@@ -13799,12 +13799,12 @@ protected:
     bool loaded_Photon_phi_;
     unsigned int counter_cached_Photon_phi_;
     unsigned int counter_uncached_Photon_phi_;
-    float Photon_photonIso_[NPHOTON_MAX];
-    vector<float> v_Photon_photonIso_;
-    TBranch *b_Photon_photonIso_;
-    bool loaded_Photon_photonIso_;
-    unsigned int counter_cached_Photon_photonIso_;
-    unsigned int counter_uncached_Photon_photonIso_;
+    float Photon_pfPhoIso03_[NPHOTON_MAX];
+    vector<float> v_Photon_pfPhoIso03_;
+    TBranch *b_Photon_pfPhoIso03_;
+    bool loaded_Photon_pfPhoIso03_;
+    unsigned int counter_cached_Photon_pfPhoIso03_;
+    unsigned int counter_uncached_Photon_pfPhoIso03_;
     bool Photon_pixelSeed_[NPHOTON_MAX];
     vector<bool> v_Photon_pixelSeed_;
     TBranch *b_Photon_pixelSeed_;
@@ -17733,7 +17733,7 @@ public:
     const vector<float> &Photon_pfRelIso03_all();
     const vector<float> &Photon_pfRelIso03_chg();
     const vector<float> &Photon_phi();
-    const vector<float> &Photon_photonIso();
+    const vector<float> &Photon_pfPhoIso03();
     const vector<bool> &Photon_pixelSeed();
     const vector<float> &Photon_pt();
     const vector<float> &Photon_r9();
@@ -20618,7 +20618,7 @@ namespace tas {
     const vector<float> &Photon_pfRelIso03_all(); // PF relative isolation dR=0.3, total (with rho*EA PU corrections)
     const vector<float> &Photon_pfRelIso03_chg(); // PF relative isolation dR=0.3, charged component (with rho*EA PU corrections)
     const vector<float> &Photon_phi(); // phi
-    const vector<float> &Photon_photonIso(); // photon iso
+    const vector<float> &Photon_pfPhoIso03(); // photon iso
     const vector<bool> &Photon_pixelSeed(); // has pixel seed
     const vector<float> &Photon_pt(); // p_{T}
     const vector<float> &Photon_r9(); // R9 of the supercluster, calculated with full 5x5 region

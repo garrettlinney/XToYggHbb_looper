@@ -32,7 +32,7 @@
 #include "../NanoCORE/Tools/bTagEff.h"
 #include "../NanoCORE/Tools/btagsf/BTagCalibrationStandalone_v2.h"
 #include "../NanoCORE/Tools/jetcorr/JetCorrectionUncertainty.h"
-#include "../NanoCORE/HggSelections.h"
+#include "../NanoCORE/DiPhotonSelections.h"
 
 #include "configuration_Zp.h"
 
@@ -145,6 +145,24 @@ int ScanChain(TChain *ch, double genEventSumw, TString year, TString process, in
 
   // Modify the name of the output file to include arguments of ScanChain function (i.e. process, year, etc.)
   TFile* fout = new TFile("temp_data/output_"+process+"_"+year+".root", "RECREATE");
+  TTree* tout = new TTree("tout","Tree with photon variables");
+
+  Float_t leadPho_pt, leadPho_eta, leadPho_phi;
+  Float_t subleadPho_pt, subleadPho_eta, subleadPho_phi;
+  Float_t diPho_pt, diPho_eta, diPho_phi, diPho_mass;
+  Int_t eventNum;
+
+  tout->Branch("leadPho_pt",&leadPho_pt,"leadPho_pt/F");
+  tout->Branch("leadPho_eta",&leadPho_eta,"leadPho_eta/F");
+  tout->Branch("leadPho_phi",&leadPho_phi,"leadPho_phi/F");
+  tout->Branch("subleadPho_pt",&subleadPho_pt,"subleadPho_pt/F");
+  tout->Branch("subleadPho_eta",&subleadPho_eta,"subleadPho_eta/F");
+  tout->Branch("subleadPho_phi",&subleadPho_phi,"subleadPho_phi/F");
+  tout->Branch("diPho_pt",&diPho_pt,"diPho_pt/F");
+  tout->Branch("diPho_eta",&diPho_eta,"diPho_eta/F");
+  tout->Branch("diPho_phi",&diPho_phi,"diPho_phi/F");
+  tout->Branch("diPho_mass",&diPho_mass,"diPho_mass/F");
+  tout->Branch("eventNum",&eventNum,"eventNum/I");
 
   // Define histo info maps
   map<TString, int> nbins { };
@@ -154,6 +172,8 @@ int ScanChain(TChain *ch, double genEventSumw, TString year, TString process, in
 
   // Define histos
   H1(cutflow,20,0,20,"");
+  H1(weight,300,0,-1,"");
+  H1(weight_full,300,0,-1,"");
   histoDefinition(nbins, low, high, title);
 
   // Define RooDataSet's for fit
@@ -232,6 +252,7 @@ int ScanChain(TChain *ch, double genEventSumw, TString year, TString process, in
 	if(removeSpikes && weight*factor>1e2) continue;
 
 	// Apply PU reweight
+        /*
 	if ( PUWeight!=0 ) {
 	  unsigned int nTrueInt = nt.Pileup_nTrueInt();
 	  TString whichPUWeight = "central";
@@ -240,7 +261,9 @@ int ScanChain(TChain *ch, double genEventSumw, TString year, TString process, in
 	  TString puyear = year;
 	  if ( useOnlyRun2018B ) puyear = "2018B";
 	  weight *= get_puWeight(nTrueInt, puyear, whichPUWeight);
+          if (event <  100) cout << "genWeight after PU reWeight is: " << weight << endl;
 	}
+        */
 
       }
 
@@ -264,14 +287,36 @@ int ScanChain(TChain *ch, double genEventSumw, TString year, TString process, in
 
 
       // do diphoton selection here
-      auto photons = getPhotons();
+      Photons photons = getPhotons();
+      DiPhotons diphotons = DiPhotonPreselection(photons);
 
+      h_weight_full->Fill(weight*factor);
+
+      if (diphotons.size() == 0) continue;
+      DiPhoton selectedDiPhoton = diphotons[0];
+
+      leadPho_pt = selectedDiPhoton.leadPho.pt();
+      leadPho_eta = selectedDiPhoton.leadPho.eta();
+      leadPho_phi = selectedDiPhoton.leadPho.phi();
+      subleadPho_pt = selectedDiPhoton.subleadPho.pt();
+      subleadPho_eta = selectedDiPhoton.subleadPho.eta();
+      subleadPho_phi = selectedDiPhoton.subleadPho.phi();
+      diPho_pt = selectedDiPhoton.p4.Pt();
+      diPho_eta = selectedDiPhoton.p4.Eta();
+      diPho_phi = selectedDiPhoton.p4.Phi();
+      diPho_mass = selectedDiPhoton.p4.M();
+
+      tout->Fill();
+      h_weight->Fill(weight*factor);
     } // Event loop
 
     delete file;
 
   } // File loop
+    
   bar.finish();
+  cout << "nTotal: " << h_weight_full->Integral() << ", nPass: " << h_weight->Integral() << ", eff: " << h_weight->Integral()/h_weight_full->Integral() << endl;
+  cout << endl;
 
   if ( muonSF!=0 ) {
     reset_muonRecoSF();
@@ -295,6 +340,7 @@ int ScanChain(TChain *ch, double genEventSumw, TString year, TString process, in
     }
   }
 
+  //tout->Write();
   fout->Write();
   //if ( fillRooDataSet ) {
   //  fout->cd();

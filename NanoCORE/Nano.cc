@@ -5270,8 +5270,8 @@ void Nano::Init(TTree *tree) {
     if (b_Photon_pfRelIso03_chg_) { b_Photon_pfRelIso03_chg_->SetAddress(&Photon_pfRelIso03_chg_); }
     b_Photon_phi_ = tree->GetBranch("Photon_phi");
     if (b_Photon_phi_) { b_Photon_phi_->SetAddress(&Photon_phi_); }
-    b_Photon_photonIso_ = tree->GetBranch("Photon_photonIso");
-    if (b_Photon_photonIso_) { b_Photon_photonIso_->SetAddress(&Photon_photonIso_); }
+    b_Photon_pfPhoIso03_ = tree->GetBranch("Photon_pfPhoIso03");
+    if (b_Photon_pfPhoIso03_) { b_Photon_pfPhoIso03_->SetAddress(&Photon_pfPhoIso03_); }
     b_Photon_pixelSeed_ = tree->GetBranch("Photon_pixelSeed");
     if (b_Photon_pixelSeed_) { b_Photon_pixelSeed_->SetAddress(&Photon_pixelSeed_); }
     b_Photon_pt_ = tree->GetBranch("Photon_pt");
@@ -8405,7 +8405,7 @@ void Nano::PrintUsage() {
     std::cout << "Photon_pfRelIso03_all (uncached/cached calls): " << counter_uncached_Photon_pfRelIso03_all_ << " / " << counter_cached_Photon_pfRelIso03_all_ << std::endl;;
     std::cout << "Photon_pfRelIso03_chg (uncached/cached calls): " << counter_uncached_Photon_pfRelIso03_chg_ << " / " << counter_cached_Photon_pfRelIso03_chg_ << std::endl;;
     std::cout << "Photon_phi (uncached/cached calls): " << counter_uncached_Photon_phi_ << " / " << counter_cached_Photon_phi_ << std::endl;;
-    std::cout << "Photon_photonIso (uncached/cached calls): " << counter_uncached_Photon_photonIso_ << " / " << counter_cached_Photon_photonIso_ << std::endl;;
+    std::cout << "Photon_pfPhoIso03 (uncached/cached calls): " << counter_uncached_Photon_pfPhoIso03_ << " / " << counter_cached_Photon_pfPhoIso03_ << std::endl;;
     std::cout << "Photon_pixelSeed (uncached/cached calls): " << counter_uncached_Photon_pixelSeed_ << " / " << counter_cached_Photon_pixelSeed_ << std::endl;;
     std::cout << "Photon_pt (uncached/cached calls): " << counter_uncached_Photon_pt_ << " / " << counter_cached_Photon_pt_ << std::endl;;
     std::cout << "Photon_r9 (uncached/cached calls): " << counter_uncached_Photon_r9_ << " / " << counter_cached_Photon_r9_ << std::endl;;
@@ -11285,7 +11285,7 @@ void Nano::GetEntry(unsigned int idx) {
     loaded_Photon_pfRelIso03_all_ = false;
     loaded_Photon_pfRelIso03_chg_ = false;
     loaded_Photon_phi_ = false;
-    loaded_Photon_photonIso_ = false;
+    loaded_Photon_pfPhoIso03_ = false;
     loaded_Photon_pixelSeed_ = false;
     loaded_Photon_pt_ = false;
     loaded_Photon_r9_ = false;
@@ -38568,16 +38568,16 @@ const vector<float> &Nano::Photon_phi() {
     }
     return v_Photon_phi_;
 }
-const vector<float> &Nano::Photon_photonIso() {
-    if (!loaded_Photon_photonIso_) counter_uncached_Photon_photonIso_++;
-    else counter_cached_Photon_photonIso_++;
-    if (!loaded_Photon_photonIso_) {
-        if (!b_Photon_photonIso_) throw std::runtime_error("Photon_photonIso branch doesn't exist");
-        int bytes = b_Photon_photonIso_->GetEntry(index);
-        v_Photon_photonIso_ = vector<float>(Photon_photonIso_,Photon_photonIso_+bytes/sizeof(Photon_photonIso_[0]));
-        loaded_Photon_photonIso_ = true;
+const vector<float> &Nano::Photon_pfPhoIso03() {
+    if (!loaded_Photon_pfPhoIso03_) counter_uncached_Photon_pfPhoIso03_++;
+    else counter_cached_Photon_pfPhoIso03_++;
+    if (!loaded_Photon_pfPhoIso03_) {
+        if (!b_Photon_pfPhoIso03_) throw std::runtime_error("Photon_pfPhoIso03 branch doesn't exist");
+        int bytes = b_Photon_pfPhoIso03_->GetEntry(index);
+        v_Photon_pfPhoIso03_ = vector<float>(Photon_pfPhoIso03_,Photon_pfPhoIso03_+bytes/sizeof(Photon_pfPhoIso03_[0]));
+        loaded_Photon_pfPhoIso03_ = true;
     }
-    return v_Photon_photonIso_;
+    return v_Photon_pfPhoIso03_;
 }
 const vector<bool> &Nano::Photon_pixelSeed() {
     if (!loaded_Photon_pixelSeed_) counter_uncached_Photon_pixelSeed_++;
@@ -43672,7 +43672,7 @@ namespace tas {
     const vector<float> &Photon_pfRelIso03_all() { return nt.Photon_pfRelIso03_all(); }
     const vector<float> &Photon_pfRelIso03_chg() { return nt.Photon_pfRelIso03_chg(); }
     const vector<float> &Photon_phi() { return nt.Photon_phi(); }
-    const vector<float> &Photon_photonIso() { return nt.Photon_photonIso(); }
+    const vector<float> &Photon_pfPhoIso03() { return nt.Photon_pfPhoIso03(); }
     const vector<bool> &Photon_pixelSeed() { return nt.Photon_pixelSeed(); }
     const vector<float> &Photon_pt() { return nt.Photon_pt(); }
     const vector<float> &Photon_r9() { return nt.Photon_r9(); }
@@ -44268,7 +44268,7 @@ namespace tas {
         else if (name == "Photon_pfRelIso03_all") return nt.Photon_pfRelIso03_all();
         else if (name == "Photon_pfRelIso03_chg") return nt.Photon_pfRelIso03_chg();
         else if (name == "Photon_phi") return nt.Photon_phi();
-        else if (name == "Photon_photonIso") return nt.Photon_photonIso();
+        else if (name == "Photon_pfPhoIso03") return nt.Photon_pfPhoIso03();
         else if (name == "Photon_pt") return nt.Photon_pt();
         else if (name == "Photon_r9") return nt.Photon_r9();
         else if (name == "Photon_sieie") return nt.Photon_sieie();
