@@ -10,7 +10,6 @@ double getSumOfGenEventSumw(TChain *chaux)
       chaux->GetEntry(run);
       sumOfGenEventSumw += genEventSumw;
     }
-
   return sumOfGenEventSumw;
 }
 
@@ -24,6 +23,7 @@ int main() {
   vector<TString> samples = { };
   map<TString,TString> sample_names = { };
   map<TString,map<TString,vector<TString>>> sample_prod = { };
+  map<TString,map<TString,int>> sample_nfiles = { };
 
   // ggH 
   samples.push_back("ggHToDiPhoM125");
@@ -32,6 +32,7 @@ int main() {
                                  { "2017",       { "RunIISummer20UL17NanoAODv9-106X_mc2017_realistic_v9-v1" } },
                                  { "2016APV",    { "RunIISummer20UL16NanoAODAPVv9-106X_mcRun2_asymptotic_preVFP_v11-v1" } },
                                  { "2016nonAPV", { "RunIISummer20UL16NanoAODv9-106X_mcRun2_asymptotic_v17-v1" } } } });
+  sample_nfiles.insert({"ggHToDiPhoM125", {{"2018", 11 } } });
 
   TString year = "2018";
   
@@ -42,13 +43,28 @@ int main() {
   int bTagSF=1;
   int JECUnc=0; // No central value, set to +/-2 to get
 
-  TChain *ch_temp = new TChain("Events");
-  TChain *chaux_temp = new TChain("Runs");
+  for ( int isample=0; isample<samples.size(); isample++ )
+  {
 
-  ch_temp->Add("/ceph/cms/store/user/legianni/skimNano-TestUL__TEST-SamplesV9/GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8_storeWeights_RunIISummer19UL18MiniAODv2/skimNano-TestUL_GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8_storeWeights_RunIISummer19UL18MiniAODv2_TESTS/220225_213121/0000/tree_11.root");
-  chaux_temp->Add("/ceph/cms/store/user/legianni/skimNano-TestUL__TEST-SamplesV9/GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8_storeWeights_RunIISummer19UL18MiniAODv2/skimNano-TestUL_GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8_storeWeights_RunIISummer19UL18MiniAODv2_TESTS/220225_213121/0000/tree_11.root");
+      TString sample = samples[isample];
+      int nFiles = sample_nfiles[sample][year];
 
-  TString sample = samples[0];
-  ScanChain(ch_temp,getSumOfGenEventSumw(chaux_temp),year,sample,topPtWeight,PUWeight,muonSF,triggerSF,bTagSF,JECUnc);
+      TChain *ch_temp = new TChain("Events");
+      TChain *chaux_temp = new TChain("Runs");
+
+      cout << "nFiles: " << nFiles << endl;
+      for ( int ifile=1; ifile<=nFiles; ifile++ )
+      {
+
+
+          TString filename = Form("/ceph/cms/store/user/legianni/skimNano-TestUL__TEST-SamplesV9/GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8_storeWeights_RunIISummer19UL18MiniAODv2/skimNano-TestUL_GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8_storeWeights_RunIISummer19UL18MiniAODv2_TESTS/220225_213121/0000/tree_%d.root", ifile);
+          cout << "filename: " << filename << endl;
+          ch_temp->Add(filename);
+          chaux_temp->Add(filename);
+
+      }
+
+      ScanChain(ch_temp,getSumOfGenEventSumw(chaux_temp),year,sample,topPtWeight,PUWeight,muonSF,triggerSF,bTagSF,JECUnc);
+  }
 
 }
