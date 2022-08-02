@@ -68,7 +68,7 @@ DiPhotons DiPhotonPreselection(Photons &photons/*, bool verbose=false*/) {
             if ( !(dipho.leadPho.pt()/dipho.p4.M() > 0.33 && dipho.subleadPho.pt()/dipho.p4.M() > 0.25) ) continue;
             if (dipho.p4.M() < 100 || dipho.p4.M() > 180) continue;
 
-            sumDiPhoPt = dipho.leadPho.pt() + dipho.subleadPho.pt();
+            float sumDiPhoPt = dipho.leadPho.pt() + dipho.subleadPho.pt();
 
             if ( diphotons.size() == 0 )
             {

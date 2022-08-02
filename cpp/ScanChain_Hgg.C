@@ -98,6 +98,8 @@ int ScanChain(TChain *ch, double genEventSumw, TString year, TString process, in
   float xsec = 1.0;
   bool isMC = true;
 
+  cout << "Process " << process << endl;
+
   if ( process.Contains("data") ) {
     isMC = false;
   }
@@ -116,6 +118,9 @@ int ScanChain(TChain *ch, double genEventSumw, TString year, TString process, in
   else if ( process == "TTHToNonbb" )        xsec = 507.5*(1-0.575); // fb
   else if ( process == "TTHTobb" )           xsec = 507.5*0.575; // fb
   else if ( process == "ggHToDiPhoM125" )    xsec = 111.8429 ; // fb
+                                                               // TODO change xs
+  else if ( process == "diPhoton" )    xsec = 111.8429 ; // fb
+  else if ( process == "HHggtautau" )    xsec = 111.8429 ; // fb
   // Signal processes and cross-sections:
   else
     {
@@ -147,17 +152,38 @@ int ScanChain(TChain *ch, double genEventSumw, TString year, TString process, in
   TFile* fout = new TFile("temp_data/output_"+process+"_"+year+".root", "RECREATE");
   TTree* tout = new TTree("tout","Tree with photon variables");
 
+  // define histograms, to be put in a different file TODO
+  H1(leadPho_sieie, 20, 0, 0.05, "");
+  H1(leadPho_phoIso, 20, 0, 10, "");
+  H1(leadPho_chgIso, 20, 0, 10, "");
+  H1(leadPho_trkIso, 20, 0, 10, "");
+  H1(subleadPho_sieie, 20, 0, 0.05, "");
+  H1(subleadPho_phoIso, 20, 0, 10, "");
+  H1(subleadPho_chgIso, 20, 0, 10, "");
+  H1(subleadPho_trkIso, 20, 0, 10, "");
+
+
   Float_t leadPho_pt, leadPho_eta, leadPho_phi;
   Float_t subleadPho_pt, subleadPho_eta, subleadPho_phi;
   Float_t diPho_pt, diPho_eta, diPho_phi, diPho_mass;
+  Float_t leadPho_sieie, leadPho_phoIso, leadPho_trkIso, leadPho_chgIso;
+  Float_t subleadPho_sieie, subleadPho_phoIso, subleadPho_trkIso, subleadPho_chgIso;
   Int_t eventNum;
 
   tout->Branch("leadPho_pt",&leadPho_pt,"leadPho_pt/F");
   tout->Branch("leadPho_eta",&leadPho_eta,"leadPho_eta/F");
   tout->Branch("leadPho_phi",&leadPho_phi,"leadPho_phi/F");
+  tout->Branch("leadPho_sieie",&leadPho_sieie,"leadPho_sieie/F");
+  tout->Branch("leadPho_phoIso",&leadPho_phoIso,"leadPho_phoIso/F");
+  tout->Branch("leadPho_trkIso",&leadPho_trkIso,"leadPho_trkIso/F");
+  tout->Branch("leadPho_chgIso",&leadPho_chgIso,"leadPho_chgIso/F");
   tout->Branch("subleadPho_pt",&subleadPho_pt,"subleadPho_pt/F");
   tout->Branch("subleadPho_eta",&subleadPho_eta,"subleadPho_eta/F");
   tout->Branch("subleadPho_phi",&subleadPho_phi,"subleadPho_phi/F");
+  tout->Branch("subleadPho_sieie",&subleadPho_sieie,"subleadPho_sieie/F");
+  tout->Branch("subleadPho_phoIso",&subleadPho_phoIso,"subleadPho_phoIso/F");
+  tout->Branch("subleadPho_trkIso",&subleadPho_trkIso,"subleadPho_trkIso/F");
+  tout->Branch("subleadPho_chgIso",&subleadPho_chgIso,"subleadPho_chgIso/F");
   tout->Branch("diPho_pt",&diPho_pt,"diPho_pt/F");
   tout->Branch("diPho_eta",&diPho_eta,"diPho_eta/F");
   tout->Branch("diPho_phi",&diPho_phi,"diPho_phi/F");
@@ -298,13 +324,30 @@ int ScanChain(TChain *ch, double genEventSumw, TString year, TString process, in
       leadPho_pt = selectedDiPhoton.leadPho.pt();
       leadPho_eta = selectedDiPhoton.leadPho.eta();
       leadPho_phi = selectedDiPhoton.leadPho.phi();
+      leadPho_sieie = selectedDiPhoton.leadPho.sieie();
+      leadPho_phoIso = selectedDiPhoton.leadPho.phoIso();
+      leadPho_trkIso = selectedDiPhoton.leadPho.trkIso();
+      leadPho_chgIso = selectedDiPhoton.leadPho.chargedHadIso();
       subleadPho_pt = selectedDiPhoton.subleadPho.pt();
       subleadPho_eta = selectedDiPhoton.subleadPho.eta();
       subleadPho_phi = selectedDiPhoton.subleadPho.phi();
+      subleadPho_sieie = selectedDiPhoton.subleadPho.sieie();
+      subleadPho_phoIso = selectedDiPhoton.subleadPho.phoIso();
+      subleadPho_trkIso = selectedDiPhoton.subleadPho.trkIso();
+      subleadPho_chgIso = selectedDiPhoton.subleadPho.chargedHadIso();
       diPho_pt = selectedDiPhoton.p4.Pt();
       diPho_eta = selectedDiPhoton.p4.Eta();
       diPho_phi = selectedDiPhoton.p4.Phi();
       diPho_mass = selectedDiPhoton.p4.M();
+
+      h_leadPho_sieie->Fill(leadPho_sieie);
+      h_leadPho_phoIso->Fill(leadPho_phoIso);
+      h_leadPho_chgIso->Fill(leadPho_chgIso);
+      h_leadPho_trkIso->Fill(leadPho_trkIso);
+      h_subleadPho_sieie->Fill(subleadPho_sieie);
+      h_subleadPho_phoIso->Fill(subleadPho_phoIso);
+      h_subleadPho_chgIso->Fill(subleadPho_chgIso);
+      h_subleadPho_trkIso->Fill(subleadPho_trkIso);
 
       tout->Fill();
       h_weight->Fill(weight*factor);
