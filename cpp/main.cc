@@ -27,7 +27,7 @@ int main() {
   map<TString,map<TString,int>> sample_nfiles = { };
 
   // TODO is there a way to read formatted config (.json, .yaml. .config) using C++?
-
+/*
   // ggH 
   samples.push_back("ggHToDiPhoM125");
   sample_names.insert({"ggHToDiPhoM125","GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
@@ -36,16 +36,17 @@ int main() {
                                  { "2017",       { "" } },
                                  { "2016APV",    { "" } },
                                  { "2016nonAPV", { "" } } } });
+*/
 
   // diPhoton 
   samples.push_back("diPhoton");
   sample_names.insert({"diPhoton","DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa"});
-  sample_nfiles.insert({"diPhoton", {{"2018", 39 } } });
+  sample_nfiles.insert({"diPhoton", {{"2018", 41 } } });
   sample_prod.insert({"diPhoton", { { "2018",       { "DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa_RunIISummer19UL18MiniAODv2/skimNano-TestUL_DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa_RunIISummer19UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1_MINIAODSIM_final_TESTS/220225_204254/0000/" } },
                                  { "2017",       { "" } },
                                  { "2016APV",    { "" } },
                                  { "2016nonAPV", { "" } } } });
-
+/*
   // HHggtautau 
   samples.push_back("HHggtautau");
   sample_names.insert({"HHggtautau","GluGluToHHTo2G2Tau_node_cHHH1_TuneCP5_13TeV-powheg-pythia8"});
@@ -68,7 +69,7 @@ int main() {
   //GluGluToHHTo2G2Tau_node_cHHH1_TuneCP5_13TeV-powheg-pythia8_2018_final/skimNano-TestUL_GluGluToHHTo2G2Tau_node_cHHH1_TuneCP5_13TeV-powheg-pythia8_2018_final_TESTS/220225_214005/0000/
   //EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final/skimNano-TestUL_EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final_TESTS/220403_112326/0000/
   //EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final/skimNano-TestUL_EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final_TESTS/220403_112326/0000/tree_
-
+*/
 
   TString year = "2018";
   TString basedir = "/ceph/cms/store/user/legianni/skimNano-TestUL__TEST-SamplesV9/";
@@ -102,10 +103,6 @@ int main() {
 
           TString filename = Form(basedir + prod + "tree_%d.root", ifile);
 
-          //ch_temp->Add(filename);
-          //chaux_temp->Add(filename);
-          //cout << "filename: " << filename << endl;
-
           ifstream i_file;
           i_file.open(filename);
           while ( !i_file )
@@ -120,7 +117,7 @@ int main() {
 
       }
 
-      ScanChain(ch_temp,getSumOfGenEventSumw(chaux_temp),year,sample,topPtWeight,PUWeight,muonSF,triggerSF,bTagSF,JECUnc);
+      ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp),year,sample,topPtWeight,PUWeight,muonSF,triggerSF,bTagSF,JECUnc);
   }
 
 }

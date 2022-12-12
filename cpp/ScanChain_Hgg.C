@@ -33,6 +33,8 @@
 #include "../NanoCORE/Tools/btagsf/BTagCalibrationStandalone_v2.h"
 #include "../NanoCORE/Tools/jetcorr/JetCorrectionUncertainty.h"
 #include "../NanoCORE/DiPhotonSelections.h"
+#include "../NanoCORE/LeptonSelections.h"
+#include "../NanoCORE/DiJetSelections.h"
 
 #include "configuration_Zp.h"
 
@@ -86,7 +88,7 @@ using namespace duplicate_removal;
 using namespace RooFit;
 
 
-int ScanChain(TChain *ch, double genEventSumw, TString year, TString process, int topPtWeight=1, int PUWeight=1, int muonSF=1, int triggerSF=1, int bTagSF=1, int JECUnc=0) {
+int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process, int topPtWeight=1, int PUWeight=1, int muonSF=1, int triggerSF=1, int bTagSF=1, int JECUnc=0) {
 // Event weights / scale factors:
 //  0: Do not apply
 //  1: Apply central value
@@ -194,13 +196,14 @@ int ScanChain(TChain *ch, double genEventSumw, TString year, TString process, in
   map<TString, int> nbins { };
   map<TString, float> low { };
   map<TString, float> high { };
+  map<TString, vector<float>> binsx { };
   map<TString, TString> title { };
 
   // Define histos
   H1(cutflow,20,0,20,"");
   H1(weight,300,0,-1,"");
   H1(weight_full,300,0,-1,"");
-  histoDefinition(nbins, low, high, title);
+  histoDefinition(nbins, low, high, binsx, title);
 
   // Define RooDataSet's for fit
   /*
@@ -220,6 +223,7 @@ int ScanChain(TChain *ch, double genEventSumw, TString year, TString process, in
   */
 
   // Define selection
+  cout << "define selection" << endl;
   vector<TString> selection = { };
   selection.push_back("sel0"); // Skimming + HLT + Good PV
   selection.push_back("sel1"); // 2 high-pT ID muons
@@ -315,10 +319,18 @@ int ScanChain(TChain *ch, double genEventSumw, TString year, TString process, in
       // do diphoton selection here
       Photons photons = getPhotons();
       DiPhotons diphotons = DiPhotonPreselection(photons);
+      Electrons electrons = getElectrons(photons);
+      Muons muons = getMuons(photons);
+      Jets jets = getJets(photons);
+      DiJets dijets = DiJetPreselection(jets);
 
       h_weight_full->Fill(weight*factor);
 
-      if (diphotons.size() == 0) continue;
+      if (diphotons.size() == 0 ) continue; // 47060
+      if (electrons.size() != 0 ) continue; // 46995
+      if (muons.size() != 0 ) continue; // 46964
+      if (jets.size() < 2) continue; //19615
+      if (dijets.size() == 0 ) continue; // 18724
       DiPhoton selectedDiPhoton = diphotons[0];
 
       leadPho_pt = selectedDiPhoton.leadPho.pt();

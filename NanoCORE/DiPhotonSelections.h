@@ -9,7 +9,8 @@ struct Photon {
         pt_ = nt.Photon_pt()[idx_];
         eta_ = nt.Photon_eta()[idx_];
         phi_ = nt.Photon_phi()[idx_];
-        p4_ = nt.Photon_p4()[idx_];
+//        p4_ = nt.Photon_p4()[idx_]; need to convert to TLorentzVector to compute DeltaR later
+        p4_.SetPtEtaPhiM(pt_, eta_, phi_, 0 );
         id_ = nt.Photon_pdgId()[idx_];
         r9_ = nt.Photon_r9()[idx_];
         chargedHadIso_ = nt.Photon_chargedHadronIso()[idx_];
@@ -18,6 +19,7 @@ struct Photon {
         trkIso_ = nt.Photon_trkSumPtHollowConeDR03()[idx_];
         sieie_ = nt.Photon_sieie()[idx_];
         eveto_ = nt.Photon_electronVeto()[idx_];
+        pixelSeed_ = nt.Photon_pixelSeed()[idx_];
         egPhoId_ = nt.Photon_mvaID()[idx_];
         //idlevel_ = whichPhotonLevel(id_, idx_);
         //fixedGridRhoAll_ = nt.fixedGridRhoAll();
@@ -27,7 +29,7 @@ struct Photon {
     int id() { return id_; }
     unsigned int idx() { return idx_; }
     //int idlevel() { return idlevel_; }
-    LorentzVector p4() { return p4_; }
+    TLorentzVector p4() { return p4_; }
     float pt() { return pt_; }
     float eta() { return eta_; }
     float phi() { return phi_; }
@@ -38,6 +40,7 @@ struct Photon {
     float trkIso() { return trkIso_; }
     float sieie() { return sieie_; }
     bool eveto() { return eveto_; }
+    bool pixelSeed() { return pixelSeed_;}
     float egPhoId() { return egPhoId_; }
     float perEvtRho() { return fixedGridRhoAll_; }
 
@@ -46,7 +49,7 @@ struct Photon {
     float pt_ = 0.;
     float eta_ = 0.;
     float phi_ = 0.;
-    LorentzVector p4_;
+    TLorentzVector p4_;
     unsigned int idx_;
     float r9_ = 0.;
     float chargedHadIso_ = 0.;
@@ -55,6 +58,7 @@ struct Photon {
     float trkIso_ = 0.;
     float sieie_ = 0.;
     bool eveto_ = 0.;
+    bool pixelSeed_ = 0.;
     float egPhoId_ = 0.;
     float fixedGridRhoAll_ = 0.; // this variable is the same for each event
     //int idlevel_ = SS::IDdefault;
@@ -82,10 +86,9 @@ struct DiPhoton{
 //typedef std::pair<Photon, Photon> DiPhoton;
 typedef std::vector<DiPhoton> DiPhotons;
 
-bool sortByPt(Photon &p1, Photon &p2)
+inline bool sortByPt(Photon &p1, Photon &p2)
 {
-        return p1.pt() > p2.pt();
-        
+        return p1.pt() > p2.pt();    
 }
 
 DiPhotons DiPhotonPreselection(Photons &photons); 

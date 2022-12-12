@@ -186,7 +186,7 @@ test_config = {
             "leadPho_sieie", "leadPho_phoIso", "leadPho_trkIso", "leadPho_chgIso", 
             "subleadPho_sieie", "subleadPho_phoIso", "subleadPho_trkIso", "subleadPho_chgIso"
             ],
-        "outdirbase": "/home/users/hmei/public_html/Hgg/triggerStudy/checkVariables/",
+        "outdirbase": "/home/users/yagu/public_html/Hgg/triggerStudy/checkVariables/",
         "outdirtag": "",
         "properties": {
             "style": "HIST",
