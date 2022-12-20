@@ -41,7 +41,7 @@ int main() {
   // diPhoton 
   samples.push_back("diPhoton");
   sample_names.insert({"diPhoton","DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa"});
-  sample_nfiles.insert({"diPhoton", {{"2018", 41 } } });
+  sample_nfiles.insert({"diPhoton", {{"2018", 1 } } });
   sample_prod.insert({"diPhoton", { { "2018",       { "DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa_RunIISummer19UL18MiniAODv2/skimNano-TestUL_DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa_RunIISummer19UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1_MINIAODSIM_final_TESTS/220225_204254/0000/" } },
                                  { "2017",       { "" } },
                                  { "2016APV",    { "" } },

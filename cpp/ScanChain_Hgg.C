@@ -86,7 +86,7 @@ using namespace std;
 using namespace tas;
 using namespace duplicate_removal;
 using namespace RooFit;
-
+int count_test=0;
 
 int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process, int topPtWeight=1, int PUWeight=1, int muonSF=1, int triggerSF=1, int bTagSF=1, int JECUnc=0) {
 // Event weights / scale factors:
@@ -119,10 +119,11 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   else if ( process == "TTZ" )               xsec = 252.9; // fb
   else if ( process == "TTHToNonbb" )        xsec = 507.5*(1-0.575); // fb
   else if ( process == "TTHTobb" )           xsec = 507.5*0.575; // fb
-  else if ( process == "ggHToDiPhoM125" )    xsec = 111.8429 ; // fb
+  else if ( process == "ggHToDiPhoM125" )    xsec = 33.93 ; // fb
                                                                // TODO change xs
-  else if ( process == "diPhoton" )    xsec = 111.8429 ; // fb
-  else if ( process == "HHggtautau" )    xsec = 111.8429 ; // fb
+  else if ( process == "diPhoton" )    xsec = 82.51 ; // 
+  else if ( process == "HHggtautau" )    xsec = 0.02669 ; // 
+//  111.8429 ; // fb
   // Signal processes and cross-sections:
   else
     {
@@ -201,8 +202,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
   // Define histos
   H1(cutflow,20,0,20,"");
-  H1(weight,300,0,-1,"");
-  H1(weight_full,300,0,-1,"");
+  H1(weight,1,0,1,"");
+  H1(weight_full,1,0,1,"");
   histoDefinition(nbins, low, high, binsx, title);
 
   // Define RooDataSet's for fit
@@ -317,21 +318,27 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
 
       // do diphoton selection here
-      Photons photons = getPhotons();
+      Photons photons = getPhotons(); //sort by pt
       DiPhotons diphotons = DiPhotonPreselection(photons);
-      Electrons electrons = getElectrons(photons);
-      Muons muons = getMuons(photons);
-      Jets jets = getJets(photons);
-      DiJets dijets = DiJetPreselection(jets);
 
       h_weight_full->Fill(weight*factor);
 
-      if (diphotons.size() == 0 ) continue; // 47060
-      if (electrons.size() != 0 ) continue; // 46995
-      if (muons.size() != 0 ) continue; // 46964
-      if (jets.size() < 2) continue; //19615
-      if (dijets.size() == 0 ) continue; // 18724
+      if (diphotons.size() == 0 ) continue; 
+
       DiPhoton selectedDiPhoton = diphotons[0];
+      Photons vector_photons={};
+      vector_photons.push_back(selectedDiPhoton.leadPho);
+      vector_photons.push_back(selectedDiPhoton.subleadPho);
+/*
+      Electrons electrons = getElectrons(photons);
+      Muons muons = getMuons(photons);
+      if (electrons.size() != 0 ) continue; 
+      if (muons.size() != 0 ) continue; 
+
+      Jets jets = getJets(photons); //sort by b score
+      DiJets dijets = DiJetPreselection(jets);
+      if (jets.size() < 2) continue; 
+      if (dijets.size() == 0 ) continue; 
 
       leadPho_pt = selectedDiPhoton.leadPho.pt();
       leadPho_eta = selectedDiPhoton.leadPho.eta();
@@ -351,6 +358,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       diPho_eta = selectedDiPhoton.p4.Eta();
       diPho_phi = selectedDiPhoton.p4.Phi();
       diPho_mass = selectedDiPhoton.p4.M();
+      count_test++;
+      if (count_test==31) cout<<diPho_mass<<" "<<diPho_pt<<" "<<diPho_eta<<" "<<diPho_phi<<" "<<photons.size()<<endl;
 
       h_leadPho_sieie->Fill(leadPho_sieie);
       h_leadPho_phoIso->Fill(leadPho_phoIso);
@@ -360,7 +369,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       h_subleadPho_phoIso->Fill(subleadPho_phoIso);
       h_subleadPho_chgIso->Fill(subleadPho_chgIso);
       h_subleadPho_trkIso->Fill(subleadPho_trkIso);
-
+*/
       tout->Fill();
       h_weight->Fill(weight*factor);
     } // Event loop
@@ -370,7 +379,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   } // File loop
     
   bar.finish();
-  cout << "nTotal: " << h_weight_full->Integral() << ", nPass: " << h_weight->Integral() << ", eff: " << h_weight->Integral()/h_weight_full->Integral() << endl;
+  cout << "nTotal: " << h_weight_full->GetBinContent(1) << ", nPass: " << h_weight->GetBinContent(1) << ", eff: " << h_weight->GetBinContent(1)/h_weight_full->GetBinContent(1) << endl;
   cout << endl;
 
   if ( muonSF!=0 ) {

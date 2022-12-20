@@ -7,10 +7,10 @@
 
 struct Jet {
     Jet(unsigned int idx = 0) : idx_(idx) {
-        pt_ = nt.Jet_pt()[idx_];
+        pt_ = nt.Jet_pt_nom()[idx_];
         eta_ = nt.Jet_eta()[idx_];
         jetId_ = nt.Jet_jetId()[idx_];
-        p4_.SetPtEtaPhiM(nt.Jet_pt()[idx_], nt.Jet_eta()[idx_], nt.Jet_phi()[idx_], nt.Jet_mass()[idx_]);
+        p4_.SetPtEtaPhiM(nt.Jet_pt_nom()[idx_], nt.Jet_eta()[idx_], nt.Jet_phi()[idx_], nt.Jet_mass()[idx_]);
         btagDeepFlavB_ = nt.Jet_btagDeepFlavB()[idx_];
     }
     //void set_idlevel(int idlevel) { idlevel_ = idlevel; }

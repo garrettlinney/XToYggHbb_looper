@@ -9,7 +9,7 @@ bool UseLowR9Photon(Photon pho, bool isEB) {
     bool useThisPhoton = false;
     if (isEB) {
         if ( !(pho.sieie() < 0.015) ) return useThisPhoton;       
-        if ( !(pho.trkIso() < 6.0) ) return useThisPhoton;       
+        if ( !(pho.trkIso() < 6.0) ) return useThisPhoton;   //?    
         if ( !(pho.phoIso() - 0.16544*pho.perEvtRho() < 4.0) ) return useThisPhoton;       
     } else {
         if ( !(pho.sieie() < 0.035) ) return useThisPhoton;       
@@ -30,10 +30,12 @@ Photons getPhotons() {
         if (pho.pt()<18) continue;
         if ( !(abs(pho.eta()<2.5)) ) continue;
         if ( !(abs(pho.eta())<1.4442 || abs(pho.eta())>1.566) ) continue;
-        if ( !(pho.hoe()<0.08) ) continue;
-        if (pho.pixelSeed() > 0.5) continue; // this is not standard photon selections, but sam used this to suppress electrons on the DY peak
-        if (pho.eveto() < 0.5) continue;
-        if ( !(pho.egPhoId() > -0.7) ) continue;
+        if ( !(pho.hoe()<0.08) ) continue;//?
+        if (pho.pixelSeed() > 0.5) continue; // this is not standard photon selections, but Sam used this to suppress electrons on the DY peak
+        if (pho.eveto() < 0.5) continue; //?
+        if ( !(pho.mvaID() > -0.7) ) continue;
+        if ( !(pho.r9() > 0.8 || pho.chargedHadIso() < 20 || pho.chargedHadIso()/pho.pt() < 0.3) ) continue;
+
         bool pho_EB_highR9 = abs(pho.eta()) < 1.5 && pho.r9() > 0.85; 
         bool pho_EE_highR9 = abs(pho.eta()) > 1.5 && pho.r9() > 0.90; 
         bool pho_EB_lowR9 = abs(pho.eta()) < 1.5 && pho.r9() < 0.85 && pho.r9() > 0.50 && UseLowR9Photon(pho, true);
@@ -55,14 +57,12 @@ DiPhotons DiPhotonPreselection(Photons &photons/*, bool verbose=false*/) {
             Photon pho1 = photons[i1];
             Photon pho2 = photons[i2];
             DiPhoton dipho = DiPhoton(pho1, pho2);
-            if ( !(dipho.leadPho.pt() > 30.0 && dipho.subleadPho.pt() > 18.0) ) continue;
-            //if ( !((dipho.leadPho.r9() > 0.8 && dipho.leadPho.chargedHadIso() < 20) || dipho.leadPho.chargedHadIso()/dipho.leadPho.pt() < 0.3) ) continue;
-            //if ( !((dipho.subleadPho.r9() > 0.8 && dipho.subleadPho.chargedHadIso() < 20) || dipho.subleadPho.chargedHadIso()/dipho.subleadPho.pt() < 0.3) ) continue;
-            if ( !(dipho.leadPho.r9() > 0.8 || dipho.leadPho.chargedHadIso() < 20 || dipho.leadPho.chargedHadIso()/dipho.leadPho.pt() < 0.3) ) continue;
-            if ( !(dipho.subleadPho.r9() > 0.8 || dipho.subleadPho.chargedHadIso() < 20 || dipho.subleadPho.chargedHadIso()/dipho.subleadPho.pt() < 0.3) ) continue;
-
-            
-            if ( !(dipho.leadPho.pt()/dipho.p4.M() > 0.33 && dipho.subleadPho.pt()/dipho.p4.M() > 0.25) ) continue;
+            if (abs(pho1.mvaID()-0.875488)<0.00001 && abs(pho1.sieie()-0.006561)<0.00001) cout<<"pho1 goes to dipho"<<endl;
+            if (abs(pho2.mvaID()-0.875488)<0.00001 && abs(pho2.sieie()-0.006561)<0.00001) cout<<"pho1 goes to dipho2"<<endl;
+            if ( !(dipho.leadPho.pt() > 30.0 && dipho.subleadPho.pt() > 18.0) ) continue;        
+//            if ( !(dipho.leadPho.pt()/dipho.p4.M() > 0.33 && dipho.subleadPho.pt()/dipho.p4.M() > 0.25) ) continue; 
+//it's a historical cut ,when searching for Higgs, people don't know the dipho mass, then for higher mass they require tighter pt
+//also, trigger cut around 20/30 , bkg mgg shape is not a smooth falling distribution ~100GeV (need to be tested)
             if (dipho.p4.M() < 55 || dipho.p4.M() > 999999) continue;
 
             float sumDiPhoPt = dipho.leadPho.pt() + dipho.subleadPho.pt();
@@ -78,7 +78,6 @@ DiPhotons DiPhotonPreselection(Photons &photons/*, bool verbose=false*/) {
                 diphotons.push_back(dipho);
                 maxSumDiphoPt = sumDiPhoPt;
             }
-
         }
     } 
 
