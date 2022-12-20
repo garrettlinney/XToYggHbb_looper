@@ -169,8 +169,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   Float_t leadPho_pt, leadPho_eta, leadPho_phi;
   Float_t subleadPho_pt, subleadPho_eta, subleadPho_phi;
   Float_t diPho_pt, diPho_eta, diPho_phi, diPho_mass;
-  Float_t leadPho_sieie, leadPho_phoIso, leadPho_trkIso, leadPho_chgIso;
-  Float_t subleadPho_sieie, subleadPho_phoIso, subleadPho_trkIso, subleadPho_chgIso;
+  Float_t leadPho_sieie, leadPho_phoIso, leadPho_trkIso, leadPho_chgIso, leadPho_mvaID;
+  Float_t subleadPho_sieie, subleadPho_phoIso, subleadPho_trkIso, subleadPho_chgIso, subleadPho_mvaID;
   Int_t eventNum;
 
   tout->Branch("leadPho_pt",&leadPho_pt,"leadPho_pt/F");
@@ -315,8 +315,16 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 	  }
 	}
       }
-
-
+/*
+      // HLT selection
+      if ( (year=="2016nonAPV" || year=="2016APV") &&
+             !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0)
+               || (tree->GetBranch("HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0) ) ) continue;
+      if ( (year=="2017") &&
+             !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55() : 0)  )  ) continue;
+      if ( (year=="2018") &&
+              !( (tree->GetBranch("HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto") ? nt.HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto() : 0) ) ) continue;
+*/
       // do diphoton selection here
       Photons photons = getPhotons(); //sort by pt
       DiPhotons diphotons = DiPhotonPreselection(photons);
@@ -329,6 +337,9 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       Photons vector_photons={};
       vector_photons.push_back(selectedDiPhoton.leadPho);
       vector_photons.push_back(selectedDiPhoton.subleadPho);
+      leadPho_mvaID = selectedDiPhoton.leadPho.mvaID();
+      subleadPho_mvaID = selectedDiPhoton.subleadPho.mvaID();
+//      if (!(subleadPho_mvaID>-0.7 && leadPho_mvaID>-0.7)) continue;
 /*
       Electrons electrons = getElectrons(photons);
       Muons muons = getMuons(photons);
@@ -339,7 +350,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       DiJets dijets = DiJetPreselection(jets);
       if (jets.size() < 2) continue; 
       if (dijets.size() == 0 ) continue; 
-
+*/
       leadPho_pt = selectedDiPhoton.leadPho.pt();
       leadPho_eta = selectedDiPhoton.leadPho.eta();
       leadPho_phi = selectedDiPhoton.leadPho.phi();
@@ -359,7 +370,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       diPho_phi = selectedDiPhoton.p4.Phi();
       diPho_mass = selectedDiPhoton.p4.M();
       count_test++;
-      if (count_test==31) cout<<diPho_mass<<" "<<diPho_pt<<" "<<diPho_eta<<" "<<diPho_phi<<" "<<photons.size()<<endl;
+      if (count_test>65025) cout<<diPho_mass<<" "<<diPho_pt<<" "<<diPho_eta<<" "<<diPho_phi<<" "<<photons.size()<<endl;
 
       h_leadPho_sieie->Fill(leadPho_sieie);
       h_leadPho_phoIso->Fill(leadPho_phoIso);
@@ -369,7 +380,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       h_subleadPho_phoIso->Fill(subleadPho_phoIso);
       h_subleadPho_chgIso->Fill(subleadPho_chgIso);
       h_subleadPho_trkIso->Fill(subleadPho_trkIso);
-*/
+
       tout->Fill();
       h_weight->Fill(weight*factor);
     } // Event loop

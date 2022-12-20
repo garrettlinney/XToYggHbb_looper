@@ -21,6 +21,8 @@ struct Photon {
         eveto_ = nt.Photon_electronVeto()[idx_];
         pixelSeed_ = nt.Photon_pixelSeed()[idx_];
         mvaID_ = nt.Photon_mvaID()[idx_];
+        isScEtaEB_ = nt.Photon_isScEtaEB()[idx_];
+        isScEtaEE_ = nt.Photon_isScEtaEE()[idx_];
         //idlevel_ = whichPhotonLevel(id_, idx_);
         //fixedGridRhoAll_ = nt.fixedGridRhoAll();
         fixedGridRhoAll_ = nt.fixedGridRhoFastjetAll();
@@ -43,6 +45,8 @@ struct Photon {
     bool pixelSeed() { return pixelSeed_;}
     float mvaID() { return mvaID_; }
     float perEvtRho() { return fixedGridRhoAll_; }
+    float isScEtaEE() { return isScEtaEE_; }
+    float isScEtaEB() { return isScEtaEB_; }
 
   private:
     int id_;
@@ -61,6 +65,8 @@ struct Photon {
     bool pixelSeed_ = 0.;
     float mvaID_ = 0.;
     float fixedGridRhoAll_ = 0.; // this variable is the same for each event
+    float isScEtaEB_ = 0;
+    float isScEtaEE_ = 0;
     //int idlevel_ = SS::IDdefault;
 };
 
