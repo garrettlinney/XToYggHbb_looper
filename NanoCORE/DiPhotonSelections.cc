@@ -7,17 +7,19 @@ using namespace tas;
 
 bool UseLowR9Photon(Photon pho, bool isEB) {
     bool useThisPhoton = false;
+    bool loweta = abs(pho.eta())<1.5;
     if (isEB) {
         if ( !(pho.sieie() < 0.015) ) return useThisPhoton;       
-        if ( !(pho.trkIso() < 6.0) ) return useThisPhoton;   //?    
-        if ( !(pho.phoIso() - 0.16544*pho.perEvtRho() < 4.0) ) return useThisPhoton;       
+        if ( !(pho.trkIso() < 6.0) ) return useThisPhoton;       
+        if ( loweta && !(pho.phoIso() - 0.16544*pho.perEvtRho() < 4.0) ) return useThisPhoton;       
+        if ( !(loweta) && !(pho.phoIso() - 0.13212*pho.perEvtRho() < 4.0) ) return useThisPhoton;
     } else {
         if ( !(pho.sieie() < 0.035) ) return useThisPhoton;       
         if ( !(pho.trkIso() < 6.0) ) return useThisPhoton;       
-        if ( !(pho.phoIso() - 0.13212*pho.perEvtRho() < 4.0) ) return useThisPhoton;       
-
+        if ( loweta && !(pho.phoIso() - 0.16544*pho.perEvtRho() < 4.0) ) return useThisPhoton;       
+        if ( !(loweta) && !(pho.phoIso() - 0.13212*pho.perEvtRho() < 4.0) ) return useThisPhoton;      
     }
-    
+
     // 0.16544 and 0.13212 are copied from flashggPreselectedDiPhotons_cfi.py
     useThisPhoton = true;
     return useThisPhoton;
@@ -31,7 +33,7 @@ Photons getPhotons() {
         if (pho.pt()<18) continue;
 //        if ( !(abs(pho.eta()<2.5)) ) continue;
         if (! (pho.isScEtaEB() || pho.isScEtaEE())) continue;
-        if ( !(abs(pho.eta())<1.4442 || abs(pho.eta())>1.566) ) continue;
+//        if ( !(abs(pho.eta())<1.4442 || abs(pho.eta())>1.566) ) continue;
         if ( !(pho.hoe()<0.08) ) continue;//?
         if (pho.pixelSeed() > 0.5) continue; // this is not standard photon selections, but Sam used this to suppress electrons on the DY peak
         if (pho.eveto() < 0.5) continue; //?

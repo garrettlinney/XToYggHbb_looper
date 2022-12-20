@@ -339,8 +339,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       vector_photons.push_back(selectedDiPhoton.subleadPho);
       leadPho_mvaID = selectedDiPhoton.leadPho.mvaID();
       subleadPho_mvaID = selectedDiPhoton.subleadPho.mvaID();
-//      if (!(subleadPho_mvaID>-0.7 && leadPho_mvaID>-0.7)) continue;
-/*
+      if (!(subleadPho_mvaID>-0.7 && leadPho_mvaID>-0.7)) continue;
+
       Electrons electrons = getElectrons(photons);
       Muons muons = getMuons(photons);
       if (electrons.size() != 0 ) continue; 
@@ -350,7 +350,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       DiJets dijets = DiJetPreselection(jets);
       if (jets.size() < 2) continue; 
       if (dijets.size() == 0 ) continue; 
-*/
+
       leadPho_pt = selectedDiPhoton.leadPho.pt();
       leadPho_eta = selectedDiPhoton.leadPho.eta();
       leadPho_phi = selectedDiPhoton.leadPho.phi();
@@ -370,7 +370,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       diPho_phi = selectedDiPhoton.p4.Phi();
       diPho_mass = selectedDiPhoton.p4.M();
       count_test++;
-      if (count_test>65025) cout<<diPho_mass<<" "<<diPho_pt<<" "<<diPho_eta<<" "<<diPho_phi<<" "<<photons.size()<<endl;
+//      if (count_test>65025) cout<<diPho_mass<<" "<<diPho_pt<<" "<<diPho_eta<<" "<<diPho_phi<<" "<<photons.size()<<endl;
 
       h_leadPho_sieie->Fill(leadPho_sieie);
       h_leadPho_phoIso->Fill(leadPho_phoIso);
