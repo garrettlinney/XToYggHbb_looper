@@ -10,12 +10,12 @@ bool UseLowR9Photon(Photon pho, bool isEB) {
     bool loweta = abs(pho.eta())<1.5;
     if (isEB) {
         if ( !(pho.sieie() < 0.015) ) return useThisPhoton;       
-        if ( !(pho.trkIso() < 6.0) ) return useThisPhoton;       
+        if ( !(pho.trkSumPtHollowConeDR03() < 6.0) ) return useThisPhoton;       
         if ( loweta && !(pho.phoIso() - 0.16544*pho.perEvtRho() < 4.0) ) return useThisPhoton;       
         if ( !(loweta) && !(pho.phoIso() - 0.13212*pho.perEvtRho() < 4.0) ) return useThisPhoton;
     } else {
         if ( !(pho.sieie() < 0.035) ) return useThisPhoton;       
-        if ( !(pho.trkIso() < 6.0) ) return useThisPhoton;       
+        if ( !(pho.trkSumPtHollowConeDR03() < 6.0) ) return useThisPhoton;       
         if ( loweta && !(pho.phoIso() - 0.16544*pho.perEvtRho() < 4.0) ) return useThisPhoton;       
         if ( !(loweta) && !(pho.phoIso() - 0.13212*pho.perEvtRho() < 4.0) ) return useThisPhoton;      
     }
