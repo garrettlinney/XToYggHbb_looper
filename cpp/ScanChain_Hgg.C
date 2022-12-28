@@ -280,7 +280,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       float weight = 1.0;
       if ( isMC ) {
 	weight = nt.genWeight();
-	if(removeSpikes && weight*factor>1e2) continue;
+//	if(removeSpikes && weight*factor>1e2) continue; //comment out for synchronizing
 
 	// Apply PU reweight
         /*
@@ -304,6 +304,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       int npv = nt.PV_npvs();
 
       // Apply Golden JSON
+/*
       if ( !isMC ) {
 	if ( !(goodrun(runnb, lumiblock)) )
 	  continue;
@@ -315,6 +316,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 	  }
 	}
       }
+*/ // comment out for synchronizing
 /*
       // HLT selection
       if ( (year=="2016nonAPV" || year=="2016APV") &&
@@ -329,7 +331,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       Photons photons = getPhotons(); //sort by pt
       DiPhotons diphotons = DiPhotonPreselection(photons);
 
-      h_weight_full->Fill(weight*factor);
+      h_weight_full->Fill(0);
+//      h_weight_full->Fill(weight*factor);
 
       if (diphotons.size() == 0 ) continue; 
 
@@ -341,15 +344,16 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       subleadPho_mvaID = selectedDiPhoton.subleadPho.mvaID();
       if (!(subleadPho_mvaID>-0.7 && leadPho_mvaID>-0.7)) continue;
 
-      Electrons electrons = getElectrons(photons);
-      Muons muons = getMuons(photons);
+      Electrons electrons = getElectrons(vector_photons);
+      Muons muons = getMuons(vector_photons);
       if (electrons.size() != 0 ) continue; 
       if (muons.size() != 0 ) continue; 
 
-      Jets jets = getJets(photons); //sort by b score
+      Jets jets = getJets(vector_photons); //sort by b score
       DiJets dijets = DiJetPreselection(jets);
       if (jets.size() < 2) continue; 
-      if (dijets.size() == 0 ) continue; 
+      DiJet selectedDiJet = dijets[0];
+      if (dijets[0].p4.M()<50) continue;
 
       leadPho_pt = selectedDiPhoton.leadPho.pt();
       leadPho_eta = selectedDiPhoton.leadPho.eta();
@@ -382,7 +386,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       h_subleadPho_trkIso->Fill(subleadPho_trkIso);
 
       tout->Fill();
-      h_weight->Fill(weight*factor);
+//      h_weight->Fill(weight*factor);
+      h_weight->Fill(0);
     } // Event loop
 
     delete file;

@@ -41,11 +41,12 @@ int main() {
   // diPhoton 
   samples.push_back("diPhoton");
   sample_names.insert({"diPhoton","DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa"});
-  sample_nfiles.insert({"diPhoton", {{"2018", 1 } } });
+  sample_nfiles.insert({"diPhoton", {{"2018", 39 } } });
   sample_prod.insert({"diPhoton", { { "2018",       { "DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa_RunIISummer19UL18MiniAODv2/skimNano-TestUL_DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa_RunIISummer19UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1_MINIAODSIM_final_TESTS/220225_204254/0000/" } },
                                  { "2017",       { "" } },
                                  { "2016APV",    { "" } },
                                  { "2016nonAPV", { "" } } } });
+//  "test_sync_samples/"
 /*
   // HHggtautau 
   samples.push_back("HHggtautau");
@@ -72,6 +73,7 @@ int main() {
 */
 
   TString year = "2018";
+//  TString basedir = "/ceph/cms/store/user/yagu/Run2018/";
   TString basedir = "/ceph/cms/store/user/legianni/skimNano-TestUL__TEST-SamplesV9/";
   
   int topPtWeight=1;
@@ -101,7 +103,7 @@ int main() {
       for ( int ifile=1; ifile<=nFiles; ifile++ )
       {
 
-          TString filename = Form(basedir + prod + "tree_%d.root", ifile);
+          TString filename = Form(basedir + prod + "tree_%d.root", ifile+filenameshifter);
 
           ifstream i_file;
           i_file.open(filename);
@@ -111,7 +113,7 @@ int main() {
               filename = Form(basedir + prod + "tree_%d.root", ifile+filenameshifter);
               i_file.open(filename);
           }
-
+          cout<<filename<<endl;
           ch_temp->Add(filename);
           chaux_temp->Add(filename);
 

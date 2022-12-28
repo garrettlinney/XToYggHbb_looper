@@ -8,7 +8,9 @@
 struct Jet {
     Jet(unsigned int idx = 0) : idx_(idx) {
         pt_ = nt.Jet_pt_nom()[idx_];
+        mass_ = nt.Jet_mass()[idx_];
         eta_ = nt.Jet_eta()[idx_];
+        phi_ = nt.Jet_phi()[idx_];
         jetId_ = nt.Jet_jetId()[idx_];
         p4_.SetPtEtaPhiM(nt.Jet_pt_nom()[idx_], nt.Jet_eta()[idx_], nt.Jet_phi()[idx_], nt.Jet_mass()[idx_]);
         btagDeepFlavB_ = nt.Jet_btagDeepFlavB()[idx_];
@@ -18,6 +20,7 @@ struct Jet {
     unsigned int idx() { return idx_; }
     TLorentzVector p4() { return p4_; }
     float pt() { return pt_; }
+    float mass() { return mass_; }
     float eta() { return eta_; }
     float phi() { return phi_; }
     int jetId() { return jetId_; }
@@ -27,6 +30,7 @@ struct Jet {
     int id_;
     float pt_ = 0.;
     float eta_ = 0.;
+    float mass_ = 0;
     TLorentzVector p4_;
     float phi_ = 0.;
     int jetId_ = 0;
@@ -45,10 +49,8 @@ struct DiJet{
     {
         leadJet = p1;
         subleadJet = p2;
-        TLorentzVector leadJetp4 = TLorentzVector();
-        TLorentzVector subleadJetp4 = TLorentzVector();
-        leadJetp4=p1.p4();
-        subleadJetp4=p2.p4();
+        TLorentzVector leadJetp4 = p1.p4();
+        TLorentzVector subleadJetp4 = p2.p4();
         p4 = leadJetp4 + subleadJetp4;
     }
 };

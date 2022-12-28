@@ -16,7 +16,6 @@ struct Photon {
         chargedHadIso_ = nt.Photon_chargedHadronIso()[idx_];
         hoe_ = nt.Photon_hoe()[idx_];
         phoIso_ = nt.Photon_pfPhoIso03()[idx_];
-        trkIso_ = nt.Photon_trkSumPtHollowConeDR03()[idx_];
         sieie_ = nt.Photon_sieie()[idx_];
         eveto_ = nt.Photon_electronVeto()[idx_];
         pixelSeed_ = nt.Photon_pixelSeed()[idx_];
@@ -25,8 +24,7 @@ struct Photon {
         isScEtaEE_ = nt.Photon_isScEtaEE()[idx_];
         trkSumPtHollowConeDR03_ = nt.Photon_trkSumPtHollowConeDR03()[idx_];
         //idlevel_ = whichPhotonLevel(id_, idx_);
-        //fixedGridRhoAll_ = nt.fixedGridRhoAll();
-        fixedGridRhoAll_ = nt.fixedGridRhoFastjetAll();
+        fixedGridRhoFastjetAll_ = nt.fixedGridRhoFastjetAll();
     }
     //void set_idlevel(int idlevel) { idlevel_ = idlevel; }
     int id() { return id_; }
@@ -45,7 +43,7 @@ struct Photon {
     bool eveto() { return eveto_; }
     bool pixelSeed() { return pixelSeed_;}
     float mvaID() { return mvaID_; }
-    float perEvtRho() { return fixedGridRhoAll_; }
+    float perEvtRho() { return fixedGridRhoFastjetAll_; }
     float isScEtaEE() { return isScEtaEE_; }
     float isScEtaEB() { return isScEtaEB_; }
     float trkSumPtHollowConeDR03() {return trkSumPtHollowConeDR03_; }
@@ -66,7 +64,7 @@ struct Photon {
     bool eveto_ = 0.;
     bool pixelSeed_ = 0.;
     float mvaID_ = 0.;
-    float fixedGridRhoAll_ = 0.; // this variable is the same for each event
+    float fixedGridRhoFastjetAll_ = 0.; // this variable is the same for each event
     float isScEtaEB_ = 0;
     float isScEtaEE_ = 0;
     float trkSumPtHollowConeDR03_ = 0;
