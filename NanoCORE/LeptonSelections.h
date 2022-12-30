@@ -50,6 +50,7 @@ struct Muon {
         dz_ = nt.Muon_dz()[idx_];
         phi_ = nt.Muon_phi()[idx_];
         id_ = nt.Muon_pdgId()[idx_];
+        isGlobal_ = nt.Muon_isGlobal()[idx_];
         mediumId_ = nt.Muon_mediumId()[idx_];
         pfRelIso03_all_ = nt.Muon_pfRelIso03_all()[idx_];
         p4_.SetPtEtaPhiM(nt.Muon_pt()[idx_], nt.Muon_eta()[idx_], nt.Muon_phi()[idx_], nt.Muon_mass()[idx_]);
@@ -64,7 +65,8 @@ struct Muon {
     float dz() { return dz_; }
     float phi() { return phi_; }
     bool mediumId() { return mediumId_; }
-    float pfRelIso03_all() {return pfRelIso03_all_; }
+    float pfRelIso03_all() { return pfRelIso03_all_; }
+    bool isGlobal() { return isGlobal_; }
 
   private:
     int id_;
@@ -77,6 +79,7 @@ struct Muon {
     bool mediumId_ = false;
     unsigned int idx_;
     float pfRelIso03_all_ = 0.;
+    bool isGlobal_ = 0;
 };
 
 vector<Muon> getMuons(Photons photons);

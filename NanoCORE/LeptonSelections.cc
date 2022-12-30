@@ -38,6 +38,7 @@ Muons getMuons(Photons photons) {
         if ( !(abs(mu.dz()) < 0.2) ) continue;
         if ( !(mu.mediumId()) ) continue;
         if ( !(mu.pfRelIso03_all()<0.3) ) continue;
+        if ( !(mu.isGlobal())) continue;
         bool clean_with_photon = true;
         for (unsigned int iphoton = 0; iphoton < photons.size(); iphoton++){
             if (mu.p4().DeltaR(photons.at(iphoton).p4())<0.2) clean_with_photon = false;
