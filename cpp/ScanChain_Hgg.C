@@ -41,6 +41,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sys/stat.h>
+#include <fstream>
 
 #define SUM(vec) std::accumulate((vec).begin(), (vec).end(), 0);
 #define SUM_GT(vec,num) std::accumulate((vec).begin(), (vec).end(), 0, [](float x,float y) { return ((y > (num)) ? x+y : x); });
@@ -88,6 +89,8 @@ using namespace duplicate_removal;
 using namespace RooFit;
 int count_test=0;
 
+ofstream txtout("evtnb.txt", ofstream::app);
+
 int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process, int topPtWeight=1, int PUWeight=1, int muonSF=1, int triggerSF=1, int bTagSF=1, int JECUnc=0) {
 // Event weights / scale factors:
 //  0: Do not apply
@@ -102,7 +105,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
   cout << "Process " << process << endl;
 
-  if ( process.Contains("data") ) {
+  if ( process.Contains("EGamma_Run2018D") ) {
     isMC = false;
   }
   // SM processes and cross-sections:
@@ -123,6 +126,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
                                                                // TODO change xs
   else if ( process == "diPhoton" )    xsec = 82.51 ; // 
   else if ( process == "HHggtautau" )    xsec = 0.02669 ; // 
+  else if ( process == "EGamma_Run2018D" )    xsec = 1 ;
 //  111.8429 ; // fb
   // Signal processes and cross-sections:
   else
@@ -261,6 +265,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
     tree->SetCacheSize(128*1024*1024);
     tree->SetCacheLearnEntries(100);
+//    nt.SetYear(2018);
 
     nt.Init(tree);
 
@@ -304,29 +309,29 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       int npv = nt.PV_npvs();
 
       // Apply Golden JSON
-/*
+
       if ( !isMC ) {
-	if ( !(goodrun(runnb, lumiblock)) )
-	  continue;
-	if ( removeDataDuplicates ) {
-	  DorkyEventIdentifier id(runnb, evtnb, lumiblock);
-	  if ( is_duplicate(id) ){
-	    ++nDuplicates;
-	    continue;
-	  }
-	}
+	      if ( !(goodrun(runnb, lumiblock)) )
+	        continue;
+	      if ( removeDataDuplicates ) {
+	        DorkyEventIdentifier id(runnb, evtnb, lumiblock);
+	        if ( is_duplicate(id) ){
+	          ++nDuplicates;
+	          continue;
+	        }
+	      }
       }
-*/ // comment out for synchronizing
-/*
-      // HLT selection
-      if ( (year=="2016nonAPV" || year=="2016APV") &&
-             !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0)
-               || (tree->GetBranch("HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0) ) ) continue;
-      if ( (year=="2017") &&
-             !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55() : 0)  )  ) continue;
-      if ( (year=="2018") &&
-              !( (tree->GetBranch("HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto") ? nt.HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto() : 0) ) ) continue;
-*/
+ // HLT in MC is comment out for synchronizing (same as HiggsDNA)
+      if (!(isMC)){
+        // HLT selection
+        if ( (year=="2016nonAPV" || year=="2016APV") &&
+            !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0)
+              || (tree->GetBranch("HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0) ) ) continue;
+        if ( (year=="2017") &&
+            !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55() : 0)  )  ) continue;
+        if ( (year=="2018") &&
+            !( (tree->GetBranch("HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto") ? nt.HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto() : 0) ) ) continue;
+      }
       // do diphoton selection here
       Photons photons = getPhotons(); //sort by pt
       DiPhotons diphotons = DiPhotonPreselection(photons);
@@ -353,8 +358,13 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       DiJets dijets = DiJetPreselection(jets);
       if (jets.size() < 2) continue; 
       DiJet selectedDiJet = dijets[0];
+
+//      if (evtnb==8289674) cout<<dijets[0].p4.Pt()<<" "<<dijets[0].p4.Eta()<<" "<<dijets[0].p4.Phi()<<" "<<dijets[0].p4.M()<<endl;
       if (dijets[0].p4.M()<50) continue;
 
+      //print evtnb
+//      txtout<<evtnb<<endl;
+      
       leadPho_pt = selectedDiPhoton.leadPho.pt();
       leadPho_eta = selectedDiPhoton.leadPho.eta();
       leadPho_phi = selectedDiPhoton.leadPho.phi();
@@ -419,7 +429,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       }
     }
   }
-
+  txtout.close();
   //tout->Write();
   fout->Write();
   //if ( fillRooDataSet ) {

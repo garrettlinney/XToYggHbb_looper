@@ -2,15 +2,20 @@
 #include "ScanChain_Hgg.C"
 #include <fstream>
 
-double getSumOfGenEventSumw(TChain *chaux)
+double getSumOfGenEventSumw(TChain *chaux, bool isMC)
 {
   double genEventSumw, sumOfGenEventSumw=0.0;
-  chaux->SetBranchAddress("genEventSumw",&genEventSumw);
-  for (unsigned int run = 0; run < chaux->GetEntriesFast(); run++)
-    {
-      chaux->GetEntry(run);
-      sumOfGenEventSumw += genEventSumw;
-    }
+  if (isMC) {
+    chaux->SetBranchAddress("genEventSumw",&genEventSumw);
+    for (unsigned int run = 0; run < chaux->GetEntriesFast(); run++)
+      {
+        chaux->GetEntry(run);
+        sumOfGenEventSumw += genEventSumw;
+      }
+  }
+  else{
+    sumOfGenEventSumw=1;
+  }
   return sumOfGenEventSumw;
 }
 
@@ -36,7 +41,6 @@ int main() {
                                  { "2017",       { "" } },
                                  { "2016APV",    { "" } },
                                  { "2016nonAPV", { "" } } } });
-*/
 
   // diPhoton 
   samples.push_back("diPhoton");
@@ -47,6 +51,17 @@ int main() {
                                  { "2016APV",    { "" } },
                                  { "2016nonAPV", { "" } } } });
 //  "test_sync_samples/"
+*/
+/*
+   // DY
+  samples.push_back("DY");
+  sample_names.insert({"DY","DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX"});
+  sample_nfiles.insert({"DY", {{"2018", 121 } } });
+  sample_prod.insert({"DY", { { "2018",       { "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX_2018/skimNano-TestUL_DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX_2018_TESTS/220712_183424/0000/" } },
+                                 { "2017",       { "" } },
+                                 { "2016APV",    { "" } },
+                                 { "2016nonAPV", { "" } } } });
+*/
 /*
   // HHggtautau 
   samples.push_back("HHggtautau");
@@ -56,6 +71,7 @@ int main() {
                                  { "2017",       { "" } },
                                  { "2016APV",    { "" } },
                                  { "2016nonAPV", { "" } } } });
+*/
 
   // partial 2018D data 
   samples.push_back("EGamma_Run2018D");
@@ -70,7 +86,7 @@ int main() {
   //GluGluToHHTo2G2Tau_node_cHHH1_TuneCP5_13TeV-powheg-pythia8_2018_final/skimNano-TestUL_GluGluToHHTo2G2Tau_node_cHHH1_TuneCP5_13TeV-powheg-pythia8_2018_final_TESTS/220225_214005/0000/
   //EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final/skimNano-TestUL_EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final_TESTS/220403_112326/0000/
   //EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final/skimNano-TestUL_EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final_TESTS/220403_112326/0000/tree_
-*/
+
 
   TString year = "2018";
 //  TString basedir = "/ceph/cms/store/user/yagu/Run2018/";
@@ -88,7 +104,7 @@ int main() {
 
       TString sample = samples[isample];
 
-      if (sample == "EGamma_Run2018D") continue; //TODO need to check if file exist, if not increase counter by 1
+//      if (sample == "EGamma_Run2018D") continue; //TODO need to check if file exist, if not increase counter by 1
       //if (sample != "HHggtautau") continue;
                                                  //
       int nFiles = sample_nfiles[sample][year];
@@ -113,13 +129,16 @@ int main() {
               filename = Form(basedir + prod + "tree_%d.root", ifile+filenameshifter);
               i_file.open(filename);
           }
-          cout<<filename<<endl;
+//          cout<<filename<<endl;
           ch_temp->Add(filename);
           chaux_temp->Add(filename);
 
       }
-
-      ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp),year,sample,topPtWeight,PUWeight,muonSF,triggerSF,bTagSF,JECUnc);
+      bool isMC=1;
+      if (sample == "EGamma_Run2018D") isMC=0;
+      cout<<1<<endl;
+      ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp, isMC),year,sample,topPtWeight,PUWeight,muonSF,triggerSF,bTagSF,JECUnc);
+      cout<<2<<endl;
   }
 
 }
