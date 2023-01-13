@@ -1,6 +1,6 @@
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #include "TFile.h"
-#include "TH1F.h"
+#include "TH1D.h"
 #include "TTree.h"
 #include "TChain.h"
 #include "TTreeCache.h"
@@ -48,8 +48,7 @@
 #define COUNT_GT(vec,num) std::count_if((vec).begin(), (vec).end(), [](float x) { return x > (num); });
 #define COUNT_LT(vec,num) std::count_if((vec).begin(), (vec).end(), [](float x) { return x < (num); });
 
-#define H1(name,nbins,low,high,xtitle) TH1F *h_##name = new TH1F(#name,"",nbins,low,high); h_##name->GetXaxis()->SetTitle(xtitle); h_##name->GetYaxis()->SetTitle("Events");
-#define HTemp(name,nbins,low,high,xtitle) TH1F *h_temp = new TH1F(name,"",nbins,low,high); h_temp->GetXaxis()->SetTitle(xtitle); h_temp->GetYaxis()->SetTitle("Events");
+#define H1(name,nbins,low,high,xtitle) TH1D *h_##name = new TH1D(#name,"",nbins,low,high); h_##name->GetXaxis()->SetTitle(xtitle); h_##name->GetYaxis()->SetTitle("Events");
 
 // #define DEBUG
 #define Zmass 91.1876
@@ -105,7 +104,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
   cout << "Process " << process << endl;
 
-  if ( process.Contains("EGamma_Run2018D") ) {
+  if ( process.Contains("EGamma_Run2018") ) {
     isMC = false;
   }
   // SM processes and cross-sections:
@@ -122,11 +121,25 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   else if ( process == "TTZ" )               xsec = 252.9; // fb
   else if ( process == "TTHToNonbb" )        xsec = 507.5*(1-0.575); // fb
   else if ( process == "TTHTobb" )           xsec = 507.5*0.575; // fb
-  else if ( process == "ggHToDiPhoM125" )    xsec = 33.93 ; // fb
-                                                               // TODO change xs
-  else if ( process == "diPhoton" )    xsec = 82.51 ; // 
-  else if ( process == "HHggtautau" )    xsec = 0.02669 ; // 
-  else if ( process == "EGamma_Run2018D" )    xsec = 1 ;
+  else if ( process == "TTGG" )              xsec = 0.01687 * 1000; //fb
+  else if ( process == "TTGJets" )           xsec = 4.078 * 1000; //fb
+  else if ( process == "TTJets" )            xsec = 831.76 * 1000; //fb
+  else if ( process == "VBFH_M125" )         xsec = 0.00858514 *1000; //fb
+  else if ( process == "VH_M125" )           xsec = 0.00512 *1000; //fb
+  else if ( process == "ggHToDiPhoM125" )    xsec = 0.1118429*1000 ; // fb
+  else if ( process == "ttH_M125" )          xsec = 0.5071 * 1000 * 0.00227; //fb
+  else if ( process == "GJets_HT-40To100" )  xsec = 23100*1000; //fb
+  else if ( process == "GJets_HT-100To200" ) xsec = 8631.0*1000; //fb
+  else if ( process == "GJets_HT-200To400" ) xsec = 2280.0*1000; //fb
+  else if ( process == "GJets_HT-400To600" ) xsec = 273*1000; //fb
+  else if ( process == "GJets_HT-600ToInf" ) xsec = 1*1000; //fb
+  else if ( process == "diPhoton" )          xsec = 84.4*1000 ; // fb
+  else if ( process == "HHbbgg" )            xsec = 0.03105*1000*0.0026223039999999998 ; // fb
+  else if ( process == "WGamma" )            xsec = 191.4*1000 ; // fb
+  else if ( process == "ZGamma" )            xsec = 55.6*1000 ; // fb
+  else if ( process.Contains("EGamma_Run2018") )   xsec = 1 ;
+  else if ( process.Contains("NMSSM_XYH_Y_gg_H_bb") ) xsec = 1 ; // fb
+  
 //  111.8429 ; // fb
   // Signal processes and cross-sections:
   else
@@ -139,6 +152,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   gconf.nanoAOD_ver = 9;
   gconf.GetConfigs(year.Atoi());
   lumi = gconf.lumi;
+  if (year == "2018") lumi=59.8; //synchronizing with HiggsDNA
+//  lumi=1;
 
   // Golden JSON files
   if ( !isMC ) {
@@ -237,9 +252,9 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   vector<TString> plot_names = { };
   plot_names.push_back("pfmet_pt");
 
-  map<TString, TH1F*> histos;
+  map<TString, TH1D*> histos;
 
-  //if ( PUWeight!=0 ) set_puWeights();
+  if ( PUWeight!=0 ) set_puWeights(); //here
 
   // Setting up JEC uncertainties
   JetCorrectionUncertainty* jec_unc = new JetCorrectionUncertainty(
@@ -273,9 +288,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
     int icutflow = 0;
     TString label = "Total";
     TString slicedlabel = label;
-
     for( unsigned int event = 0; event < tree->GetEntriesFast(); ++event) {
-
+//    for( unsigned int event = 0; event < 1000; ++event) {
       nt.GetEntry(event);
       tree->LoadTree(event);
 
@@ -288,7 +302,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 //	if(removeSpikes && weight*factor>1e2) continue; //comment out for synchronizing
 
 	// Apply PU reweight
-        /*
+/*        
 	if ( PUWeight!=0 ) {
 	  unsigned int nTrueInt = nt.Pileup_nTrueInt();
 	  TString whichPUWeight = "central";
@@ -299,9 +313,11 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 	  weight *= get_puWeight(nTrueInt, puyear, whichPUWeight);
           if (event <  100) cout << "genWeight after PU reWeight is: " << weight << endl;
 	}
-        */
+*/        
 
       }
+
+      h_weight_full->Fill(0.5, weight*factor);
 
       unsigned int runnb = nt.run();
       unsigned int lumiblock = nt.luminosityBlock();
@@ -336,9 +352,6 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       Photons photons = getPhotons(); //sort by pt
       DiPhotons diphotons = DiPhotonPreselection(photons);
 
-      h_weight_full->Fill(0);
-//      h_weight_full->Fill(weight*factor);
-
       if (diphotons.size() == 0 ) continue; 
 
       DiPhoton selectedDiPhoton = diphotons[0];
@@ -362,9 +375,6 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 //      if (evtnb==8289674) cout<<dijets[0].p4.Pt()<<" "<<dijets[0].p4.Eta()<<" "<<dijets[0].p4.Phi()<<" "<<dijets[0].p4.M()<<endl;
       if (dijets[0].p4.M()<50) continue;
 
-      //print evtnb
-//      txtout<<evtnb<<endl;
-      
       leadPho_pt = selectedDiPhoton.leadPho.pt();
       leadPho_eta = selectedDiPhoton.leadPho.eta();
       leadPho_phi = selectedDiPhoton.leadPho.phi();
@@ -384,7 +394,6 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       diPho_phi = selectedDiPhoton.p4.Phi();
       diPho_mass = selectedDiPhoton.p4.M();
       count_test++;
-//      if (count_test>65025) cout<<diPho_mass<<" "<<diPho_pt<<" "<<diPho_eta<<" "<<diPho_phi<<" "<<photons.size()<<endl;
 
       h_leadPho_sieie->Fill(leadPho_sieie);
       h_leadPho_phoIso->Fill(leadPho_phoIso);
@@ -396,8 +405,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       h_subleadPho_trkIso->Fill(subleadPho_trkIso);
 
       tout->Fill();
-//      h_weight->Fill(weight*factor);
-      h_weight->Fill(0);
+      h_weight->Fill(0.5, weight*factor);
+//      h_weight->Fill(0.5);
     } // Event loop
 
     delete file;
@@ -420,7 +429,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
     cout << "Number of duplicates found: " << nDuplicates << endl;
 
   // Avoid histograms with unphysical negative bin content (due to negative GEN weights)
-  map<TString, TH1F*>::iterator it;
+  map<TString, TH1D*>::iterator it;
   for ( it = histos.begin(); it != histos.end(); it++ ) {
     for ( unsigned int b=1; b<(it->second)->GetNbinsX()+1; b++ ) { 
       if ( (it->second)->GetBinContent(b)<0.0) {
