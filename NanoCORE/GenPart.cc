@@ -7,7 +7,6 @@ GenParts getGenParts() {
     GenParts genParts;
     for (unsigned int iGenPart = 0; iGenPart < nt.nGenPart(); iGenPart++) {
         GenPart cand_GenPart = GenPart(iGenPart);
-        *(cand_GenPart.gen_mother) = GenPart(cand_GenPart.motherIdx());
         genParts.push_back(cand_GenPart);
     }
     return genParts;

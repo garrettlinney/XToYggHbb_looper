@@ -102,6 +102,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   float lumi = 1.0;
   float xsec = 1.0;
   bool isMC = true;
+  int process_id = 0;
 
   cout << "Process " << process << endl;
 
@@ -110,8 +111,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   }
   // SM processes and cross-sections:
   // set this in a different file
-  else if ( process == "ttbar" )             xsec = 87310.0; // fb
-  else if ( process == "DY" )                xsec = 5765400.0; // fb
+  else if ( process == "ttbar" )             {xsec = 87310.0; /* fb */}
+  else if ( process == "DY" )                {xsec = 5765400.0; /* fb */ process_id = 16; }
   else if ( process == "WW" )                xsec = 118700.0; // fb 
   else if ( process == "WZ" )                xsec = 47130.0; // fb
   else if ( process == "ZZ" )                xsec = 16523.0; // fb
@@ -122,25 +123,33 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   else if ( process == "TTZ" )               xsec = 252.9; // fb
   else if ( process == "TTHToNonbb" )        xsec = 507.5*(1-0.575); // fb
   else if ( process == "TTHTobb" )           xsec = 507.5*0.575; // fb
-  else if ( process == "TTGG" )              xsec = 0.01687 * 1000; //fb
-  else if ( process == "TTGJets" )           xsec = 4.078 * 1000; //fb
-  else if ( process == "TTJets" )            xsec = 831.76 * 1000; //fb
-  else if ( process == "VBFH_M125" )         xsec = 0.00858514 *1000; //fb
-  else if ( process == "VH_M125" )           xsec = 0.00512 *1000; //fb
-  else if ( process == "ggHToDiPhoM125" )    xsec = 0.1118429*1000 ; // fb
-  else if ( process == "ttH_M125" )          xsec = 0.5071 * 1000 * 0.00227; //fb
-  else if ( process == "GJets_HT-40To100" )  xsec = 23100*1000; //fb
-  else if ( process == "GJets_HT-100To200" ) xsec = 8631.0*1000; //fb
-  else if ( process == "GJets_HT-200To400" ) xsec = 2280.0*1000; //fb
-  else if ( process == "GJets_HT-400To600" ) xsec = 273*1000; //fb
-  else if ( process == "GJets_HT-600ToInf" ) xsec = 1*1000; //fb
-  else if ( process == "diPhoton" )          xsec = 84.4*1000 ; // fb
-  else if ( process == "HHbbgg" )            xsec = 0.03105*1000*0.0026223039999999998 ; // fb
-  else if ( process == "WGamma" )            xsec = 191.4*1000 ; // fb
-  else if ( process == "ZGamma" )            xsec = 55.6*1000 ; // fb
-  else if ( process.Contains("EGamma_Run2018") )   xsec = 1 ;
-  else if ( process.Contains("NMSSM_XYH_Y_gg_H_bb") ) xsec = 1 ; // fb
-  
+  else if ( process == "TTGG" )              {xsec = 0.01687 * 1000; /*fb*/ process_id = 12;} 
+  else if ( process == "TTGJets" )           {xsec = 4.078 * 1000; /*fb*/ process_id = 11;} 
+  else if ( process == "TTJets" )            {xsec = 831.76 * 1000; /*fb*/ process_id = 10;}
+  else if ( process == "VBFH_M125" )         {xsec = 0.00858514 *1000; /*fb*/ process_id = 3;}
+  else if ( process == "VH_M125" )           {xsec = 0.00512 *1000; /*fb*/ process_id = 4;}
+  else if ( process == "ggHToDiPhoM125" )    {xsec = 0.1118429*1000 ; /* fb */ process_id = 2;}
+  else if ( process == "ttH_M125" )          {xsec = 0.5071 * 1000 * 0.00227; /*fb*/ process_id = 1;}
+  else if ( process == "GJets_HT-40To100" )  {xsec = 23100*1000; /*fb*/ process_id = 5;}
+  else if ( process == "GJets_HT-100To200" ) {xsec = 8631.0*1000; /*fb*/ process_id = 6;}
+  else if ( process == "GJets_HT-200To400" ) {xsec = 2280.0*1000; /*fb*/ process_id = 7;}
+  else if ( process == "GJets_HT-400To600" ) {xsec = 273*1000; /*fb*/ process_id = 8;}
+  else if ( process == "GJets_HT-600ToInf" ) {xsec = 1*1000; /*fb*/ process_id = 9;}
+  else if ( process == "diPhoton" )          {xsec = 84.4*1000 ; /* fb */ process_id = 15; }
+  else if ( process == "HHbbgg" )            {xsec = 0.03105*1000*0.0026223039999999998 ; /*fb*/ process_id = 17;}
+  else if ( process == "WGamma" )            {xsec = 191.4*1000 ; /* fb */ process_id = 13;}
+  else if ( process == "ZGamma" )            {xsec = 55.6*1000 ; /* fb */ process_id = 14;}
+  else if ( process.Contains("EGamma_Run2018") )   {xsec = 1 ; /*fb*/ process_id = 0;}
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_600_MY_100" ) {xsec = 1 ; /* fb */ process_id = 20;}
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_600_MY_90" ) {xsec = 1 ; /* fb */ process_id = 18;}
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_600_MY_95" ) {xsec = 1 ; /* fb */ process_id = 19;}
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_650_MY_100" ) {xsec = 1 ; /* fb */ process_id = 23;}
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_650_MY_90" ) {xsec = 1 ; /* fb */ process_id = 21;}
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_650_MY_95" ) {xsec = 1 ; /* fb */ process_id = 22;}
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_700_MY_100" ) {xsec = 1 ; /* fb */ process_id = 26;}
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_700_MY_90" ) {xsec = 1 ; /* fb */ process_id = 24;}
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_700_MY_95" ) {xsec = 1 ; /* fb */ process_id = 25;}
+    
 //  111.8429 ; // fb
   // Signal processes and cross-sections:
   else
@@ -201,15 +210,13 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   Float_t dijet_pt, dijet_eta, dijet_phi, dijet_mass, dijet_dR;
   Int_t year_out, eventNum, weight_central, weight_central_initial, weight_central_no_lumi;
 
-
-  int n_gen_matched_jets, n_gen_matched_in_dijet;
-  bool dijet_lead_gen_match, dijet_sublead_gen_match;
-  float GenHiggs_pt, GenHiggs_eta, GenHiggs_phi, GenHiggs_mass, GenHiggs_dR;
-  float GenY_pt, GenY_eta, GenY_phi, GenY_mass, GenY_dR;
-  float GenX_pt, GenX_eta, GenX_phi, GenX_mass, GenX_dR;
-  float GenBFromHiggs_1_pt, GenBFromHiggs_1_eta, GenBFromHiggs_1_phi, GenBFromHiggs_1_mass;
-  float GenBFromHiggs_2_pt, GenBFromHiggs_2_eta, GenBFromHiggs_2_phi, GenBFromHiggs_2_mass;
-
+  int n_gen_matched_jets = 0, n_gen_matched_in_dijet = 0;
+  bool dijet_lead_gen_match=false, dijet_sublead_gen_match=false;
+  float GenHiggs_pt=-999, GenHiggs_eta=-999, GenHiggs_phi=-999, GenHiggs_mass=-999, GenHiggs_dR=-999;
+  float GenY_pt=-999, GenY_eta=-999, GenY_phi=-999, GenY_mass=-999, GenY_dR=-999;
+  float GenX_pt=-999, GenX_eta=-999, GenX_phi=-999, GenX_mass=-999, GenX_dR=-999;
+  float GenBFromHiggs_1_pt=-999, GenBFromHiggs_1_eta=-999, GenBFromHiggs_1_phi=-999, GenBFromHiggs_1_mass=-999;
+  float GenBFromHiggs_2_pt=-999, GenBFromHiggs_2_eta=-999, GenBFromHiggs_2_phi=-999, GenBFromHiggs_2_mass=-999;
 
   tout->Branch("xcand_pt", &xcand_pt, "xcand_pt/F");
   tout->Branch("xcand_eta", &xcand_eta, "xcand_eta/F");
@@ -273,6 +280,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   tout->Branch("weight_central_initial",&weight_central_initial,"weight_central_initial/F");
   tout->Branch("weight_central_no_lumi",&weight_central_no_lumi,"weight_central_no_lumi/F");
   tout->Branch("event",&eventNum,"event/I");
+  tout->Branch("process_id",&process_id,"process_id/I");
 
   if (year=="2016nonAPV" || year=="2016APV") year_out = 2016;
   else if (year=="2017") year_out = 2017;
@@ -288,18 +296,18 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
     tout->Branch("GenHiggs_eta",&GenHiggs_eta,"GenHiggs_eta/F");
     tout->Branch("GenHiggs_phi",&GenHiggs_phi,"GenHiggs_phi/F");
     tout->Branch("GenHiggs_mass",&GenHiggs_mass,"GenHiggs_mass/F");
-//    tout->Branch("GenHiggs_dR",&GenHiggs_dR,"GenHiggs_dR/F");
+    tout->Branch("GenHiggs_dR",&GenHiggs_dR,"GenHiggs_dR/F");
     tout->Branch("GenY_pt",&GenY_pt,"GenY_pt/F");
     tout->Branch("GenY_eta",&GenY_eta,"GenY_eta/F");
     tout->Branch("GenY_phi",&GenY_phi,"GenY_phi/F");
     tout->Branch("GenY_mass",&GenY_mass,"GenY_mass/F");
-//    tout->Branch("GenY_dR",&GenY_dR,"GenY_dR/F");
+    tout->Branch("GenY_dR",&GenY_dR,"GenY_dR/F");
     tout->Branch("GenX_pt",&GenX_pt,"GenX_pt/F");
     tout->Branch("GenX_eta",&GenX_eta,"GenX_eta/F");
     tout->Branch("GenX_phi",&GenX_phi,"GenX_phi/F");
     tout->Branch("GenX_mass",&GenX_mass,"GenX_mass/F");
-//    tout->Branch("GenX_dR",&GenX_dR,"GenX_dR/F");
-/*    tout->Branch("GenBFromHiggs_1_pt",&GenBFromHiggs_1_pt,"GenBFromHiggs_1_pt/F");
+    tout->Branch("GenX_dR",&GenX_dR,"GenX_dR/F");
+    tout->Branch("GenBFromHiggs_1_pt",&GenBFromHiggs_1_pt,"GenBFromHiggs_1_pt/F");
     tout->Branch("GenBFromHiggs_1_eta",&GenBFromHiggs_1_eta,"GenBFromHiggs_1_eta/F");
     tout->Branch("GenBFromHiggs_1_phi",&GenBFromHiggs_1_phi,"GenBFromHiggs_1_phi/F");
     tout->Branch("GenBFromHiggs_1_mass",&GenBFromHiggs_1_mass,"GenBFromHiggs_1_mass/F");
@@ -307,7 +315,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
     tout->Branch("GenBFromHiggs_2_eta",&GenBFromHiggs_2_eta,"GenBFromHiggs_2_eta/F");
     tout->Branch("GenBFromHiggs_2_phi",&GenBFromHiggs_2_phi,"GenBFromHiggs_2_phi/F");
     tout->Branch("GenBFromHiggs_2_mass",&GenBFromHiggs_2_mass,"GenBFromHiggs_2_mass/F");
-*/  }
+  }
 
   // Define histo info maps
   map<TString, int> nbins { };
@@ -474,25 +482,51 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       if (isMC){
         TLorentzVector GenHiggs, GenX, GenY;
         GenParts genparts = getGenParts();
+        vector<TLorentzVector> gen_child_xyh, gen_child_ygg, gen_child_hbb;
         for (int igenpart=0; igenpart<genparts.size(); igenpart++)
           {
-            if (genparts[igenpart].isxyh()) GenX = (*genparts[igenpart].gen_mother).p4();
-            if (genparts[igenpart].isygg()) GenY = (*genparts[igenpart].gen_mother).p4();
-            if (genparts[igenpart].ishbb()) GenHiggs = (*genparts[igenpart].gen_mother).p4();
+            if (genparts[igenpart].isxyh()) {GenX = genparts[igenpart].mother_p4(); gen_child_xyh.push_back(genparts[igenpart].p4());}
+            if (genparts[igenpart].isygg()) {GenY = genparts[igenpart].mother_p4(); gen_child_ygg.push_back(genparts[igenpart].p4());}
+            if (genparts[igenpart].ishbb()) {GenHiggs = genparts[igenpart].mother_p4(); gen_child_hbb.push_back(genparts[igenpart].p4());}
           }
+        TLorentzVector sort_GenPart;
+//          if (gen_child_xyh[0].Pt()<gen_child_xyh[1].Pt()) {sort_GenPart = gen_child_xyh[0]; gen_child_xyh[0]= gen_child_xyh[1]; gen_child_xyh[1] = sort_GenPart;}
+//          if (gen_child_ygg[0].Pt()<gen_child_ygg[1].Pt()) {sort_GenPart = gen_child_ygg[0]; gen_child_ygg[0]= gen_child_ygg[1]; gen_child_ygg[1] = sort_GenPart;}
+        if (!abs(GenX_pt+999)<0.0001){
           GenX_pt = GenX.Pt();
           GenX_eta = GenX.Eta();
           GenX_phi = GenX.Phi();
           GenX_mass = GenX.M();
+          GenX_dR = gen_child_xyh[0].DeltaR(gen_child_xyh[1]);
+        }
+        if (!abs(GenY_pt+999)<0.0001){
           GenY_pt = GenY.Pt();
           GenY_eta = GenY.Eta();
           GenY_phi = GenY.Phi();
           GenY_mass = GenY.M();
+          GenY_dR = gen_child_ygg[0].DeltaR(gen_child_ygg[1]);
+        }
+        if (!abs(GenHiggs_pt+999)<0.0001){
           GenHiggs_pt = GenHiggs.Pt();
           GenHiggs_eta = GenHiggs.Eta();
           GenHiggs_phi = GenHiggs.Phi();
           GenHiggs_mass = GenHiggs.M();
-
+          GenHiggs_dR = gen_child_hbb[0].DeltaR(gen_child_hbb[1]);
+          if (gen_child_hbb[0].Pt()<gen_child_hbb[1].Pt()) {sort_GenPart = gen_child_hbb[0]; gen_child_hbb[0]= gen_child_hbb[1]; gen_child_hbb[1] = sort_GenPart;}
+          GenBFromHiggs_1_pt = gen_child_hbb[0].Pt();
+          GenBFromHiggs_1_eta = gen_child_hbb[0].Eta();
+          GenBFromHiggs_1_phi = gen_child_hbb[0].Phi();
+          GenBFromHiggs_1_mass = gen_child_hbb[0].M();
+          GenBFromHiggs_2_pt = gen_child_hbb[1].Pt();
+          GenBFromHiggs_2_eta = gen_child_hbb[1].Eta();
+          GenBFromHiggs_2_phi = gen_child_hbb[1].Phi();
+          GenBFromHiggs_2_mass = gen_child_hbb[1].M();
+          if (selectedDiJet.leadJet.p4().DeltaR(gen_child_hbb[0])<=0.4 || selectedDiJet.leadJet.p4().DeltaR(gen_child_hbb[1])<=0.4) {dijet_lead_gen_match=true; n_gen_matched_in_dijet++;}
+          if (selectedDiJet.subleadJet.p4().DeltaR(gen_child_hbb[0])<=0.4 || selectedDiJet.subleadJet.p4().DeltaR(gen_child_hbb[1])<=0.4) {dijet_sublead_gen_match=true; n_gen_matched_in_dijet++;}
+          for (int ijet=0; ijet<jets.size(); ijet++)
+            if (jets[ijet].p4().DeltaR(gen_child_hbb[0])<=0.4 || jets[ijet].p4().DeltaR(gen_child_hbb[1])<=0.4)
+              n_gen_matched_jets++;
+        }
       }
 
       TLorentzVector x_cand = selectedDiPhoton.p4 + selectedDiJet.p4;
@@ -563,21 +597,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       h_SubleadPhoton_pfPhoIso03->Fill(SubleadPhoton_pfPhoIso03);
       h_SubleadPhoton_chargedHadronIso->Fill(SubleadPhoton_chargedHadronIso);
       h_SubleadPhoton_trkSumPtHollowConeDR03->Fill(SubleadPhoton_trkSumPtHollowConeDR03);
-/*
-Index([
-       'n_gen_matched_jets', 'n_gen_matched_in_dijet',
-       'dijet_lead_gen_match',
-       'dijet_sublead_gen_match', 
-       'GenHiggs_pt', 'GenHiggs_eta',
-       'GenHiggs_phi', 'GenHiggs_mass', 'GenHiggs_dR', 'GenY_pt', 'GenY_eta',
-       'GenY_phi', 'GenY_mass', 'GenY_dR', 'GenX_pt', 'GenX_eta', 'GenX_phi',
-       'GenX_mass', 'GenX_dR', 'GenBFromHiggs_1_pt', 'GenBFromHiggs_1_eta',
-       'GenBFromHiggs_1_phi', 'GenBFromHiggs_1_mass', 'GenBFromHiggs_2_pt',
-       'GenBFromHiggs_2_eta', 'GenBFromHiggs_2_phi', 'GenBFromHiggs_2_mass',
-       'bdt_score',
-       'process_id'],
-      dtype='object')
-*/
+
       weight_central_initial = weight;
       weight_central_no_lumi = weight*factor/lumi;
 

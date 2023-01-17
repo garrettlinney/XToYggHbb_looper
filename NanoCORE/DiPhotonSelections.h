@@ -9,6 +9,7 @@ struct Photon {
         pt_ = nt.Photon_pt()[idx_];
         eta_ = nt.Photon_eta()[idx_];
         phi_ = nt.Photon_phi()[idx_];
+        mass_ = nt.Photon_mass()[idx_];
 //        p4_ = nt.Photon_p4()[idx_]; need to convert to TLorentzVector to compute DeltaR later
         p4_.SetPtEtaPhiM(pt_, eta_, phi_, 0 );
         id_ = nt.Photon_pdgId()[idx_];
@@ -25,6 +26,8 @@ struct Photon {
         trkSumPtHollowConeDR03_ = nt.Photon_trkSumPtHollowConeDR03()[idx_];
         //idlevel_ = whichPhotonLevel(id_, idx_);
         fixedGridRhoFastjetAll_ = nt.fixedGridRhoFastjetAll();
+
+        genPartFlav_ = nt.Photon_genPartFlav()[idx_];
     }
     //void set_idlevel(int idlevel) { idlevel_ = idlevel; }
     int id() { return id_; }
@@ -34,6 +37,7 @@ struct Photon {
     float pt() { return pt_; }
     float eta() { return eta_; }
     float phi() { return phi_; }
+    float mass() { return mass_; }
     float r9() { return r9_; }
     float chargedHadIso() { return chargedHadIso_; }
     float hoe() { return hoe_; }
@@ -47,12 +51,14 @@ struct Photon {
     float isScEtaEE() { return isScEtaEE_; }
     float isScEtaEB() { return isScEtaEB_; }
     float trkSumPtHollowConeDR03() {return trkSumPtHollowConeDR03_; }
+    unsigned char genPartFlav() {return genPartFlav_; }
 
   private:
     int id_;
     float pt_ = 0.;
     float eta_ = 0.;
     float phi_ = 0.;
+    float mass_ = 0.;
     TLorentzVector p4_;
     unsigned int idx_;
     float r9_ = 0.;
@@ -69,6 +75,7 @@ struct Photon {
     float isScEtaEE_ = 0;
     float trkSumPtHollowConeDR03_ = 0;
     //int idlevel_ = SS::IDdefault;
+    unsigned char genPartFlav_ = 0;
 };
 
 vector<Photon> getPhotons();
@@ -78,6 +85,7 @@ struct DiPhoton{
     Photon leadPho;
     Photon subleadPho;
     TLorentzVector p4;
+    float dR;
     DiPhoton(Photon p1, Photon p2)
     {
         leadPho = p1;
@@ -87,6 +95,7 @@ struct DiPhoton{
         leadPhop4.SetPtEtaPhiM(p1.pt(), p1.eta(), p1.phi(), 0);
         subleadPhop4.SetPtEtaPhiM(p2.pt(), p2.eta(), p2.phi(), 0);
         p4 = leadPhop4 + subleadPhop4;
+        dR = leadPhop4.DeltaR(subleadPhop4);
     }
 };
 

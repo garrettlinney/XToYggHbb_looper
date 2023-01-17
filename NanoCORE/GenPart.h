@@ -13,14 +13,16 @@ struct GenPart {
         pdgId_ = nt.GenPart_pdgId()[idx_];
         p4_.SetPtEtaPhiM(pt_, nt.GenPart_eta()[idx_], nt.GenPart_phi()[idx_], nt.GenPart_mass()[idx_]);
         motherIdx_ = nt.GenPart_genPartIdxMother()[idx_];
-        isxyh_ = (nt.GenPart_pdgId()[motherIdx_] == 45 && (abs(pdgId_) == 35 || abs(pdgId_) == 25));
-        isygg_ = (nt.GenPart_pdgId()[motherIdx_] == 35 && (abs(pdgId_) == 22 || abs(pdgId_) == 22));
-        ishbb_ = (nt.GenPart_pdgId()[motherIdx_] == 25 && (abs(pdgId_) == 5 || abs(pdgId_) == 5));
+        isxyh_ = (abs(nt.GenPart_pdgId()[motherIdx_]) == 45 && (abs(pdgId_) == 35 || abs(pdgId_) == 25));
+        isygg_ = (abs(nt.GenPart_pdgId()[motherIdx_]) == 35 && (abs(pdgId_) == 22 || abs(pdgId_) == 22));
+        ishbb_ = (abs(nt.GenPart_pdgId()[motherIdx_]) == 25 && (abs(pdgId_) == 5 || abs(pdgId_) == 5));
+        mother_p4_.SetPtEtaPhiM(nt.GenPart_pt()[motherIdx_], nt.GenPart_eta()[motherIdx_], nt.GenPart_phi()[motherIdx_],nt.GenPart_mass()[motherIdx_]);
     }
 
     int id() { return id_; }
     unsigned int idx() { return idx_; }
     TLorentzVector p4() { return p4_; }
+    TLorentzVector mother_p4() { return mother_p4_; }
     float pt() { return pt_; }
     float mass() { return mass_; }
     float eta() { return eta_; }
@@ -30,7 +32,6 @@ struct GenPart {
     bool isygg() { return isygg_; }
     bool ishbb() { return ishbb_; }
     int motherIdx() { return motherIdx_; }
-    struct GenPart* gen_mother;
 
   private:
     int id_;
@@ -38,6 +39,7 @@ struct GenPart {
     float eta_ = 0.;
     float mass_ = 0;
     TLorentzVector p4_;
+    TLorentzVector mother_p4_;
     float phi_ = 0.;
     int pdgId_ = 0;
     unsigned int idx_;
