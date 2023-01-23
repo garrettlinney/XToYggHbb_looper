@@ -194,21 +194,22 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   H1(SubleadPhoton_chargedHadronIso, 20, 0, 10, "");
   H1(SubleadPhoton_trkSumPtHollowConeDR03, 20, 0, 10, "");
 
-  Float_t xcand_pt, xcand_eta, xcand_phi, xcand_mass;
+  float xcand_pt, xcand_eta, xcand_phi, xcand_mass;
 
-  Float_t LeadPhoton_pt, LeadPhoton_eta, LeadPhoton_phi, LeadPhoton_mass, LeadPhoton_mvaID;
-  Bool_t LeadPhoton_pixelSeed, SubleadPhoton_pixelSeed;
-  UChar_t LeadPhoton_genPartFlav, SubleadPhoton_genPartFlav;
-  Float_t SubleadPhoton_pt, SubleadPhoton_eta, SubleadPhoton_phi, SubleadPhoton_mass, SubleadPhoton_mvaID;
-  Float_t Diphoton_pt, Diphoton_eta, Diphoton_phi, Diphoton_mass, Diphoton_pt_mgg, Diphoton_dR;
-  Float_t LeadPhoton_sieie, LeadPhoton_pfPhoIso03, LeadPhoton_trkSumPtHollowConeDR03, LeadPhoton_chargedHadronIso, LeadPhoton_r9;
-  Float_t SubleadPhoton_sieie, SubleadPhoton_pfPhoIso03, SubleadPhoton_trkSumPtHollowConeDR03, SubleadPhoton_chargedHadronIso, SubleadPhoton_r9;
+  float LeadPhoton_pt, LeadPhoton_eta, LeadPhoton_phi, LeadPhoton_mass, LeadPhoton_mvaID;
+  bool LeadPhoton_pixelSeed, SubleadPhoton_pixelSeed;
+  unsigned int LeadPhoton_genPartFlav, SubleadPhoton_genPartFlav;
+  float SubleadPhoton_pt, SubleadPhoton_eta, SubleadPhoton_phi, SubleadPhoton_mass, SubleadPhoton_mvaID;
+  float Diphoton_pt, Diphoton_eta, Diphoton_phi, Diphoton_mass, Diphoton_pt_mgg, Diphoton_dR;
+  float LeadPhoton_sieie, LeadPhoton_pfPhoIso03, LeadPhoton_trkSumPtHollowConeDR03, LeadPhoton_chargedHadronIso, LeadPhoton_r9;
+  float SubleadPhoton_sieie, SubleadPhoton_pfPhoIso03, SubleadPhoton_trkSumPtHollowConeDR03, SubleadPhoton_chargedHadronIso, SubleadPhoton_r9;
 
-  Int_t n_jets;
-  Float_t dijet_lead_pt, dijet_lead_eta, dijet_lead_phi, dijet_lead_mass, dijet_lead_btagDeepFlavB;
-  Float_t dijet_sublead_pt, dijet_sublead_eta, dijet_sublead_phi, dijet_sublead_mass, dijet_sublead_btagDeepFlavB;
-  Float_t dijet_pt, dijet_eta, dijet_phi, dijet_mass, dijet_dR;
-  Int_t year_out, eventNum, weight_central, weight_central_initial, weight_central_no_lumi;
+  int n_jets;
+  float dijet_lead_pt, dijet_lead_eta, dijet_lead_phi, dijet_lead_mass, dijet_lead_btagDeepFlavB;
+  float dijet_sublead_pt, dijet_sublead_eta, dijet_sublead_phi, dijet_sublead_mass, dijet_sublead_btagDeepFlavB;
+  float dijet_pt, dijet_eta, dijet_phi, dijet_mass, dijet_dR;
+  int year_out, eventNum;
+  float weight_central, weight_central_initial, weight_central_no_lumi;
 
   int n_gen_matched_jets = 0, n_gen_matched_in_dijet = 0;
   bool dijet_lead_gen_match=false, dijet_sublead_gen_match=false;
