@@ -44,54 +44,26 @@
 #include <sys/stat.h>
 #include <fstream>
 
-#define SUM(vec) std::accumulate((vec).begin(), (vec).end(), 0);
-#define SUM_GT(vec,num) std::accumulate((vec).begin(), (vec).end(), 0, [](float x,float y) { return ((y > (num)) ? x+y : x); });
-#define COUNT_GT(vec,num) std::count_if((vec).begin(), (vec).end(), [](float x) { return x > (num); });
-#define COUNT_LT(vec,num) std::count_if((vec).begin(), (vec).end(), [](float x) { return x < (num); });
-
 #define H1(name,nbins,low,high,xtitle) TH1D *h_##name = new TH1D(#name,"",nbins,low,high); h_##name->GetXaxis()->SetTitle(xtitle); h_##name->GetYaxis()->SetTitle("Events");
 
-// #define DEBUG
 #define Zmass 91.1876
-
-// For testing purposes only
-bool useOnlyRun2018B = true;
-
-// Looper setup flags
-bool muonDebug = false;
-bool doMllBins = false;
-bool doNbTagBins = true;
-bool doTTEnriched = false;
-bool doDYEnriched = false;
-bool doMuDetRegionBins = false;
 
 // General flags
 bool removeSpikes = true;
 bool removeDataDuplicates = false;
-bool useTuneP = true;
 bool usePuppiMET = true;
-bool fillRooDataSet = true;
-//
 
 const char* outdir = "temp_data";
 int mdir = mkdir(outdir,0755);
 
-struct debugger { template<typename T> debugger& operator , (const T& v) { cerr<<v<<" "; return *this; } } dbg;
-#ifdef DEBUG
-#define debug(args...) do {cerr << #args << ": "; dbg,args; cerr << endl;} while(0)
-#else
-#define debug(args...)
-#endif
-
 using namespace std;
 using namespace tas;
 using namespace duplicate_removal;
-using namespace RooFit;
 int count_test=0;
 
 ofstream txtout("evtnb.txt", ofstream::app);
 
-int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process, int topPtWeight=1, int PUWeight=1, int muonSF=1, int triggerSF=1, int bTagSF=1, int JECUnc=0) {
+int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process, int PUWeight=1, int bTagSF=1, int JECUnc=0) {
 // Event weights / scale factors:
 //  0: Do not apply
 //  1: Apply central value
@@ -106,64 +78,60 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
   cout << "Process " << process << endl;
 
-  if ( process.Contains("EGamma_Run2018") ) {
+  if ( process.Contains("_Run201") ) {
     isMC = false;
   }
-  // SM processes and cross-sections:
+  // Processes and cross-sections (in fb):
   // set this in a different file
-  else if ( process == "ttbar" )             {xsec = 87310.0; /* fb */}
-  else if ( process == "DY" )                {xsec = 5765400.0; /* fb */ process_id = 16; }
-  else if ( process == "WW" )                xsec = 118700.0; // fb 
-  else if ( process == "WZ" )                xsec = 47130.0; // fb
-  else if ( process == "ZZ" )                xsec = 16523.0; // fb
-  else if ( process == "tW" )                xsec = 19550; // fb
-  else if ( process == "tbarW" )             xsec = 19550; // fb
-  else if ( process == "tZq" )               xsec = 75.8; // fb
-  else if ( process == "TTW" )               xsec = 204.3; // fb
-  else if ( process == "TTZ" )               xsec = 252.9; // fb
-  else if ( process == "TTHToNonbb" )        xsec = 507.5*(1-0.575); // fb
-  else if ( process == "TTHTobb" )           xsec = 507.5*0.575; // fb
-  else if ( process == "TTGG" )              {xsec = 0.01687 * 1000; /*fb*/ process_id = 12;} 
-  else if ( process == "TTGJets" )           {xsec = 4.078 * 1000; /*fb*/ process_id = 11;} 
-  else if ( process == "TTJets" )            {xsec = 831.76 * 1000; /*fb*/ process_id = 10;}
-  else if ( process == "VBFH_M125" )         {xsec = 0.00858514 *1000; /*fb*/ process_id = 3;}
-  else if ( process == "VH_M125" )           {xsec = 0.00512 *1000; /*fb*/ process_id = 4;}
-  else if ( process == "ggHToDiPhoM125" )    {xsec = 0.1118429*1000 ; /* fb */ process_id = 2;}
-  else if ( process == "ttH_M125" )          {xsec = 0.5071 * 1000 * 0.00227; /*fb*/ process_id = 1;}
-  else if ( process == "GJets_HT-40To100" )  {xsec = 23100*1000; /*fb*/ process_id = 5;}
-  else if ( process == "GJets_HT-100To200" ) {xsec = 8631.0*1000; /*fb*/ process_id = 6;}
-  else if ( process == "GJets_HT-200To400" ) {xsec = 2280.0*1000; /*fb*/ process_id = 7;}
-  else if ( process == "GJets_HT-400To600" ) {xsec = 273*1000; /*fb*/ process_id = 8;}
-  else if ( process == "GJets_HT-600ToInf" ) {xsec = 1*1000; /*fb*/ process_id = 9;}
-  else if ( process == "diPhoton" )          {xsec = 84.4*1000 ; /* fb */ process_id = 15; }
-  else if ( process == "HHbbgg" )            {xsec = 0.03105*1000*0.0026223039999999998 ; /*fb*/ process_id = 17;}
-  else if ( process == "WGamma" )            {xsec = 191.4*1000 ; /* fb */ process_id = 13;}
-  else if ( process == "ZGamma" )            {xsec = 55.6*1000 ; /* fb */ process_id = 14;}
-  else if ( process.Contains("EGamma_Run2018") )   {xsec = 1 ; /*fb*/ process_id = 0;}
-  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_600_MY_100" ) {xsec = 1 ; /* fb */ process_id = 20;}
-  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_600_MY_90" ) {xsec = 1 ; /* fb */ process_id = 18;}
-  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_600_MY_95" ) {xsec = 1 ; /* fb */ process_id = 19;}
-  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_650_MY_100" ) {xsec = 1 ; /* fb */ process_id = 23;}
-  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_650_MY_90" ) {xsec = 1 ; /* fb */ process_id = 21;}
-  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_650_MY_95" ) {xsec = 1 ; /* fb */ process_id = 22;}
-  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_700_MY_100" ) {xsec = 1 ; /* fb */ process_id = 26;}
-  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_700_MY_90" ) {xsec = 1 ; /* fb */ process_id = 24;}
-  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_700_MY_95" ) {xsec = 1 ; /* fb */ process_id = 25;}
-    
-//  111.8429 ; // fb
-  // Signal processes and cross-sections:
-  else
-    {
-      cout<<"Non-valid process: Exiting!"<<endl;
-      return 1;
-    }
+  else if ( process == "ttbar" )                              { xsec = 87310.0;                                  }
+  else if ( process == "DY" )                                 { xsec = 5765400.0;               process_id = 16; }
+  else if ( process == "WW" )                                 { xsec = 118700.0;                                 }
+  else if ( process == "WZ" )                                 { xsec = 47130.0;                                  }
+  else if ( process == "ZZ" )                                 { xsec = 16523.0;                                  }
+  else if ( process == "tW" )                                 { xsec = 19550;                                    }
+  else if ( process == "tbarW" )                              { xsec = 19550;                                    }
+  else if ( process == "tZq" )                                { xsec = 75.8;                                     }
+  else if ( process == "TTW" )                                { xsec = 204.3;                                    }
+  else if ( process == "TTZ" )                                { xsec = 252.9;                                    }
+  else if ( process == "TTHToNonbb" )                         { xsec = 507.5*(1-0.575);                          }
+  else if ( process == "TTHTobb" )                            { xsec = 507.5*0.575;                              }
+  else if ( process == "TTGG" )                               { xsec = 0.01687 * 1000;          process_id = 12; } 
+  else if ( process == "TTGJets" )                            { xsec = 4.078 * 1000;            process_id = 11; } 
+  else if ( process == "TTJets" )                             { xsec = 831.76 * 1000;           process_id = 10; }
+  else if ( process == "VBFH_M125" )                          { xsec = 0.00858514 *1000;        process_id = 3;  }
+  else if ( process == "VH_M125" )                            { xsec = 0.00512 *1000;           process_id = 4;  }
+  else if ( process == "ggHToDiPhoM125" )                     { xsec = 0.1118429*1000 ;         process_id = 2;  }
+  else if ( process == "ttH_M125" )                           { xsec = 0.5071 * 1000 * 0.00227; process_id = 1;  }
+  else if ( process == "GJets_HT-40To100" )                   { xsec = 23100*1000;              process_id = 5;  }
+  else if ( process == "GJets_HT-100To200" )                  { xsec = 8631.0*1000;             process_id = 6;  }
+  else if ( process == "GJets_HT-200To400" )                  { xsec = 2280.0*1000;             process_id = 7;  }
+  else if ( process == "GJets_HT-400To600" )                  { xsec = 273*1000;                process_id = 8;  }
+  else if ( process == "GJets_HT-600ToInf" )                  { xsec = 1*1000;                  process_id = 9;  }
+  else if ( process == "diPhoton" )                           { xsec = 84.4*1000 ;              process_id = 15; }
+  else if ( process == "HHbbgg" )                             { xsec = 0.03105*1000*0.00262230; process_id = 17; }
+  else if ( process == "WGamma" )                             { xsec = 191.4*1000 ;             process_id = 13; }
+  else if ( process == "ZGamma" )                             { xsec = 55.6*1000 ;              process_id = 14; }
+  else if ( process.Contains("_Run201") )                     { xsec = 1 ;                      process_id = 0;  }
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_600_MY_100" )  { xsec = 1 ;                      process_id = 20; }
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_600_MY_90" )   { xsec = 1 ;                      process_id = 18; }
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_600_MY_95" )   { xsec = 1 ;                      process_id = 19; }
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_650_MY_100" )  { xsec = 1 ;                      process_id = 23; }
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_650_MY_90" )   { xsec = 1 ;                      process_id = 21; }
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_650_MY_95" )   { xsec = 1 ;                      process_id = 22; }
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_700_MY_100" )  { xsec = 1 ;                      process_id = 26; }
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_700_MY_90" )   { xsec = 1 ;                      process_id = 24; }
+  else if ( process == "NMSSM_XYH_Y_gg_H_bb_MX_700_MY_95" )   { xsec = 1 ;                      process_id = 25; }
+  //  111.8429 ; // fb - FIXME: What is this?
+  else {
+    cout<<"Non-valid process: Exiting!"<<endl;
+    return 1;
+  }
 
   // Configuration setup: NanoCORE/Config.{h,cc}
   gconf.nanoAOD_ver = 9;
   gconf.GetConfigs(year.Atoi());
   lumi = gconf.lumi;
-  if (year == "2018") lumi=59.8; //synchronizing with HiggsDNA
-//  lumi=1;
+  if (year == "2018") lumi = 59.8; //synchronizing with HiggsDNA
 
   // Golden JSON files
   if ( !isMC ) {
@@ -180,9 +148,11 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   if ( isMC )
     factor = xsec*lumi/genEventSumw;
 
+
   // Modify the name of the output file to include arguments of ScanChain function (i.e. process, year, etc.)
   TFile* fout = new TFile("temp_data/output_"+process+"_"+year+".root", "RECREATE");
   TTree* tout = new TTree("tout","Tree with photon variables");
+
 
   // define histograms, to be put in a different file TODO
   H1(LeadPhoton_sieie, 20, 0, 0.05, "");
@@ -194,6 +164,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   H1(SubleadPhoton_chargedHadronIso, 20, 0, 10, "");
   H1(SubleadPhoton_trkSumPtHollowConeDR03, 20, 0, 10, "");
 
+
+  // Variables for output branches
   float xcand_pt, xcand_eta, xcand_phi, xcand_mass;
 
   float LeadPhoton_pt, LeadPhoton_eta, LeadPhoton_phi, LeadPhoton_mass, LeadPhoton_mvaID;
@@ -219,6 +191,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   float GenBFromHiggs_1_pt=-999, GenBFromHiggs_1_eta=-999, GenBFromHiggs_1_phi=-999, GenBFromHiggs_1_mass=-999;
   float GenBFromHiggs_2_pt=-999, GenBFromHiggs_2_eta=-999, GenBFromHiggs_2_phi=-999, GenBFromHiggs_2_mass=-999;
 
+
+  // Branch booking
   tout->Branch("xcand_pt", &xcand_pt, "xcand_pt/F");
   tout->Branch("xcand_eta", &xcand_eta, "xcand_eta/F");
   tout->Branch("xcand_phi", &xcand_phi, "xcand_phi/F");
@@ -286,7 +260,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   if (year=="2016nonAPV" || year=="2016APV") year_out = 2016;
   else if (year=="2017") year_out = 2017;
   else if (year=="2018") year_out = 2018;
-  else year_out==0;
+  else year_out = 0;
   
   if (isMC) {
     tout->Branch("n_gen_matched_jets",&n_gen_matched_jets,"n_gen_matched_jets/I");
@@ -318,6 +292,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
     tout->Branch("GenBFromHiggs_2_mass",&GenBFromHiggs_2_mass,"GenBFromHiggs_2_mass/F");
   }
 
+
   // Define histo info maps
   map<TString, int> nbins { };
   map<TString, float> low { };
@@ -331,45 +306,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   H1(weight_full,1,0,1,"");
   histoDefinition(nbins, low, high, binsx, title);
 
-  // Define RooDataSet's for fit
-  /*
-  RooRealVar mfit("mfit", "mfit", 150.0, 3000.0);
-  RooRealVar roow("roow", "roow", 1.0);
-  map<TString, RooDataSet> roods;
-  for ( unsigned int imll=0; imll < mllbin.size(); imll++ ) {
-    for ( unsigned int inb=0; inb < nbtag.size(); inb++ ) {
-      for (unsigned int iMuDet = 0; iMuDet < MuDetRegion.size(); iMuDet++){
-        TString dname = TString("d_") + mllbin[imll] + TString("_") + nbtag[inb] + TString("_") + MuDetRegion[iMuDet];
-	TString slice = mllbin[imll] + TString("_") + nbtag[inb] + TString("_") + MuDetRegion[iMuDet];
-	if ( fillRooDataSet )
-	  roods.insert({slice, RooDataSet(dname,dname,RooArgSet(mfit,roow),WeightVar(roow))});
-      }
-    }
-  }
-  */
 
-  // Define selection
-  cout << "define selection" << endl;
-  vector<TString> selection = { };
-  selection.push_back("sel0"); // Skimming + HLT + Good PV
-  selection.push_back("sel1"); // 2 high-pT ID muons
-  selection.push_back("sel2"); // pT > 53 GeV && |eta| < 2.4 muons
-
-  vector<TString> plot_names = { };
-  plot_names.push_back("pfmet_pt");
-
-  map<TString, TH1D*> histos;
-
-  if ( PUWeight!=0 ) set_puWeights(); //here
-
-  // Setting up JEC uncertainties
-  JetCorrectionUncertainty* jec_unc = new JetCorrectionUncertainty(
-    "../NanoCORE/Tools/jetcorr/data/"
-    + gconf.jecEraMC 
-    + "/"
-    + gconf.jecEraMC
-    + "_Uncertainty_AK4PFchs.txt"
-  );
+  //if ( PUWeight!=0 ) set_puWeights(); // FIXME to be enabled later?
 
   int nEventsTotal = 0;
   int nDuplicates = 0;
@@ -386,16 +324,10 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
     tree->SetCacheSize(128*1024*1024);
     tree->SetCacheLearnEntries(100);
-//    nt.SetYear(2018);
 
     nt.Init(tree);
 
-    // Before any cuts
-    int icutflow = 0;
-    TString label = "Total";
-    TString slicedlabel = label;
     for( unsigned int event = 0; event < tree->GetEntriesFast(); ++event) {
-//    for( unsigned int event = 0; event < 1000; ++event) {
       nt.GetEntry(event);
       tree->LoadTree(event);
 
@@ -404,23 +336,22 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
       float weight = 1.0;
       if ( isMC ) {
-	weight = nt.genWeight();
-//	if(removeSpikes && weight*factor>1e2) continue; //comment out for synchronizing
+        weight = nt.genWeight();
+        //if(removeSpikes && weight*factor>1e2) continue; //comment out for synchronizing
 
-	// Apply PU reweight
+        // Apply PU reweight // FIXME to be enabled later?
 /*        
-	if ( PUWeight!=0 ) {
-	  unsigned int nTrueInt = nt.Pileup_nTrueInt();
-	  TString whichPUWeight = "central";
-	  if ( PUWeight==2 ) whichPUWeight = "up";
-	  else if ( PUWeight==-2 ) whichPUWeight = "down";
-	  TString puyear = year;
-	  if ( useOnlyRun2018B ) puyear = "2018B";
-	  weight *= get_puWeight(nTrueInt, puyear, whichPUWeight);
+        if ( PUWeight!=0 ) {
+          unsigned int nTrueInt = nt.Pileup_nTrueInt();
+          TString whichPUWeight = "central";
+          if ( PUWeight==2 ) whichPUWeight = "up";
+          else if ( PUWeight==-2 ) whichPUWeight = "down";
+          TString puyear = year;
+          if ( useOnlyRun2018B ) puyear = "2018B";
+          weight *= get_puWeight(nTrueInt, puyear, whichPUWeight);
           if (event <  100) cout << "genWeight after PU reWeight is: " << weight << endl;
-	}
+        }
 */        
-
       }
 
       h_weight_full->Fill(0.5, weight*factor);
@@ -430,22 +361,24 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       unsigned long int evtnb = nt.event();
       int npv = nt.PV_npvs();
 
-      // Apply Golden JSON
 
+      // Apply Golden JSON
       if ( !isMC ) {
-	      if ( !(goodrun(runnb, lumiblock)) )
-	        continue;
-	      if ( removeDataDuplicates ) {
-	        DorkyEventIdentifier id(runnb, evtnb, lumiblock);
-	        if ( is_duplicate(id) ){
-	          ++nDuplicates;
-	          continue;
-	        }
-	      }
+        if ( !(goodrun(runnb, lumiblock)) )
+          continue;
+        if ( removeDataDuplicates ) {
+          DorkyEventIdentifier id(runnb, evtnb, lumiblock);
+          if ( is_duplicate(id) ) {
+            ++nDuplicates;
+            continue;
+          }
+        }
       }
- // HLT in MC is comment out for synchronizing (same as HiggsDNA)
-      if (!(isMC)){
-        // HLT selection
+
+
+      // HLT selection
+      // HLT selection not applied in MC for synchronizing (same as HiggsDNA) - FIXME: To be applied later
+      if (!isMC){
         if ( (year=="2016nonAPV" || year=="2016APV") &&
             !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0)
               || (tree->GetBranch("HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0) ) ) continue;
@@ -454,60 +387,63 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
         if ( (year=="2018") &&
             !( (tree->GetBranch("HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto") ? nt.HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto() : 0) ) ) continue;
       }
-      // do diphoton selection here
-      Photons photons = getPhotons(); //sort by pt
+
+
+      // Object selection
+      Photons photons = getPhotons();
       DiPhotons diphotons = DiPhotonPreselection(photons);
 
       if (diphotons.size() == 0 ) continue; 
 
       DiPhoton selectedDiPhoton = diphotons[0];
-      Photons vector_photons={};
-      vector_photons.push_back(selectedDiPhoton.leadPho);
-      vector_photons.push_back(selectedDiPhoton.subleadPho);
+      Photons selectedPhotons={selectedDiPhoton.leadPho, selectedDiPhoton.subleadPho};
+
       LeadPhoton_mvaID = selectedDiPhoton.leadPho.mvaID();
       SubleadPhoton_mvaID = selectedDiPhoton.subleadPho.mvaID();
-      if (!(SubleadPhoton_mvaID>-0.7 && LeadPhoton_mvaID>-0.7)) continue;
+      if ( !(SubleadPhoton_mvaID>-0.7 && LeadPhoton_mvaID>-0.7) ) continue;
 
-      Electrons electrons = getElectrons(vector_photons);
-      Muons muons = getMuons(vector_photons);
+      Electrons electrons = getElectrons(selectedPhotons);
+      Muons muons = getMuons(selectedPhotons);
       if (electrons.size() != 0 ) continue; 
       if (muons.size() != 0 ) continue; 
 
-      Jets jets = getJets(vector_photons); //sort by b score
-      DiJets dijets = DiJetPreselection(jets);
+      Jets jets = getJets(selectedPhotons);
       if (jets.size() < 2) continue; 
+
+      DiJets dijets = DiJetPreselection(jets);
       DiJet selectedDiJet = dijets[0];
 
       if (dijets[0].p4.M()<50) continue;
 
-      if (isMC){
+
+      // Gen info - FIXME: Doesn't work because all if-statements are trivially false
+      if (isMC) {
         TLorentzVector GenHiggs, GenX, GenY;
         GenParts genparts = getGenParts();
         vector<TLorentzVector> gen_child_xyh, gen_child_ygg, gen_child_hbb;
-        for (int igenpart=0; igenpart<genparts.size(); igenpart++)
-          {
-            if (genparts[igenpart].isxyh()) {GenX = genparts[igenpart].mother_p4(); gen_child_xyh.push_back(genparts[igenpart].p4());}
-            if (genparts[igenpart].isygg()) {GenY = genparts[igenpart].mother_p4(); gen_child_ygg.push_back(genparts[igenpart].p4());}
-            if (genparts[igenpart].ishbb()) {GenHiggs = genparts[igenpart].mother_p4(); gen_child_hbb.push_back(genparts[igenpart].p4());}
-          }
+        for (int igenpart=0; igenpart<genparts.size(); igenpart++) {
+          if (genparts[igenpart].isxyh()) {GenX = genparts[igenpart].mother_p4(); gen_child_xyh.push_back(genparts[igenpart].p4());}
+          if (genparts[igenpart].isygg()) {GenY = genparts[igenpart].mother_p4(); gen_child_ygg.push_back(genparts[igenpart].p4());}
+          if (genparts[igenpart].ishbb()) {GenHiggs = genparts[igenpart].mother_p4(); gen_child_hbb.push_back(genparts[igenpart].p4());}
+        }
         TLorentzVector sort_GenPart;
-//          if (gen_child_xyh[0].Pt()<gen_child_xyh[1].Pt()) {sort_GenPart = gen_child_xyh[0]; gen_child_xyh[0]= gen_child_xyh[1]; gen_child_xyh[1] = sort_GenPart;}
-//          if (gen_child_ygg[0].Pt()<gen_child_ygg[1].Pt()) {sort_GenPart = gen_child_ygg[0]; gen_child_ygg[0]= gen_child_ygg[1]; gen_child_ygg[1] = sort_GenPart;}
-        if (!abs(GenX_pt+999)<0.0001){
+        //if (gen_child_xyh[0].Pt()<gen_child_xyh[1].Pt()) {sort_GenPart = gen_child_xyh[0]; gen_child_xyh[0]= gen_child_xyh[1]; gen_child_xyh[1] = sort_GenPart;}
+        //if (gen_child_ygg[0].Pt()<gen_child_ygg[1].Pt()) {sort_GenPart = gen_child_ygg[0]; gen_child_ygg[0]= gen_child_ygg[1]; gen_child_ygg[1] = sort_GenPart;}
+        if (!abs(GenX_pt+999)<0.0001) {
           GenX_pt = GenX.Pt();
           GenX_eta = GenX.Eta();
           GenX_phi = GenX.Phi();
           GenX_mass = GenX.M();
           GenX_dR = gen_child_xyh[0].DeltaR(gen_child_xyh[1]);
         }
-        if (!abs(GenY_pt+999)<0.0001){
+        if (!abs(GenY_pt+999)<0.0001) {
           GenY_pt = GenY.Pt();
           GenY_eta = GenY.Eta();
           GenY_phi = GenY.Phi();
           GenY_mass = GenY.M();
           GenY_dR = gen_child_ygg[0].DeltaR(gen_child_ygg[1]);
         }
-        if (!abs(GenHiggs_pt+999)<0.0001){
+        if (!abs(GenHiggs_pt+999)<0.0001) {
           GenHiggs_pt = GenHiggs.Pt();
           GenHiggs_eta = GenHiggs.Eta();
           GenHiggs_phi = GenHiggs.Phi();
@@ -524,14 +460,15 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
           GenBFromHiggs_2_mass = gen_child_hbb[1].M();
           if (selectedDiJet.leadJet.p4().DeltaR(gen_child_hbb[0])<=0.4 || selectedDiJet.leadJet.p4().DeltaR(gen_child_hbb[1])<=0.4) {dijet_lead_gen_match=true; n_gen_matched_in_dijet++;}
           if (selectedDiJet.subleadJet.p4().DeltaR(gen_child_hbb[0])<=0.4 || selectedDiJet.subleadJet.p4().DeltaR(gen_child_hbb[1])<=0.4) {dijet_sublead_gen_match=true; n_gen_matched_in_dijet++;}
-          for (int ijet=0; ijet<jets.size(); ijet++)
+          for (int ijet=0; ijet<jets.size(); ijet++) {
             if (jets[ijet].p4().DeltaR(gen_child_hbb[0])<=0.4 || jets[ijet].p4().DeltaR(gen_child_hbb[1])<=0.4)
               n_gen_matched_jets++;
+          }
         }
       }
 
+      // Setting output variables
       TLorentzVector x_cand = selectedDiPhoton.p4 + selectedDiJet.p4;
-
       xcand_pt = x_cand.Pt();
       xcand_eta = x_cand.Eta();
       xcand_phi = x_cand.Phi();
@@ -586,10 +523,14 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       dijet_dR = selectedDiJet.dR;
 
       weight_central = weight*factor;
+      weight_central_initial = weight;
+      weight_central_no_lumi = weight*factor/lumi;
       eventNum = evtnb;
 
       count_test++;
 
+
+      // Histo filling
       h_LeadPhoton_sieie->Fill(LeadPhoton_sieie);
       h_LeadPhoton_pfPhoIso03->Fill(LeadPhoton_pfPhoIso03);
       h_LeadPhoton_chargedHadronIso->Fill(LeadPhoton_chargedHadronIso);
@@ -598,52 +539,22 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       h_SubleadPhoton_pfPhoIso03->Fill(SubleadPhoton_pfPhoIso03);
       h_SubleadPhoton_chargedHadronIso->Fill(SubleadPhoton_chargedHadronIso);
       h_SubleadPhoton_trkSumPtHollowConeDR03->Fill(SubleadPhoton_trkSumPtHollowConeDR03);
-
-      weight_central_initial = weight;
-      weight_central_no_lumi = weight*factor/lumi;
+      h_weight->Fill(0.5, weight*factor);
 
       tout->Fill();
-      h_weight->Fill(0.5, weight*factor);
-//      h_weight->Fill(0.5);
     } // Event loop
-
     delete file;
-
   } // File loop
     
   bar.finish();
   cout << "nTotal: " << h_weight_full->GetBinContent(1) << ", nPass: " << h_weight->GetBinContent(1) << ", eff: " << h_weight->GetBinContent(1)/h_weight_full->GetBinContent(1) << endl;
   cout << endl;
 
-  if ( muonSF!=0 ) {
-    reset_muonRecoSF();
-    reset_muonIDSF();
-    reset_muonIsoSF();
-  }
-  if ( triggerSF!=0 ) reset_triggerSF();
-  if ( bTagSF!=0 ) reset_bTagEff();
-
   if ( removeDataDuplicates )
     cout << "Number of duplicates found: " << nDuplicates << endl;
 
-  // Avoid histograms with unphysical negative bin content (due to negative GEN weights)
-  map<TString, TH1D*>::iterator it;
-  for ( it = histos.begin(); it != histos.end(); it++ ) {
-    for ( unsigned int b=1; b<(it->second)->GetNbinsX()+1; b++ ) { 
-      if ( (it->second)->GetBinContent(b)<0.0) {
-	(it->second)->SetBinContent(b,0.0);
-	(it->second)->SetBinError(b,0.0);
-      }
-    }
-  }
   txtout.close();
-  //tout->Write();
   fout->Write();
-  //if ( fillRooDataSet ) {
-  //  fout->cd();
-  //  for (const auto& d : roods )
-  //    d.second.Write();
-  //}
   fout->Close();
 
   return 0;

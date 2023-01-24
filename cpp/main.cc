@@ -7,14 +7,13 @@ double getSumOfGenEventSumw(TChain *chaux, bool isMC)
   double genEventSumw, sumOfGenEventSumw=0.0;
   if (isMC) {
     chaux->SetBranchAddress("genEventSumw",&genEventSumw);
-    for (unsigned int run = 0; run < chaux->GetEntriesFast(); run++)
-      {
-        chaux->GetEntry(run);
-        sumOfGenEventSumw += genEventSumw;
-      }
+    for (unsigned int run = 0; run < chaux->GetEntriesFast(); run++) {
+      chaux->GetEntry(run);
+      sumOfGenEventSumw += genEventSumw;
+    }
   }
-  else{
-    sumOfGenEventSumw=1;
+  else {
+    sumOfGenEventSumw=1.0;
   }
   return sumOfGenEventSumw;
 }
@@ -329,17 +328,14 @@ int main() {
 //  TString basedir = "/ceph/cms/store/user/yagu/Run2018/";
   TString basedir = "/ceph/cms/store/user/legianni/skimNano-TestUL__TEST-SamplesV9/";
   
-  int topPtWeight=1;
   int PUWeight=1;
-  int muonSF=1;
-  int triggerSF=1;
   int bTagSF=1;
   int JECUnc=0; // No central value, set to +/-2 to get
 
-  for ( int isample=0; isample<samples.size(); isample++ )
-  {
+  for ( int isample=0; isample<samples.size(); isample++ ) {
     TString sample = samples[isample];
     cout<<sample_nfiles[sample][year].size()<<endl;
+
     for (int i_subfile=0; i_subfile<sample_nfiles[sample][year].size(); i_subfile++){
       int nFiles = sample_nfiles[sample][year][i_subfile];
       TString prod = sample_prod[sample][year][i_subfile];
@@ -352,22 +348,22 @@ int main() {
       int filenameshifter = 0;
       for ( int ifile=1; ifile<=nFiles; ifile++ )
       {
-          TString filename = Form(basedir + prod + "tree_%d.root", ifile+filenameshifter);
+        TString filename = Form(basedir + prod + "tree_%d.root", ifile+filenameshifter);
 
-          ifstream i_file;
+        ifstream i_file;
+        i_file.open(filename);
+        while ( !i_file ) {
+          filenameshifter++;
+          filename = Form(basedir + prod + "tree_%d.root", ifile+filenameshifter);
           i_file.open(filename);
-          while ( !i_file )
-          {
-              filenameshifter++;
-              filename = Form(basedir + prod + "tree_%d.root", ifile+filenameshifter);
-              i_file.open(filename);
-          }
-          ch_temp->Add(filename);
-          chaux_temp->Add(filename);
+        }
+        ch_temp->Add(filename);
+        chaux_temp->Add(filename);
       }
+
       bool isMC=1;
-      if (sample.Contains("EGamma_Run2018") ) isMC=0;
-      ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp, isMC),year,sample,topPtWeight,PUWeight,muonSF,triggerSF,bTagSF,JECUnc);
+      if ( sample.Contains("_Run201") ) isMC=0;
+      ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp, isMC),year,sample,PUWeight,bTagSF,JECUnc);
     }
   }
 
