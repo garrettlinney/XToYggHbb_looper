@@ -9,12 +9,12 @@ struct Photon {
         pt_ = nt.Photon_pt()[idx_];
         eta_ = nt.Photon_eta()[idx_];
         phi_ = nt.Photon_phi()[idx_];
-        mass_ = nt.Photon_mass()[idx_];
+        //mass_ = nt.Photon_mass()[idx_]; // Not in newest custom NanoAOD
 //        p4_ = nt.Photon_p4()[idx_]; need to convert to TLorentzVector to compute DeltaR later
         p4_.SetPtEtaPhiM(pt_, eta_, phi_, 0 );
-        id_ = nt.Photon_pdgId()[idx_];
+        //id_ = nt.Photon_pdgId()[idx_]; // Not in newest custom NanoAOD
         r9_ = nt.Photon_r9()[idx_];
-        chargedHadIso_ = nt.Photon_chargedHadronIso()[idx_];
+        chargedHadIso_ = nt.Photon_pfChargedIsoPFPV()[idx_]; // Equivalent to chargedHadronIso, as noted here: https://github.com/cms-sw/cmssw/pull/36526/#discussion_r772295841
         hoe_ = nt.Photon_hoe()[idx_];
         phoIso_ = nt.Photon_pfPhoIso03()[idx_];
         sieie_ = nt.Photon_sieie()[idx_];
@@ -23,20 +23,20 @@ struct Photon {
         mvaID_ = nt.Photon_mvaID()[idx_];
         isScEtaEB_ = nt.Photon_isScEtaEB()[idx_];
         isScEtaEE_ = nt.Photon_isScEtaEE()[idx_];
-        trkSumPtHollowConeDR03_ = nt.Photon_trkSumPtHollowConeDR03()[idx_];
+        //trkSumPtHollowConeDR03_ = nt.Photon_trkSumPtHollowConeDR03()[idx_]; // To be readded
         //idlevel_ = whichPhotonLevel(id_, idx_);
-        fixedGridRhoFastjetAll_ = nt.fixedGridRhoFastjetAll();
+        fixedGridRhoFastjetAll_ = nt.Rho_fixedGridRhoFastjetAll();
     }
     void setGenPartFlav(unsigned int idx) { genPartFlav_ = nt.Photon_genPartFlav()[idx_]; }
     //void set_idlevel(int idlevel) { idlevel_ = idlevel; }
-    int id() { return id_; }
+    //int id() { return id_; } // Not in newest custom NanoAOD
     unsigned int idx() { return idx_; }
     //int idlevel() { return idlevel_; }
     TLorentzVector p4() { return p4_; }
     float pt() { return pt_; }
     float eta() { return eta_; }
     float phi() { return phi_; }
-    float mass() { return mass_; }
+    //float mass() { return mass_; } // Not in newest custom NanoAOD
     float r9() { return r9_; }
     float chargedHadIso() { return chargedHadIso_; }
     float hoe() { return hoe_; }
@@ -49,15 +49,15 @@ struct Photon {
     float perEvtRho() { return fixedGridRhoFastjetAll_; }
     float isScEtaEE() { return isScEtaEE_; }
     float isScEtaEB() { return isScEtaEB_; }
-    float trkSumPtHollowConeDR03() { return trkSumPtHollowConeDR03_; }
+    //float trkSumPtHollowConeDR03() { return trkSumPtHollowConeDR03_; } // To be readded
     unsigned char genPartFlav() { return genPartFlav_; }
 
   private:
-    int id_;
+    //int id_; // Not in newest custom NanoAOD
     float pt_ = 0.;
     float eta_ = 0.;
     float phi_ = 0.;
-    float mass_ = 0.;
+    //float mass_ = 0.; // Not in newest custom NanoAOD
     TLorentzVector p4_;
     unsigned int idx_;
     float r9_ = 0.;
@@ -72,7 +72,7 @@ struct Photon {
     float fixedGridRhoFastjetAll_ = 0.; // this variable is the same for each event
     float isScEtaEB_ = 0;
     float isScEtaEE_ = 0;
-    float trkSumPtHollowConeDR03_ = 0;
+    //float trkSumPtHollowConeDR03_ = 0; // To be readded
     //int idlevel_ = SS::IDdefault;
     unsigned char genPartFlav_ = 0;
 };

@@ -13620,6 +13620,12 @@ protected:
     bool loaded_Photon_chargedHadronIso_;
     unsigned int counter_cached_Photon_chargedHadronIso_;
     unsigned int counter_uncached_Photon_chargedHadronIso_;
+    float Photon_pfChargedIsoPFPV_[NPHOTON_MAX];
+    vector<float> v_Photon_pfChargedIsoPFPV_;
+    TBranch *b_Photon_pfChargedIsoPFPV_;
+    bool loaded_Photon_pfChargedIsoPFPV_;
+    unsigned int counter_cached_Photon_pfChargedIsoPFPV_;
+    unsigned int counter_uncached_Photon_pfChargedIsoPFPV_;
     UChar_t Photon_cleanmask_[NPHOTON_MAX];
     vector<UChar_t> v_Photon_cleanmask_;
     TBranch *b_Photon_cleanmask_;
@@ -14864,6 +14870,11 @@ protected:
     bool loaded_fixedGridRhoFastjetAll_;
     unsigned int counter_cached_fixedGridRhoFastjetAll_;
     unsigned int counter_uncached_fixedGridRhoFastjetAll_;
+    float Rho_fixedGridRhoFastjetAll_;
+    TBranch *b_Rho_fixedGridRhoFastjetAll_;
+    bool loaded_Rho_fixedGridRhoFastjetAll_;
+    unsigned int counter_cached_Rho_fixedGridRhoFastjetAll_;
+    unsigned int counter_uncached_Rho_fixedGridRhoFastjetAll_;
     float fixedGridRhoFastjetCentral_;
     TBranch *b_fixedGridRhoFastjetCentral_;
     bool loaded_fixedGridRhoFastjetCentral_;
@@ -17703,6 +17714,7 @@ public:
     const float &PV_z();
     const vector<int> &Photon_charge();
     const vector<float> &Photon_chargedHadronIso();
+    const vector<float> &Photon_pfChargedIsoPFPV();
     const vector<UChar_t> &Photon_cleanmask();
     const vector<int> &Photon_cutBased();
     const vector<int> &Photon_cutBased_Fall17V1Bitmap();
@@ -17919,6 +17931,7 @@ public:
     const ULong64_t &event();
     const float &fixedGridRhoAll();
     const float &fixedGridRhoFastjetAll();
+    const float &Rho_fixedGridRhoFastjetAll();
     const float &fixedGridRhoFastjetCentral();
     const float &fixedGridRhoFastjetCentralCalo();
     const float &fixedGridRhoFastjetCentralChargedPileUp();
@@ -20588,6 +20601,7 @@ namespace tas {
     const float &PV_z(); // main primary vertex position z coordinate
     const vector<int> &Photon_charge(); // electric charge
     const vector<float> &Photon_chargedHadronIso(); // charged hadron isolation with dxy,dz match to pv
+    const vector<float> &ePhoton_pfChargedIsoPFPV(); // PF absolute isolation dR=0.3, charged component (PF PV only)
     const vector<UChar_t> &Photon_cleanmask(); // simple cleaning mask with priority to leptons
     const vector<int> &Photon_cutBased(); // cut-based ID bitmap, Fall17V2, (0:fail, 1:loose, 2:medium, 3:tight)
     const vector<int> &Photon_cutBased_Fall17V1Bitmap(); // cut-based ID bitmap, Fall17V1, 2^(0:loose, 1:medium, 2:tight).
@@ -20804,6 +20818,7 @@ namespace tas {
     const ULong64_t &event(); // event/l
     const float &fixedGridRhoAll(); // test
     const float &fixedGridRhoFastjetAll(); // rho from all PF Candidates, used e.g. for JECs
+    const float &Rho_fixedGridRhoFastjetAll(); // rho from all PF Candidates, used e.g. for JECs
     const float &fixedGridRhoFastjetCentral(); // rho from all PF Candidates for central region, used e.g. for JECs
     const float &fixedGridRhoFastjetCentralCalo(); // rho from calo towers with |eta| < 2.5, used e.g. egamma PFCluster isolation
     const float &fixedGridRhoFastjetCentralChargedPileUp(); // rho from charged PF Candidates for central region, used e.g. for JECs
