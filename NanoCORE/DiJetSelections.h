@@ -57,10 +57,15 @@ struct DiJet{
     float dR;
     DiJet(Jet p1, Jet p2)
     {
-        leadJet = p1;
-        subleadJet = p2;
-        TLorentzVector leadJetp4 = p1.p4();
-        TLorentzVector subleadJetp4 = p2.p4();
+        if (p1.pt() > p2.pt()) {
+            leadJet = p1;
+            subleadJet = p2;
+        } else {
+            leadJet = p2;
+            subleadJet = p1;
+        }
+        TLorentzVector leadJetp4 = leadJet.p4();
+        TLorentzVector subleadJetp4 = subleadJet.p4();
         p4 = leadJetp4 + subleadJetp4;
         dR = leadJetp4.DeltaR(subleadJetp4);
     }

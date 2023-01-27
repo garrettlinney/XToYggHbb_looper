@@ -26,9 +26,8 @@ struct Photon {
         trkSumPtHollowConeDR03_ = nt.Photon_trkSumPtHollowConeDR03()[idx_];
         //idlevel_ = whichPhotonLevel(id_, idx_);
         fixedGridRhoFastjetAll_ = nt.fixedGridRhoFastjetAll();
-
-        genPartFlav_ = nt.Photon_genPartFlav()[idx_];
     }
+    void setGenPartFlav(unsigned int idx) { genPartFlav_ = nt.Photon_genPartFlav()[idx_]; }
     //void set_idlevel(int idlevel) { idlevel_ = idlevel; }
     int id() { return id_; }
     unsigned int idx() { return idx_; }
@@ -50,8 +49,8 @@ struct Photon {
     float perEvtRho() { return fixedGridRhoFastjetAll_; }
     float isScEtaEE() { return isScEtaEE_; }
     float isScEtaEB() { return isScEtaEB_; }
-    float trkSumPtHollowConeDR03() {return trkSumPtHollowConeDR03_; }
-    unsigned char genPartFlav() {return genPartFlav_; }
+    float trkSumPtHollowConeDR03() { return trkSumPtHollowConeDR03_; }
+    unsigned char genPartFlav() { return genPartFlav_; }
 
   private:
     int id_;

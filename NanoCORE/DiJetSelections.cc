@@ -28,11 +28,9 @@ Jets getJets(Photons photons) {
 
 DiJets DiJetPreselection(Jets &jets) {
     DiJets dijets;   
-    if (jets.size()>1){
+    if (jets.size() > 1) {
         DiJet dijet = DiJet(jets[0], jets[1]);
-//        if (dijet.p4.M() > 50) 
         dijets.push_back(dijet);
     }
-    // thre could be either 1 or 0 dijet in the output
     return dijets;    
 }
