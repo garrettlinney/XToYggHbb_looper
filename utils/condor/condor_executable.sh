@@ -1,17 +1,13 @@
 #!/bin/bash
 
-SCRAMARCH=slc7_amd64_gcc700
-CMSSWVERSION=CMSSW_10_2_13
-
 DIR=$1
 YEAR=$2 # all, 2018, 2017, 2016APV, 2016nonAPV
 DATA=$3 # 0, 1
 BKG=$4 # 0, 1
 SIG=$5 # 0, 1
-BFF=$6 # 0, 1
-SAM=$7 # all, data, ttbar, DYbb, ZToMuMu, VV, tW, tZq, TTX, Y3, DY3, DYp3, B3mL2, TTv7, DYv7, BFF
-while ! [ -z "$8" ]; do
-    FLAGS="$FLAGS $8"; shift;
+SAM=$6
+while ! [ -z "$7" ]; do
+    FLAGS="$FLAGS $7"; shift;
 done
 
 function stageout {
@@ -46,25 +42,22 @@ function stageout {
     fi
 }
 
+# Setup for ROOT
+SCRAMARCH=slc7_amd64_gcc700
+CMSSWVERSION=CMSSW_10_2_13
 source /cvmfs/cms.cern.ch/cmsset_default.sh
+cd /cvmfs/cms.cern.ch/$SCRAMARCH/cms/cmssw/$CMSSWVERSION/src ; eval `scramv1 runtime -sh` ; cd -
 
 tar xvf package.tar.gz
-cd ZPrimeSnT/
-export SCRAM_ARCH=${SCRAMARCH} && scramv1 project CMSSW ${CMSSWVERSION}
-cd ${CMSSWVERSION}/src
-cmsenv
-mv ../../PhysicsTools/ .
-scram b -j
-
-cd ../.. # Get back to ZPrimeSnT/
+cd XToYggHbb_looper/
 cd cpp/
-bash runOutput_Zp.sh $DIR $YEAR $DATA $BKG $SIG $BFF $SAM $FLAGS
+bash runOutput_XToYggHbb.sh $DIR $YEAR $DATA $BKG $SIG $SAM $FLAGS
 
 for FILE in $(ls $DIR);
 do
   echo "File $FILE to be copied..."
   echo ""
   COPY_SRC="file://`pwd`/$DIR/$FILE"
-  COPY_DEST="davs://redirector.t2.ucsd.edu:1095/store/user/$USER/ZPrimeSnTOutput/$DIR/$FILE"
+  COPY_DEST="davs://redirector.t2.ucsd.edu:1095/store/user/$USER/XToYggHbbOutput/$DIR/$FILE"
   stageout $COPY_SRC $COPY_DEST
 done;
