@@ -23,11 +23,12 @@ double getSumOfGenEventSumw(TChain *chaux, bool isMC)
 int main(int argc, char **argv) {
   //Arguments
   const char* outdir = ( argc > 1 ? argv[1]               : "temp_data" );
-  TString yearArg    = ( argc > 1 ? argv[2]               : "all" );
-  int run_data       = ( argc > 1 ? ((int)*argv[3] - 48 ) : 1 );  // '0' has the ASCII code of 48
-  int run_MCbkg      = ( argc > 1 ? ((int)*argv[4] - 48 ) : 1 );  // '0' has the ASCII code of 48
-  int run_signal     = ( argc > 1 ? ((int)*argv[5] - 48 ) : 1 );  // '0' has the ASCII code of 48
-  TString sampleArg  = ( argc > 1 ? argv[6]               : "all" );
+  TString yearArg    = ( argc > 2 ? argv[2]               : "all" );
+  int run_data       = ( argc > 3 ? ((int)*argv[3] - 48 ) : 1 );  // '0' has the ASCII code of 48
+  int run_MCbkg      = ( argc > 4 ? ((int)*argv[4] - 48 ) : 1 );  // '0' has the ASCII code of 48
+  int run_signal     = ( argc > 5 ? ((int)*argv[5] - 48 ) : 1 );  // '0' has the ASCII code of 48
+  TString sampleArg  = ( argc > 6 ? argv[6]               : "all" );
+  int onlyCreateJSON = ( argc > 7 ? ((int)*argv[7] - 48 ) : 0 );  // '0' has the ASCII code of 48
   
   int PUWeight=1;
   int bTagSF=1;
@@ -283,57 +284,59 @@ int main(int argc, char **argv) {
   }
 
 
-  // Create summary json
-  ofstream file;
-  file.open("summary.json");
-  file << "{" << endl;
-  file << "\t\"sample_id_map\": {" << endl;
-  file << "\t\t\""<<samples[0]<<"\": "<<sample_procids[samples[0]];
-  for ( int isample=1; isample<samples.size(); isample++ ) {
-    file << "," <<endl;
-    TString sample = samples[isample];
-    file << "\t\t\""<<sample<<"\": "<<sample_procids[sample];
-  }
-  file << endl;
-  file << "\t}" << endl;
-  file << "}" << endl;
-  file.close();
-
-
-  // Main loops
-  TString baseDir = "/ceph/cms/store/group/Hgg/XToYHToggbb/skimmedNanoAOD";
-  TString version = "v0";
-
-  for ( int iyear=0; iyear<years.size(); iyear++ ) {
-    TString year = years[iyear];
-    std::cout<<"\n";
-    std::cout<<"Year: "<<year<<"\n";
-    std::cout<<"------------\n";
-
-    for ( int isample=0; isample<samples.size(); isample++ ) {
+  if (onlyCreateJSON) {
+    // Create summary json
+    ofstream file;
+    file.open("summary.json");
+    file << "{" << endl;
+    file << "\t\"sample_id_map\": {" << endl;
+    file << "\t\t\""<<samples[0]<<"\": "<<sample_procids[samples[0]];
+    for ( int isample=1; isample<samples.size(); isample++ ) {
+      file << "," <<endl;
       TString sample = samples[isample];
-      TString dataformat = "MINIAODSIM";
-      bool isMC = 1;
+      file << "\t\t\""<<sample<<"\": "<<sample_procids[sample];
+    }
+    file << endl;
+    file << "\t}" << endl;
+    file << "}" << endl;
+    file.close();
+  }
+  else {
+    // Main loops
+    TString baseDir = "/ceph/cms/store/group/Hgg/XToYHToggbb/skimmedNanoAOD";
+    TString version = "v0";
 
-      if (sample == "data") {
-        sample_names[sample] = ( year=="2018" ? "EGamma" : "DoubleEG" );
-        dataformat = "MINIAOD";
-        isMC = 0;
+    for ( int iyear=0; iyear<years.size(); iyear++ ) {
+      TString year = years[iyear];
+      std::cout<<"\n";
+      std::cout<<"Year: "<<year<<"\n";
+      std::cout<<"------------\n";
+
+      for ( int isample=0; isample<samples.size(); isample++ ) {
+        TString sample = samples[isample];
+        TString dataformat = "MINIAODSIM";
+        bool isMC = 1;
+
+        if (sample == "data") {
+          sample_names[sample] = ( year=="2018" ? "EGamma" : "DoubleEG" );
+          dataformat = "MINIAOD";
+          isMC = 0;
+        }
+        TString sample_name = sample_names[sample];
+        int sample_procid = sample_procids[sample];
+
+        TChain *ch_temp = new TChain("Events");
+        TChain *chaux_temp = new TChain("Runs");
+        for ( unsigned int d=0; d<sample_prod[sample][year].size(); d++ ) {
+          TString trees = baseDir+"/"+year+"/"+sample_name+"_"+sample_prod[sample][year][d]+"_"+dataformat+"_"+version+"/"+"tree_*.root";
+
+          ch_temp->Add(trees);
+          chaux_temp->Add(trees);
+        }
+
+        std::cout<<"Sample: "<<sample<<" --> Process ID: "<<sample_procid<<"\n\n";
+        ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp, isMC),year,sample,sample_procid,outdir,PUWeight,bTagSF,JECUnc);
       }
-      TString sample_name = sample_names[sample];
-      int sample_procid = sample_procids[sample];
-
-      TChain *ch_temp = new TChain("Events");
-      TChain *chaux_temp = new TChain("Runs");
-      for ( unsigned int d=0; d<sample_prod[sample][year].size(); d++ ) {
-        TString trees = baseDir+"/"+year+"/"+sample_name+"_"+sample_prod[sample][year][d]+"_"+dataformat+"_"+version+"/"+"tree_*.root";
-
-        ch_temp->Add(trees);
-        chaux_temp->Add(trees);
-      }
-
-      std::cout<<"Sample: "<<sample<<" --> Process ID: "<<sample_procid<<"\n\n";
-      ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp, isMC),year,sample,sample_procid,outdir,PUWeight,bTagSF,JECUnc);
     }
   }
 

@@ -19,6 +19,7 @@ export STARTDIR=$PWD
 
 mkdir -p utils/condor/plotting_logs
 mkdir -p /ceph/cms/store/user/$USER/XToYggHbbOutput/$OUTPUTDIR
+cp cpp/summary.json /ceph/cms/store/user/$USER/XToYggHbbOutput/$OUTPUTDIR/.
 
 sh utils/condor/create_package.sh
 
