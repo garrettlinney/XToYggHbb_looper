@@ -1,148 +1,124 @@
-### Environment & setup
+# X -> YH -> γγbb instructions
+
+## Environment & setup
+
 ```bash
-git clone git@github.com:cmstas/ZPrimeSnT.git
-pushd ZPrimeSnT/
+git clone git@github.com:cmstas/XToYggHbb_looper.git
+cd XToYggHbb_looper/
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-export SCRAM_ARCH=slc7_amd64_gcc700
-cmsrel CMSSW_10_2_13
-pushd CMSSW_10_2_13/src
-cmsenv
-git clone https://github.com/cms-nanoAOD/nanoAOD-tools.git PhysicsTools/NanoAODTools
-git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
-pushd HiggsAnalysis/CombinedLimit
-git fetch origin
-git checkout v8.2.0
-scramv1 b clean; scramv1 b # always make a clean build
-popd
-scram b
-popd
-pushd NanoCORE
-make -j12
-popd
+cd /cvmfs/cms.cern.ch/slc7_amd64_gcc700/cms/cmssw/CMSSW_10_2_13/src ; eval `scramv1 runtime -sh` ; cd -
+cd NanoCORE
+make -j8
+cd -
 ```
 
-## Analysis code:
+**N.B.:** The compilation of the NanoCORE package needs to be repeated each time a file inside the package is modified.
 
-For more dedtails, refer to `cpp/README.md`.
+## Preselection code
 
-### Example instructions
+Edit `cpp/ScanChain_Hgg.C` and/or `cpp/main.cc` appropriately. The former contains the looper that defines the analysis preselection, while the latter contains the logic that includes the samples to be run. Before starting working with the code, the following command needs to be run:
 
-Edit `cpp/doAll_Zp.C` and/or `cpp/ScanChain_Zp.C` with an appropriate file (or hopefully the default one still exists).
+```bash
+source setup.sh
+```
+
+This makes ROOT available and initiates the grid certificate (hence the prompt for a code).
+
+### Compilation
+
+Any time any of the above files is edited, the code needs to be compiled. This is achieved by:
+
+```bash
+cp cpp/
+make clean
+make -j4
+cd -
+```
+
+This creates the cpp/main.exe executable that runs the preselection code.
+
+### Running
 
 **To run locally:**
 
-```bash
-sh cpp/runOutput_Zp.sh DIRECTORY/FOR/OUTPUT/FILES YEAR RUNDATA RUNBKG RUNSIGNAL RUNBFF SAMPLE ADDITIONALBOOLEANFLAGS
-```
-
-For example, to run all data, bkg and signal but not the BFF samples, for all years and with all additional flags to their default values, the command to save the files in a folder called "temp_data" would be:
+After the code is compiled, it can be run locally with the following command:
 
 ```bash
-sh cpp/runOutput_Zp.sh temp_data all 1 1 1 0 all
+cd cpp
+./main.exe OUTPUTDIRNAME YEAR RUNDATA RUNBKG RUNSIGNAL SAMPLE ADDITIONALBOOLEANFLAGS
+cd -
 ```
 
-One should check `cpp/doAll_Zp.C` for details on the (additional) arguments and their meaning.
+For example, to run all data, bkg and signal, for all years and with all additional flags to their default values, the command to save the files in a folder called "temp_data" would be:
+
+```bash
+cd cpp
+./main.exe temp_data all 1 1 1 all
+cd -
+```
+
+One should check `cpp/main.cc` for details on the (additional) arguments and their meaning.
 
 This loops and creates a number of output files of the form `output_"process"_"year".root` containing histograms. 
-Optionally, the file also contains a `RooDataSet` to be used as input for fitting (see below).
 
 **To run on condor:**
 
+To run on condor, the grid certificate needs to be active and export to the correct environmental variable. This is all done by the `setup.sh` script. Then, the jobs can be sent to condor by running the following command:
+
 ```bash
-voms-proxy-init -voms cms
-export X509_USER_PROXY=/ABSOLUTE/PATH/TO/PROXY/LOCATION
-sh utils/condor/runOutput_Zp_onCondor.sh FOLDER/FOR/OUTPUT/FILES
+sh utils/condor/runOutput_XToYggHbb_onCondor.sh FOLDER/FOR/OUTPUT/FILES
 ```
 
-This script will package the current state of the repository and send it to condor jobs running the `cpp/runOutput_Zp.sh` with the arguments included in the different lines of `utils/condor/runOutput_Zp_onCondor.sub` (please edit this file to control what condor jobs you send). More details on this are included in the description of [PR#57](https://github.com/cmstas/ZPrimeSnT/pull/57).
+This script will package the current state of the repository and send it to condor jobs running the `cpp/runOutput_XToYggHbb.sh` script with the arguments included in the different lines of `utils/condor/runOutput_XToYggHbb_onCondor.sub`.
 
-The output of your jobs will be found under `/ceph/cms/store/user/$USER/ZPrimeSnTOutput/FOLDER/FOR/OUTPUT/FILES` and the plotting logs under `utils/condor/plotting_logs`.
+*Please edit the latter file to control what condor jobs you send.*
+
+The output of your jobs will be found under `/ceph/cms/store/user/$USER/XToYggHbbOutput/FOLDER/FOR/OUTPUT/FILES` and the plotting logs under `utils/condor/plotting_logs`.
 
 **To produce plots:**
-```bash
-python python/stack_plots.py
-```
+
+:construction: **WIP** :construction:
 
 **To produce cutflow table:**
+
+:construction: **WIP** :construction:
+
+### Converting .root files to .parquet files
+
+The output of the preselection code is a list of .root files. These output files are meant to be the input of the analysis pNN, which expects a single .parquet file for the merged output. This can be done by running the `root_to_parquet.sh` script. However, running this script requires setting up a virtual environment with the proper python package to read/write parquet files.
+
+**Setup**
 ```bash
-python python/make_cutflow_table.py
+# download conda installer
+curl -O -L https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh -b 
+
+# add conda to the end of ~/.bashrc, so relogin after executing this line
+~/miniconda3/bin/conda init
+
+# stop conda from activating the base environment on login
+conda config --set auto_activate_base false
+conda config --add channels conda-forge
+
+# create environment
+conda create --name fastparquet fastparquet
 ```
 
+**Running**
 
-## Fitting code:
+Once the above commands are setup correctly once, the `root_to_parquet.sh` script can be run by providing the *absolute path* to a single .root file to be converted or to a whole directory for all the .root files in it to be converted to a single, merged .parquet files. For example, in the former case:
 
 ```bash
-pushd CMSSW_10_2_13/src/
-cmsenv
-popd
-pushd cpp/
-root -b -q -l -n doAll_fitDimuonMass.C
-popd
+sh utils/root_to_parquet.sh /home/users/$USER/XToYggHbb_looper/cpp/temp_data/output_DY_2018.root
 ```
 
-This creates a ROOT file with a workspace containing all relevant PDFs, to be used as input to `combine`.
-Optionally, fits are drawn and fit results are saved in a dedicated ROOT file.
-In order to plot fit results:
+or, the latter case:
+
 ```bash
-python python/plot_fitResults.py
+sh utils/root_to_parquet.sh /home/users/$USER/XToYggHbb_looper/cpp/temp_data/
 ```
 
+## Development
 
-## Pull requests:
+The `main` is protected from pushing commits directly to it. For new developments, a new branch needs to be created and then a PR needs to be made to the `main` branch.
 
-When opening a PR against the `main` branch, please make sure your code is up-to-date:
-```bash
-pushd ZPrimeSnt/
-git checkout main
-git pull
-git checkout -b <branchname>
-<Do your developmets and commit>
-git push origin <branchname>
-```
-Then, open a PR against `main` branch and request review.
-
-
-## NanoCORE synchronization:
-
-The `NanoCORE` subdirectory shall be synchronized often with `git@github.com:cmstas/NanoTools.git`.
-For the first time only:
-```bash
-git clone git@github.com:cmstas/NanoTools.git
-```
-To pull updates from `NanoTools`:
-```bash
-pushd NanoTools
-git pull
-cp NanoCORE/* ../ZPrimeSnT/NanoCORE/
-popd
-pushd ZPrimeSnT/
-git checkout -b <branchname>
-git commit -a -m "<description>"
-git push origin <branchname>
-```
-Then, open pull request to `ZPrimeSnT` remote repository.
-
-To push updates to `NanoTools`:
-```bash
-pushd NanoTools
-git pull
-git checkout -b <branchname>
-cp ../ZPrimeSnT/NanoCORE/* NanoCORE/*
-git commit -a -m "<description>"
-git push origin <branchname>
-```
-Then, open pull request to `NanoTools` remote repository.
-
-
-## Style:
-
-We use `clang-format` based on LLVM style to format our code. To format the `ElectronSelections.cc` file in-place, do
-```bash
-clang-format -style="{BasedOnStyle: llvm, IndentWidth: 4, ColumnLimit: 120, AllowShortIfStatementsOnASingleLine: true, AllowShortBlocksOnASingleLine: true}" -i ElectronSelections.cc
-```
-
-If you use ```vim```, add this to the ```~/.vimrc``` (assumes you are working on UAF):
-```
-autocmd BufNewFile,BufRead *.cc,*.h,*.C,*.cxx set formatprg=clang-format\ -style=\"{BasedOnStyle:\ llvm,\ IndentWidth:\ 4,\ ColumnLimit:\ 100,\ AllowShortIfStatementsOnASingleLine:\ true,\ AllowShortBlocksOnASingleLine:\ false,\ BreakBeforeBraces:\ Allman}\"
-```
-To format your code in ```vim```, press ```ggvGgq```.

@@ -4,21 +4,19 @@ In this folder, there is a "standard" C++ looper that is hooked up to NanoCORE a
 
 ### Example instructions
 
-Edit `doAll_Zp.C` with an appropriate file (or hopefully the default one still exists).
+Edit `doAll_btagEff.C` and run it:
 
 ```bash
 root -b -q -l -n doAll_Zp.C
 ```
 
-This loops and creates a number of output files of the form `output_"process"_"year".root`, which contains a handful of histograms. 
-
 ### Making a standalone executable
 
-Sometimes it is handy to make a standalone executable from an unnamed macro (e.g., `root -b -q -l -n doAll_jec.C` -> `./main.exe`).
+Sometimes it is handy to make a standalone executable from an unnamed macro (e.g., `root -b -q -l -n doAll_btagEff.C` -> `./main.exe`).
 To do this, first make a macro that is not unnamed (valid C++) usually by wrapping the unnamed function with a few lines to get
 ```cpp
 #include "TROOT.h"
-#include "ScanChain_jec.C"
+#include "ScanChain_btagEff.C"
 int main() {
     TChain *ch = new TChain("Events");
     ch->Add("root://cmsxrootd.fnal.gov//store/mc/RunIIFall17NanoAODv6/TTJets_SingleLeptFromTbar_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano25Oct2019_102X_mc2017_realistic_v7-v1/260000/E5F07826-B7B2-0C48-850C-63F68B5C9B99.root");
