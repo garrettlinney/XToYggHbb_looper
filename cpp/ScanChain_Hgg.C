@@ -469,7 +469,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       dijet_phi = selectedDiJet.p4.Phi();
       dijet_mass = selectedDiJet.p4.M();
       dijet_dR = selectedDiJet.dR;
-      pfmet_pt = nt.MET_T1_pt();
+      pfmet_pt = isMC ? nt.MET_T1_pt() : nt.MET_pt();
       puppimet_pt = nt.PuppiMET_pt();
 
       weight_central = weight*factor;
