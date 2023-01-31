@@ -67,10 +67,10 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   float lumi = 1.0;
   float xsec = 1.0;
   bool isMC = true;
-
-  if ( process.Contains("_Run201") ) {
+  if ( process == "data" ) {
     isMC = false;
   }
+   
   // Processes and cross-sections (in fb):
   // set this in a different file
   else if ( process == "ttbar" )                              { xsec = 87310.0;                 }
