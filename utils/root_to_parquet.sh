@@ -3,9 +3,9 @@
 cd /cvmfs/cms.cern.ch/slc7_amd64_gcc820/cms/cmssw/CMSSW_10_6_30/ ; cmsenv ; cd - >/dev/null
 source ~/miniconda3/etc/profile.d/conda.sh
 
-OUTPUTNAME=$(python python/root_to_pickle.py $1)
+python python/root_to_pickle.py $1
 conda activate fastparquet
-python python/pickle_to_parquet.py $OUTPUTNAME
+python python/pickle_to_parquet.py $1
 conda deactivate
 
-rm $OUTPUTNAME
+rm $1/*.pkl
