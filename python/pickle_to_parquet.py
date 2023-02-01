@@ -6,7 +6,7 @@ output_name = sys.argv[1].replace(".pkl",".parquet")
 file_names = [ sys.argv[1] ]
 if sys.argv[1].endswith("/"):
   file_names = glob.glob(sys.argv[1]+"*.pkl")
-  output_name = sys.argv[1]+"merged_output.parquet"
+  output_name = sys.argv[1]+"merged_nominal.parquet"
 
 newFile = True
 df = pd.DataFrame()
