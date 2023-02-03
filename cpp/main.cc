@@ -58,8 +58,8 @@ int main(int argc, char **argv) {
 
   // Sample list: Data
   if (run_data) {
-    if ( sampleArg=="data" || sampleArg=="all" ) {
-      TString sampleName = "data";
+    if ( sampleArg=="Data" || sampleArg=="all" ) {
+      TString sampleName = "Data";
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 0});
       sample_names.insert({sampleName, sampleName});
@@ -294,7 +294,10 @@ int main(int argc, char **argv) {
     for ( int isample=1; isample<samples.size(); isample++ ) {
       file << "," <<endl;
       TString sample = samples[isample];
-      file << "\t\t\""<<sample<<"\": "<<sample_procids[sample];
+      if ( sample.Contains("NMSSM_XToYHTo2G2B") ) {
+        sample.ReplaceAll("-","_");
+      }
+      file << "\t\t\""<<sample<<"\": "<<sample_procids[samples[isample]];
     }
     file << endl;
     file << "\t}" << endl;
@@ -317,7 +320,7 @@ int main(int argc, char **argv) {
         TString dataformat = "MINIAODSIM";
         bool isMC = 1;
 
-        if (sample == "data") {
+        if (sample == "Data") {
           sample_names[sample] = ( year=="2018" ? "EGamma" : "DoubleEG" );
           dataformat = "MINIAOD";
           isMC = 0;

@@ -67,53 +67,42 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   float lumi = 1.0;
   float xsec = 1.0;
   bool isMC = true;
-  if ( process == "data" ) {
+  if ( process == "Data" ) {
     isMC = false;
   }
    
   // Processes and cross-sections (in fb):
   // set this in a different file
-  else if ( process == "ttbar" )                              { xsec = 87310.0;                 }
-  else if ( process == "DY" )                                 { xsec = 5765400.0;               }
-  else if ( process == "WW" )                                 { xsec = 118700.0;                }
-  else if ( process == "WZ" )                                 { xsec = 47130.0;                 }
-  else if ( process == "ZZ" )                                 { xsec = 16523.0;                 }
-  else if ( process == "tW" )                                 { xsec = 19550;                   }
-  else if ( process == "tbarW" )                              { xsec = 19550;                   }
-  else if ( process == "tZq" )                                { xsec = 75.8;                    }
-  else if ( process == "TTW" )                                { xsec = 204.3;                   }
-  else if ( process == "TTZ" )                                { xsec = 252.9;                   }
-  else if ( process == "TTHToNonbb" )                         { xsec = 507.5*(1-0.575);         }
-  else if ( process == "TTHTobb" )                            { xsec = 507.5*0.575;             }
-  else if ( process == "TTGG" )                               { xsec = 0.01687 * 1000;          } 
-  else if ( process == "TTGJets" )                            { xsec = 4.078 * 1000;            } 
-  else if ( process == "TTJets" )                             { xsec = 831.76 * 1000;           }
-  else if ( process == "VBFH_M125" )                          { xsec = 0.00858514 *1000;        }
-  else if ( process == "VH_M125" )                            { xsec = 0.00512 *1000;           }
-  else if ( process == "ggHToDiPhoM125" )                     { xsec = 0.1118429*1000 ;         }
-  else if ( process == "ttH_M125" )                           { xsec = 0.5071 * 1000 * 0.00227; }
-  else if ( process == "GJets_HT-40To100" )                   { xsec = 23100*1000;              }
-  else if ( process == "GJets_HT-100To200" )                  { xsec = 8631.0*1000;             }
-  else if ( process == "GJets_HT-200To400" )                  { xsec = 2280.0*1000;             }
-  else if ( process == "GJets_HT-400To600" )                  { xsec = 273*1000;                }
-  else if ( process == "GJets_HT-600ToInf" )                  { xsec = 1*1000;                  }
-  else if ( process == "DiPhoton" )                           { xsec = 84.4*1000 ;              }
-  else if ( process == "HHbbgg" )                             { xsec = 0.03105*1000*0.00262230; }
-  else if ( process == "WG" )                                 { xsec = 191.4*1000 ;             }
-  else if ( process == "ZG" )                                 { xsec = 55.6*1000 ;              }
-  else if ( process == "data" )                               { xsec = 1 ;                      }
-  else if ( process.Contains("NMSSM_XToYHTo2G2B") )           { xsec = 1 ;                      }
-  // FIXME: Do wwe need separate process IDs for different mass points?
-  //else if ( process == "NMSSM_XToYHTo2G2B_MX_600_MY_100" )  { xsec = 1 ;                      }
-  //else if ( process == "NMSSM_XToYHTo2G2B_MX_600_MY_90" )   { xsec = 1 ;                      }
-  //else if ( process == "NMSSM_XToYHTo2G2B_MX_600_MY_95" )   { xsec = 1 ;                      }
-  //else if ( process == "NMSSM_XToYHTo2G2B_MX_650_MY_100" )  { xsec = 1 ;                      }
-  //else if ( process == "NMSSM_XToYHTo2G2B_MX_650_MY_90" )   { xsec = 1 ;                      }
-  //else if ( process == "NMSSM_XToYHTo2G2B_MX_650_MY_95" )   { xsec = 1 ;                      }
-  //else if ( process == "NMSSM_XToYHTo2G2B_MX_700_MY_100" )  { xsec = 1 ;                      }
-  //else if ( process == "NMSSM_XToYHTo2G2B_MX_700_MY_90" )   { xsec = 1 ;                      }
-  //else if ( process == "NMSSM_XToYHTo2G2B_MX_700_MY_95" )   { xsec = 1 ;                      }
-  //  111.8429 ; // fb - FIXME: What is this?
+  else if ( process == "ttbar" )                              { xsec = 87310.0;                         }
+  else if ( process == "DY" )                                 { xsec = 5765400.0;                       }
+  else if ( process == "WW" )                                 { xsec = 118700.0;                        }
+  else if ( process == "WZ" )                                 { xsec = 47130.0;                         }
+  else if ( process == "ZZ" )                                 { xsec = 16523.0;                         }
+  else if ( process == "tW" )                                 { xsec = 19550;                           }
+  else if ( process == "tbarW" )                              { xsec = 19550;                           }
+  else if ( process == "tZq" )                                { xsec = 75.8;                            }
+  else if ( process == "TTW" )                                { xsec = 204.3;                           }
+  else if ( process == "TTZ" )                                { xsec = 252.9;                           }
+  else if ( process == "TTHToNonbb" )                         { xsec = 507.5*(1-0.575);                 }
+  else if ( process == "TTHTobb" )                            { xsec = 507.5*0.575;                     }
+  else if ( process == "TTGG" )                               { xsec = 0.01687 * 1000;                  }
+  else if ( process == "TTGJets" )                            { xsec = 4.078 * 1000;                    }
+  else if ( process == "TTJets" )                             { xsec = 831.76 * 1000;                   }
+  else if ( process == "VBFH_M125" )                          { xsec = 0.00858514 *1000;                }
+  else if ( process == "VH_M125" )                            { xsec = 0.00512 *1000;                   }
+  else if ( process == "ggHToDiPhoM125" )                     { xsec = 0.1118429*1000 ;                 }
+  else if ( process == "ttH_M125" )                           { xsec = 0.5071 * 1000 * 0.00227;         }
+  else if ( process == "GJets_HT-40To100" )                   { xsec = 23100*1000;                      }
+  else if ( process == "GJets_HT-100To200" )                  { xsec = 8631.0*1000;                     }
+  else if ( process == "GJets_HT-200To400" )                  { xsec = 2280.0*1000;                     }
+  else if ( process == "GJets_HT-400To600" )                  { xsec = 273*1000;                        }
+  else if ( process == "GJets_HT-600ToInf" )                  { xsec = 1*1000;                          }
+  else if ( process == "DiPhoton" )                           { xsec = 84.4*1000 ;                      }
+  else if ( process == "HHbbgg" )                             { xsec = 0.03105*1000*0.00262230;         }
+  else if ( process == "WG" )                                 { xsec = 191.4*1000 ;                     }
+  else if ( process == "ZG" )                                 { xsec = 55.6*1000 ;                      }
+  else if ( process == "Data" )                               { xsec = 1 ;                              }
+  else if ( process.Contains("NMSSM_XToYHTo2G2B") )           { xsec = 1 ; process.ReplaceAll("-","_"); }
   else {
     cout<<"Non-valid process: Exiting!"<<endl;
     return 1;
