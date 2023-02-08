@@ -182,16 +182,16 @@ int main(int argc, char **argv) {
 
     if ( sampleArg=="VG" || sampleArg=="all" ) {
       vector<TString> V = { "W", "Z" };
-      map<TString,int> processId_V = { {"W",0},  {"Z",1} };
+      map<TString,int> processId_V = { {"W",0}, {"Z",1} };
       for ( unsigned int iV=0; iV<V.size(); iV++ ) {
-      TString sampleName = V[iV]+"G";
-      samples.push_back(sampleName);
-      sample_procids.insert({sampleName, 15+processId_V[V[iV]]});
-      sample_names.insert({sampleName, sampleName+"ToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
-      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
-                                        { "2017",       { "" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+        TString sampleName = V[iV]+"G";
+        samples.push_back(sampleName);
+        sample_procids.insert({sampleName, 15+processId_V[V[iV]]});
+        sample_names.insert({sampleName, sampleName+"ToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
+        sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
+                                          { "2017",       { "" } },
+                                          { "2016APV",    { "" } },
+                                          { "2016nonAPV", { "" } } } });
       }
     }
 
@@ -204,6 +204,34 @@ int main(int argc, char **argv) {
                                         { "2017",       { "" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
+    }
+
+    if ( sampleArg=="DiPhotonLow" || sampleArg=="all" ) {
+      TString sampleName = "DiPhotonLow";
+      samples.push_back(sampleName);
+      sample_procids.insert({sampleName, 18});
+      sample_names.insert({sampleName, "DiPhotonJetsBox_MGG-40to80_13TeV-sherpa"});
+      sample_prod.insert({sampleName, { { "2018",       { "privateUL18Leonardo" } },
+                                        { "2017",       { "" } },
+                                        { "2016APV",    { "" } },
+                                        { "2016nonAPV", { "" } } } });
+    }
+
+    if ( sampleArg=="VV" || sampleArg=="all" ) {
+      vector<TString> V = { "WW", "WZ", "ZZ" };
+      map<TString,int> processId_V = { {"WW",0}, {"WZ",1}, {"ZZ",2} };
+      for ( unsigned int iV=0; iV<V.size(); iV++ ) {
+        TString sampleName = V[iV];
+        samples.push_back(sampleName);
+        sample_procids.insert({sampleName, 19+processId_V[V[iV]]});
+        sample_names.insert({sampleName, sampleName+"_TuneCP5_13TeV-pythia8"});
+        sample_prod.insert({sampleName, { { "2018",       { ( V[iV] == "ZZ" ?
+                                                              "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" :
+                                                              "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" ) } },
+                                          { "2017",       { "" } },
+                                          { "2016APV",    { "" } },
+                                          { "2016nonAPV", { "" } } } });
+      }
     }
   }
 

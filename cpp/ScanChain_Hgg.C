@@ -98,9 +98,13 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   else if ( process == "GJets_HT-400To600" )                  { xsec = 273*1000;                        }
   else if ( process == "GJets_HT-600ToInf" )                  { xsec = 1*1000;                          }
   else if ( process == "DiPhoton" )                           { xsec = 84.4*1000 ;                      }
+  else if ( process == "DiPhotonLow" )                        { xsec = 303.2*1000 ;                     }
   else if ( process == "HHbbgg" )                             { xsec = 0.03105*1000*0.00262230;         }
   else if ( process == "WG" )                                 { xsec = 191.4*1000 ;                     }
   else if ( process == "ZG" )                                 { xsec = 55.6*1000 ;                      }
+  else if ( process == "WW" )                                 { xsec = 75.8*1000 ;                      }
+  else if ( process == "WZ" )                                 { xsec = 27.6*1000 ;                      }
+  else if ( process == "ZZ" )                                 { xsec = 12.14*1000 ;                     }
   else if ( process == "Data" )                               { xsec = 1 ;                              }
   else if ( process.Contains("NMSSM_XToYHTo2G2B") )           { xsec = 1 ; process.ReplaceAll("-","_"); }
   else {
