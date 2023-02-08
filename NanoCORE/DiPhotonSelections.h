@@ -25,7 +25,7 @@ struct Photon {
         isScEtaEE_ = nt.Photon_isScEtaEE()[idx_];
         //trkSumPtHollowConeDR03_ = nt.Photon_trkSumPtHollowConeDR03()[idx_]; // To be readded
         //idlevel_ = whichPhotonLevel(id_, idx_);
-        fixedGridRhoFastjetAll_ = nt.Rho_fixedGridRhoFastjetAll();
+        try { fixedGridRhoFastjetAll_ = nt.Rho_fixedGridRhoFastjetAll(); } catch(const std::exception& e) { fixedGridRhoFastjetAll_ = nt.fixedGridRhoFastjetAll(); }
     }
     void setGenPartFlav(unsigned int idx) { genPartFlav_ = nt.Photon_genPartFlav()[idx_]; }
     //void set_idlevel(int idlevel) { idlevel_ = idlevel; }
