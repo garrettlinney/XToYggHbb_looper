@@ -1,0 +1,41 @@
+executable      = $ENV(STARTDIR)/utils/condor/condor_executable.sh
+output          = $ENV(STARTDIR)/utils/condor/plotting_logs/job.$(ClusterId).$(ProcId).out
+error           = $ENV(STARTDIR)/utils/condor/plotting_logs/job.$(ClusterId).$(ProcId).err
+log             = $ENV(STARTDIR)/utils/condor/plotting_logs/job.$(ClusterId).$(ProcId).log
+
+getenv = True
++JobFlavour = "longlunch"
++DESIRED_Sites = "T2_US_UCSD"
+transfer_input_files = $ENV(STARTDIR)/package.tar.gz
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+x509userproxy=$ENV(X509_USER_PROXY)
+use_x509userproxy = True
+
+# Comment out any of the following configurations
+queue arguments from (
+# 2018
+$ENV(OUTPUTDIR) 2018 1 0 0 all
+$ENV(OUTPUTDIR) 2018 0 1 0 all
+$ENV(OUTPUTDIR) 2018 0 0 1 all_low
+$ENV(OUTPUTDIR) 2018 0 0 1 all_med
+$ENV(OUTPUTDIR) 2018 0 0 1 all_high
+## 2017
+#$ENV(OUTPUTDIR) 2017 1 0 0 all
+#$ENV(OUTPUTDIR) 2017 0 1 0 all
+#$ENV(OUTPUTDIR) 2017 0 0 1 all_low
+#$ENV(OUTPUTDIR) 2017 0 0 1 all_med
+#$ENV(OUTPUTDIR) 2017 0 0 1 all_high
+## 2016APV
+#$ENV(OUTPUTDIR) 2016APV 1 0 0 all
+#$ENV(OUTPUTDIR) 2016APV 0 1 0 all
+#$ENV(OUTPUTDIR) 2016APV 0 0 1 all_low
+#$ENV(OUTPUTDIR) 2016APV 0 0 1 all_med
+#$ENV(OUTPUTDIR) 2016APV 0 0 1 all_high
+## 2016nonAPV
+#$ENV(OUTPUTDIR) 2016nonAPV 1 0 0 all
+#$ENV(OUTPUTDIR) 2016nonAPV 0 1 0 all
+#$ENV(OUTPUTDIR) 2016nonAPV 0 0 1 all_low
+#$ENV(OUTPUTDIR) 2016nonAPV 0 0 1 all_med
+#$ENV(OUTPUTDIR) 2016nonAPV 0 0 1 all_high
+)

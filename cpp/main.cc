@@ -2,6 +2,7 @@
 #include "ScanChain_Hgg.C"
 #include <fstream>
 
+
 double getSumOfGenEventSumw(TChain *chaux, bool isMC)
 {
   double genEventSumw, sumOfGenEventSumw=0.0;
@@ -18,297 +19,357 @@ double getSumOfGenEventSumw(TChain *chaux, bool isMC)
   return sumOfGenEventSumw;
 }
 
-int main() {
-  // Map definitions
-  vector<TString> samples = { };
-  map<TString,TString> sample_names = { };
-  map<TString,map<TString,vector<TString>>> sample_prod = { };
 
-  // TODO is there a way to read formatted config (.json, .yaml. .config) using C++?
-/*
-  // 2018D data
-  samples.push_back("EGamma_Run2018D");
-  sample_names.insert({"EGamma_Run2018D","EGamma_Run2018D-UL2018"});
-  sample_prod.insert({"EGamma_Run2018D", { { "2018",       { "EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final/skimNano-TestUL_EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final_TESTS/220308_013616/0000/",
-                                                             "EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final/skimNano-TestUL_EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final_TESTS/220308_013616/0001/",
-                                                             "EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final/skimNano-TestUL_EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final_TESTS/220308_013616/0002/"
-                                                            } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-
-  samples.push_back("EGamma_Run2018D_more");
-  sample_names.insert({"EGamma_Run2018D_more","EGamma_Run2018D-UL2018"});
-  sample_prod.insert({"EGamma_Run2018D_more", { { "2018",       { "EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final/skimNano-TestUL_EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final_TESTS/220330_223617/0000/",
-                                                                  "EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final/skimNano-TestUL_EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final_TESTS/220330_223617/0001/",
-                                                                  "EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final/skimNano-TestUL_EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final_TESTS/220330_223617/0002/",
-                                                                  "EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final/skimNano-TestUL_EGamma_Run2018D-UL2018_MiniAODv2-v2_MINIAOD_final_TESTS/220403_112326/0000/"
-                                                                } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-                       
-  samples.push_back("EGamma_Run2018C");
-  sample_names.insert({"EGamma_Run2018C","EGamma_Run2018C-UL2018"});
-  sample_prod.insert({"EGamma_Run2018C", { { "2018",       { "EGamma_Run2018C-UL2018_MiniAODv2-v1_MINIAOD_final/skimNano-TestUL_EGamma_Run2018C-UL2018_MiniAODv2-v1_MINIAOD_final_TESTS/220308_013506/0000/",
-                                                             "EGamma_Run2018C-UL2018_MiniAODv2-v1_MINIAOD_final/skimNano-TestUL_EGamma_Run2018C-UL2018_MiniAODv2-v1_MINIAOD_final_TESTS/220330_223512/0000/",
-                                                             "EGamma_Run2018C-UL2018_MiniAODv2-v1_MINIAOD_final/skimNano-TestUL_EGamma_Run2018C-UL2018_MiniAODv2-v1_MINIAOD_final_TESTS/220403_112220/0000/"
-                                                            } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  samples.push_back("EGamma_Run2018B");
-  sample_names.insert({"EGamma_Run2018B","EGamma_Run2018B-UL2018"});
-  sample_prod.insert({"EGamma_Run2018B", { { "2018",       { "EGamma_Run2018B-UL2018_MiniAODv2-v1_MINIAOD_final/skimNano-TestUL_EGamma_Run2018B-UL2018_MiniAODv2-v1_MINIAOD_final_TESTS/220308_013359/0000/",
-                                                             "EGamma_Run2018B-UL2018_MiniAODv2-v1_MINIAOD_final/skimNano-TestUL_EGamma_Run2018B-UL2018_MiniAODv2-v1_MINIAOD_final_TESTS/220330_223407/0000/",
-                                                             "EGamma_Run2018B-UL2018_MiniAODv2-v1_MINIAOD_final/skimNano-TestUL_EGamma_Run2018B-UL2018_MiniAODv2-v1_MINIAOD_final_TESTS/220403_112116/0000/"
-                                                            } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-             
-  samples.push_back("EGamma_Run2018A");
-  sample_names.insert({"EGamma_Run2018A","EGamma_Run2018A-UL2018"});
-  sample_prod.insert({"EGamma_Run2018A", { { "2018",       { "EGamma_Run2018A-UL2018_MiniAODv2-v1_MINIAOD_final/skimNano-TestUL_EGamma_Run2018A-UL2018_MiniAODv2-v1_MINIAOD_final_TESTS/220308_013253/0000/",
-                                                             "EGamma_Run2018A-UL2018_MiniAODv2-v1_MINIAOD_final/skimNano-TestUL_EGamma_Run2018A-UL2018_MiniAODv2-v1_MINIAOD_final_TESTS/220308_013253/0001/",
-                                                             "EGamma_Run2018A-UL2018_MiniAODv2-v1_MINIAOD_final/skimNano-TestUL_EGamma_Run2018A-UL2018_MiniAODv2-v1_MINIAOD_final_TESTS/220330_223303/0000/",
-                                                             "EGamma_Run2018A-UL2018_MiniAODv2-v1_MINIAOD_final/skimNano-TestUL_EGamma_Run2018A-UL2018_MiniAODv2-v1_MINIAOD_final_TESTS/220330_223303/0001/",
-                                                             "EGamma_Run2018A-UL2018_MiniAODv2-v1_MINIAOD_final/skimNano-TestUL_EGamma_Run2018A-UL2018_MiniAODv2-v1_MINIAOD_final_TESTS/220403_112010/0000/"
-                                                            } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  // diPhoton 
-  samples.push_back("diPhoton");
-  sample_names.insert({"diPhoton","DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa"});
-  sample_prod.insert({"diPhoton", { { "2018",       { "DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa_RunIISummer19UL18MiniAODv2/skimNano-TestUL_DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa_RunIISummer19UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1_MINIAODSIM_final_TESTS/220225_204254/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  // TTGG
-  samples.push_back("TTGG");
-  sample_names.insert({"TTGG","TTGG_0Jets_TuneCP5_13TeV-amcatnlo-madspin-pythia8"});
-  sample_prod.insert({"TTGG", { { "2018",       { "TTGG_0Jets_TuneCP5_13TeV-amcatnlo-madspin-pythia8_RunIISummer19UL18MiniAODv2/skimNano-TestUL_TTGG_0Jets_TuneCP5_13TeV-amcatnlo-madspin-pythia8_RunIISummer19UL18MiniAODv2_TESTS/220225_222646/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  // TTGJets
-  samples.push_back("TTGJets");
-  sample_names.insert({"TTGJets","TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
-  sample_prod.insert({"TTGJets", { { "2018",       { "TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_RunIISummer20UL18MiniAODv2/skimNano-TestUL_TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_RunIISummer20UL18MiniAODv2_TESTS/220225_223107/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  // TTJets                               
-  samples.push_back("TTJets");
-  sample_names.insert({"TTJets","TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
-  sample_prod.insert({"TTJets", { { "2018",       { "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8_RunIISummer19UL18MiniAODv2/skimNano-TestUL_TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8_RunIISummer19UL18MiniAODv2_TESTS/220225_223214/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  // VH_M125
-  samples.push_back("VH_M125");
-  sample_names.insert({"VH_M125","VHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
-  sample_prod.insert({"VH_M125", { { "2018",       { "VHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_RunIISummer20UL18MiniAODv2/skimNano-TestUL_VHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_RunIISummer20UL18MiniAODv2_TESTS/220225_224148/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });  
-
-  // VBFH_M125
-  samples.push_back("VBFH_M125");
-  sample_names.insert({"VBFH_M125","VBFHToGG_M125_TuneCP5_13TeV-amcatnlo-pythia8"});
-  sample_prod.insert({"VBFH_M125", { { "2018",       { "VBFHToGG_M125_TuneCP5_13TeV-amcatnlo-pythia8_storeWeights_RunIISummer19UL18MiniAODv2/skimNano-TestUL_VBFHToGG_M125_TuneCP5_13TeV-amcatnlo-pythia8_storeWeights_RunIISummer19UL18MiniAODv2_TESTS/220225_223810/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  // ttH_M125
-  samples.push_back("ttH_M125");
-  sample_names.insert({"ttH_M125","ttHJetToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
-  sample_prod.insert({"ttH_M125", { { "2018",       { "ttHJetToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_RunIISummer20UL18MiniAODv2/skimNano-TestUL_ttHJetToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_RunIISummer20UL18MiniAODv2_TESTS/220225_231014/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  // ggH 
-  samples.push_back("ggHToDiPhoM125");
-  sample_names.insert({"ggHToDiPhoM125","GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
-  sample_prod.insert({"ggHToDiPhoM125", { { "2018",       { "GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8_storeWeights_RunIISummer19UL18MiniAODv2/skimNano-TestUL_GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8_storeWeights_RunIISummer19UL18MiniAODv2_TESTS/220225_213121/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  // GJets_HT-40To100
-  samples.push_back("GJets_HT-40To100");
-  sample_names.insert({"GJets_HT-40To100","GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8"});
-  sample_prod.insert({"GJets_HT-40To100", { { "2018",       { "GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8_RunIISummer19UL18MiniAODv2/skimNano-TestUL_GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8_RunIISummer19UL18MiniAODv2_TESTS/220225_211817/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-              
-  // GJets_HT-100To200
-  samples.push_back("GJets_HT-100To200");
-  sample_names.insert({"GJets_HT-100To200","GJets_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8"});
-  sample_prod.insert({"GJets_HT-100To200", { { "2018",       { "GJets_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8_RunIISummer19UL18MiniAODv2/skimNano-TestUL_GJets_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8_RunIISummer19UL18MiniAODv2_TESTS/220225_210621/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  // GJets_HT-200To400
-  samples.push_back("GJets_HT-200To400");
-  sample_names.insert({"GJets_HT-200To400","GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8"});
-  sample_prod.insert({"GJets_HT-200To400", { { "2018",       { "GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8_RunIISummer19UL18MiniAODv2/skimNano-TestUL_GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8_RunIISummer19UL18MiniAODv2_TESTS/220225_211040/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  // GJets_HT-400To600
-  samples.push_back("GJets_HT-400To600");
-  sample_names.insert({"GJets_HT-400To600","GJets_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8"});
-  sample_prod.insert({"GJets_HT-400To600", { { "2018",       { "GJets_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8_RunIISummer19UL18MiniAODv2/skimNano-TestUL_GJets_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8_RunIISummer19UL18MiniAODv2_TESTS/220225_211501/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  // GJets_HT-600ToInf
-  samples.push_back("GJets_HT-600ToInf");
-  sample_names.insert({"GJets_HT-600ToInf","GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8"});
-  sample_prod.insert({"GJets_HT-600ToInf", { { "2018",       { "GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8_RunIISummer19UL18MiniAODv2/skimNano-TestUL_GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8_RunIISummer19UL18MiniAODv2_TESTS/220225_212236/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-   // DY
-  samples.push_back("DY");
-  sample_names.insert({"DY","DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX"});
-  sample_prod.insert({"DY", { { "2018",       { "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX_2018/skimNano-TestUL_DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX_2018_TESTS/220712_183424/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-   // WGamma
-  samples.push_back("WGamma");
-  sample_names.insert({"WGamma","WGToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
-  sample_prod.insert({"WGamma", { { "2018",       { "WGToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8_RunIISummer20UL18MiniAODv2/skimNano-TestUL_WGToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8_RunIISummer20UL18MiniAODv2_TESTS/220225_224602/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-   // ZGamma
-  samples.push_back("ZGamma");
-  sample_names.insert({"ZGamma","ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
-  sample_prod.insert({"ZGamma", { { "2018",       { "ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8_RunIISummer20UL18MiniAODv2/skimNano-TestUL_ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8_RunIISummer20UL18MiniAODv2_TESTS/220225_230245/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-*/
-
-  // HHbbgg
-  samples.push_back("HHbbgg");
-  sample_names.insert({"HHbbgg","GluGluToHHTo2B2G_node_cHHH1_TuneCP5_13TeV-powheg-pythia8"});
-  sample_prod.insert({"HHbbgg", { { "2018",       { "GluGluToHHTo2B2G_node_cHHH1_TuneCP5_13TeV-powheg-pythia8_2018_v0/skimNano-TestUL_GluGluToHHTo2B2G_node_cHHH1_TuneCP5_13TeV-powheg-pythia8_2018_v0_TESTS/220729_201156/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-/*
-  // NMSSM_XYH_Y_gg_H_bb_MX_600_MY_90
-  samples.push_back("NMSSM_XYH_Y_gg_H_bb_MX_600_MY_90");
-  sample_names.insert({"NMSSM_XYH_Y_gg_H_bb_MX_600_MY_90","NMSSM_XYH_Y_gg_H_bb_MX_600_MY_90"});
-  sample_prod.insert({"NMSSM_XYH_Y_gg_H_bb_MX_600_MY_90", { { "2018",       { "NMSSM_XYH_Y_gg_H_bb_MX_600_MY_90_2018_v0_070722/skimNano-TestUL_NMSSM_XYH_Y_gg_H_bb_MX_600_MY_90_2018_v0_070722_TESTS/220711_225445/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  // NMSSM_XYH_Y_gg_H_bb_MX_600_MY_95
-  samples.push_back("NMSSM_XYH_Y_gg_H_bb_MX_600_MY_95");
-  sample_names.insert({"NMSSM_XYH_Y_gg_H_bb_MX_600_MY_95","NMSSM_XYH_Y_gg_H_bb_MX_600_MY_95"});
-  sample_prod.insert({"NMSSM_XYH_Y_gg_H_bb_MX_600_MY_95", { { "2018",       { "NMSSM_XYH_Y_gg_H_bb_MX_600_MY_95_2018_v0_070722/skimNano-TestUL_NMSSM_XYH_Y_gg_H_bb_MX_600_MY_95_2018_v0_070722_TESTS/220711_225902/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-
-  // NMSSM_XYH_Y_gg_H_bb_MX_600_MY_100
-  samples.push_back("NMSSM_XYH_Y_gg_H_bb_MX_600_MY_100");
-  sample_names.insert({"NMSSM_XYH_Y_gg_H_bb_MX_600_MY_100","NMSSM_XYH_Y_gg_H_bb_MX_600_MY_100"});
-  sample_prod.insert({"NMSSM_XYH_Y_gg_H_bb_MX_600_MY_100", { { "2018",       { "NMSSM_XYH_Y_gg_H_bb_MX_600_MY_100_2018_v0_070722/skimNano-TestUL_NMSSM_XYH_Y_gg_H_bb_MX_600_MY_100_2018_v0_070722_TESTS/220711_225030/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  // NMSSM_XYH_Y_gg_H_bb_MX_650_MY_100
-  samples.push_back("NMSSM_XYH_Y_gg_H_bb_MX_650_MY_90");
-  sample_names.insert({"NMSSM_XYH_Y_gg_H_bb_MX_650_MY_90","NMSSM_XYH_Y_gg_H_bb_MX_650_MY_90"});
-  sample_prod.insert({"NMSSM_XYH_Y_gg_H_bb_MX_650_MY_90", { { "2018",       { "NMSSM_XYH_Y_gg_H_bb_MX_650_MY_90_2018_v0_070722/skimNano-TestUL_NMSSM_XYH_Y_gg_H_bb_MX_650_MY_90_2018_v0_070722_TESTS/220711_230731/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  samples.push_back("NMSSM_XYH_Y_gg_H_bb_MX_650_MY_95");
-  sample_names.insert({"NMSSM_XYH_Y_gg_H_bb_MX_650_MY_95","NMSSM_XYH_Y_gg_H_bb_MX_650_MY_95"});
-  sample_prod.insert({"NMSSM_XYH_Y_gg_H_bb_MX_650_MY_95", { { "2018",       { "NMSSM_XYH_Y_gg_H_bb_MX_650_MY_95_2018_v0_070722/skimNano-TestUL_NMSSM_XYH_Y_gg_H_bb_MX_650_MY_95_2018_v0_070722_TESTS/220711_231148/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  samples.push_back("NMSSM_XYH_Y_gg_H_bb_MX_650_MY_100");
-  sample_names.insert({"NMSSM_XYH_Y_gg_H_bb_MX_650_MY_100","NMSSM_XYH_Y_gg_H_bb_MX_650_MY_100"});
-  sample_prod.insert({"NMSSM_XYH_Y_gg_H_bb_MX_650_MY_100", { { "2018",       { "NMSSM_XYH_Y_gg_H_bb_MX_650_MY_100_2018_v0_070722/skimNano-TestUL_NMSSM_XYH_Y_gg_H_bb_MX_650_MY_100_2018_v0_070722_TESTS/220711_230317/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  samples.push_back("NMSSM_XYH_Y_gg_H_bb_MX_700_MY_90");
-  sample_names.insert({"NMSSM_XYH_Y_gg_H_bb_MX_700_MY_90","NMSSM_XYH_Y_gg_H_bb_MX_700_MY_90"});
-  sample_prod.insert({"NMSSM_XYH_Y_gg_H_bb_MX_700_MY_90", { { "2018",       { "NMSSM_XYH_Y_gg_H_bb_MX_700_MY_90_2018_v0_070722/skimNano-TestUL_NMSSM_XYH_Y_gg_H_bb_MX_700_MY_90_2018_v0_070722_TESTS/220711_232022/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  samples.push_back("NMSSM_XYH_Y_gg_H_bb_MX_700_MY_95");
-  sample_names.insert({"NMSSM_XYH_Y_gg_H_bb_MX_700_MY_95","NMSSM_XYH_Y_gg_H_bb_MX_700_MY_95"});
-  sample_prod.insert({"NMSSM_XYH_Y_gg_H_bb_MX_700_MY_95", { { "2018",       { "NMSSM_XYH_Y_gg_H_bb_MX_700_MY_95_2018_v0_070722/skimNano-TestUL_NMSSM_XYH_Y_gg_H_bb_MX_700_MY_95_2018_v0_070722_TESTS/220711_232439/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-
-  samples.push_back("NMSSM_XYH_Y_gg_H_bb_MX_700_MY_100");
-  sample_names.insert({"NMSSM_XYH_Y_gg_H_bb_MX_700_MY_100","NMSSM_XYH_Y_gg_H_bb_MX_700_MY_100"});
-  sample_prod.insert({"NMSSM_XYH_Y_gg_H_bb_MX_700_MY_100", { { "2018",       { "NMSSM_XYH_Y_gg_H_bb_MX_700_MY_100_2018_v0_070722/skimNano-TestUL_NMSSM_XYH_Y_gg_H_bb_MX_700_MY_100_2018_v0_070722_TESTS/220711_231606/0000/" } },
-                                 { "2017",       { "" } },
-                                 { "2016APV",    { "" } },
-                                 { "2016nonAPV", { "" } } } });
-*/
-  TString year = "2018";
-  TString basedir = "/ceph/cms/store/user/legianni/skimNano-TestUL__TEST-SamplesV9/";
+int main(int argc, char **argv) {
+  //Arguments
+  const char* outdir = ( argc > 1 ? argv[1]               : "temp_data" );
+  TString yearArg    = ( argc > 2 ? argv[2]               : "all" );
+  int run_data       = ( argc > 3 ? ((int)*argv[3] - 48 ) : 1 );  // '0' has the ASCII code of 48
+  int run_MCbkg      = ( argc > 4 ? ((int)*argv[4] - 48 ) : 1 );  // '0' has the ASCII code of 48
+  int run_signal     = ( argc > 5 ? ((int)*argv[5] - 48 ) : 1 );  // '0' has the ASCII code of 48
+  TString sampleArg  = ( argc > 6 ? argv[6]               : "all" );
+  int onlyCreateJSON = ( argc > 7 ? ((int)*argv[7] - 48 ) : 0 );  // '0' has the ASCII code of 48
   
   int PUWeight=1;
   int bTagSF=1;
   int JECUnc=0; // No central value, set to +/-2 to get
+  
 
-  for ( int isample=0; isample<samples.size(); isample++ ) {
-    TString sample = samples[isample];
+  // Map definitions
+  vector<TString> years = { };
+  if ( yearArg=="all" ) {
+    years.push_back("2018");
+    years.push_back("2017");
+    years.push_back("2016APV");
+    years.push_back("2016nonAPV");
+  }
+  else if ( yearArg=="2018" || yearArg=="2017" || yearArg=="2016APV" || yearArg=="2016nonAPV" ) {
+    years.push_back(yearArg);
+  }
+  else {
+    cout << "\nInvalid option for year, exiting...\n\n";
+    return 1;
+  }
+  vector<TString> samples = { };
+  map<TString,TString> sample_names = { };
+  map<TString,int> sample_procids = { };
+  map<TString,map<TString,vector<TString>>> sample_prod = { };
 
-    for (int i_subfile=0; i_subfile<sample_prod[sample][year].size(); i_subfile++){ // FIXME: To be simplified with simpler directory structure
-      TString prod = sample_prod[sample][year][i_subfile];
 
-      TChain *ch_temp = new TChain("Events");
-      TChain *chaux_temp = new TChain("Runs");
-
-      TString filename = Form(basedir + prod + "tree_*.root");
-      ch_temp->Add(filename);
-      chaux_temp->Add(filename);
-
-      bool isMC=1;
-      if ( sample.Contains("_Run201") ) isMC=0;
-      ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp, isMC),year,sample,PUWeight,bTagSF,JECUnc);
+  // Sample list: Data
+  if (run_data) {
+    if ( sampleArg=="Data" || sampleArg=="all" ) {
+      TString sampleName = "Data";
+      samples.push_back(sampleName);
+      sample_procids.insert({sampleName, 0});
+      sample_names.insert({sampleName, sampleName});
+      sample_prod.insert({sampleName, { { "2018",       { /*"Run2018A-UL2018_MiniAODv2_GT36-v1",*/
+                                                          /*"Run2018B-UL2018_MiniAODv2_GT36-v1",*/
+                                                          "Run2018C-UL2018_MiniAODv2_GT36-v1"//,
+                                                          /*"Run2018D-UL2018_MiniAODv2-v2"*/ } },
+                                        { "2017",       { "" } },
+                                        { "2016APV",    { "" } },
+                                        { "2016nonAPV", { "" } } } });
     }
   }
+
+
+  // Sample list: MC
+  if (run_MCbkg) {
+    if ( sampleArg=="DiPhoton" || sampleArg=="all" ) {
+      TString sampleName = "DiPhoton";
+      samples.push_back(sampleName);
+      sample_procids.insert({sampleName, 1});
+      sample_names.insert({sampleName, "DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa"});
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
+                                        { "2017",       { "" } },
+                                        { "2016APV",    { "" } },
+                                        { "2016nonAPV", { "" } } } });
+    }
+
+    if ( sampleArg=="TT" || sampleArg=="all" ) {
+      TString sampleName = "TTGG";
+      samples.push_back(sampleName);
+      sample_procids.insert({sampleName, 2});
+      sample_names.insert({sampleName, "TTGG_0Jets_TuneCP5_13TeV-amcatnlo-madspin-pythia8"});
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
+                                        { "2017",       { "" } },
+                                        { "2016APV",    { "" } },
+                                        { "2016nonAPV", { "" } } } });
+
+      sampleName = "TTGJets";
+      samples.push_back(sampleName);
+      sample_procids.insert({sampleName, 3});
+      sample_names.insert({sampleName, "TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
+                                        { "2017",       { "" } },
+                                        { "2016APV",    { "" } },
+                                        { "2016nonAPV", { "" } } } });
+
+      sampleName = "TTJets";
+      samples.push_back(sampleName);
+      sample_procids.insert({sampleName, 4});
+      sample_names.insert({sampleName, "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
+                                        { "2017",       { "" } },
+                                        { "2016APV",    { "" } },
+                                        { "2016nonAPV", { "" } } } });
+    }
+
+    if ( sampleArg=="H" || sampleArg=="all" ) {
+      TString sampleName = "VH_M125";
+      samples.push_back(sampleName);
+      sample_procids.insert({sampleName, 5});
+      sample_names.insert({sampleName, "VHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
+                                        { "2017",       { "" } },
+                                        { "2016APV",    { "" } },
+                                        { "2016nonAPV", { "" } } } });  
+
+      sampleName = "VBFH_M125";
+      samples.push_back(sampleName);
+      sample_procids.insert({sampleName, 6});
+      sample_names.insert({sampleName,"VBFHToGG_M125_TuneCP5_13TeV-amcatnlo-pythia8"});
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
+                                        { "2017",       { "" } },
+                                        { "2016APV",    { "" } },
+                                        { "2016nonAPV", { "" } } } });
+
+      sampleName = "ttH_M125";
+      samples.push_back(sampleName);
+      sample_procids.insert({sampleName, 7});
+      sample_names.insert({sampleName, "ttHJetToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
+                                        { "2017",       { "" } },
+                                        { "2016APV",    { "" } },
+                                        { "2016nonAPV", { "" } } } });
+
+      sampleName = "ggHToDiPhoM125";
+      samples.push_back(sampleName);
+      sample_procids.insert({sampleName, 8});
+      sample_names.insert({sampleName, "GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
+                                        { "2017",       { "" } },
+                                        { "2016APV",    { "" } },
+                                        { "2016nonAPV", { "" } } } });
+    }
+
+    if ( sampleArg=="GJets" || sampleArg=="all" ) {
+      vector<TString> M = { "40", "100", "200", "400", "600", "Inf" };
+      map<TString,int> processId_M = { {"40",0}, {"100",1}, {"200",2}, {"400",3}, {"600",4} };
+      for ( unsigned int imass=0; imass<M.size()-1; imass++ ) {
+        TString sampleName = "GJets_HT-"+M[imass]+"To"+M[imass+1];
+        samples.push_back(sampleName);
+        sample_procids.insert({sampleName, 9+processId_M[M[imass]]});
+        sample_names.insert({sampleName, sampleName+"_TuneCP5_13TeV-madgraphMLM-pythia8"});
+        sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
+                                          { "2017",       { "" } },
+                                          { "2016APV",    { "" } },
+                                          { "2016nonAPV", { "" } } } });
+      }
+    }
+
+    if ( sampleArg=="DY" || sampleArg=="all" ) {
+      TString sampleName = "DY";
+      samples.push_back(sampleName);
+      sample_procids.insert({sampleName, 14});
+      sample_names.insert({sampleName, "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
+                                        { "2017",       { "" } },
+                                        { "2016APV",    { "" } },
+                                        { "2016nonAPV", { "" } } } });
+    }
+
+    if ( sampleArg=="VG" || sampleArg=="all" ) {
+      vector<TString> V = { "W", "Z" };
+      map<TString,int> processId_V = { {"W",0}, {"Z",1} };
+      for ( unsigned int iV=0; iV<V.size(); iV++ ) {
+        TString sampleName = V[iV]+"G";
+        samples.push_back(sampleName);
+        sample_procids.insert({sampleName, 15+processId_V[V[iV]]});
+        sample_names.insert({sampleName, sampleName+"ToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
+        sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
+                                          { "2017",       { "" } },
+                                          { "2016APV",    { "" } },
+                                          { "2016nonAPV", { "" } } } });
+      }
+    }
+
+    if ( sampleArg=="HHbbgg" || sampleArg=="all" ) {
+      TString sampleName = "HHbbgg";
+      samples.push_back(sampleName);
+      sample_procids.insert({sampleName, 17});
+      sample_names.insert({sampleName, "GluGluToHHTo2B2G_node_cHHH1_TuneCP5_13TeV-powheg-pythia8"});
+      sample_prod.insert({sampleName, { { "2018",       { "privateUL18" } },
+                                        { "2017",       { "" } },
+                                        { "2016APV",    { "" } },
+                                        { "2016nonAPV", { "" } } } });
+    }
+
+    if ( sampleArg=="DiPhotonLow" || sampleArg=="all" ) {
+      TString sampleName = "DiPhotonLow";
+      samples.push_back(sampleName);
+      sample_procids.insert({sampleName, 18});
+      sample_names.insert({sampleName, "DiPhotonJetsBox_MGG-40to80_13TeV-sherpa"});
+      sample_prod.insert({sampleName, { { "2018",       { "privateUL18Leonardo" } },
+                                        { "2017",       { "" } },
+                                        { "2016APV",    { "" } },
+                                        { "2016nonAPV", { "" } } } });
+    }
+
+    if ( sampleArg=="VV" || sampleArg=="all" ) {
+      vector<TString> V = { "WW", "WZ", "ZZ" };
+      map<TString,int> processId_V = { {"WW",0}, {"WZ",1}, {"ZZ",2} };
+      for ( unsigned int iV=0; iV<V.size(); iV++ ) {
+        TString sampleName = V[iV];
+        samples.push_back(sampleName);
+        sample_procids.insert({sampleName, 19+processId_V[V[iV]]});
+        sample_names.insert({sampleName, sampleName+"_TuneCP5_13TeV-pythia8"});
+        sample_prod.insert({sampleName, { { "2018",       { ( V[iV] == "ZZ" ?
+                                                              "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" :
+                                                              "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" ) } },
+                                          { "2017",       { "" } },
+                                          { "2016APV",    { "" } },
+                                          { "2016nonAPV", { "" } } } });
+      }
+    }
+  }
+
+  // Sample list: Signal
+  if (run_signal) {
+    if ( sampleArg.Contains("all" ) ) {
+      map<TString,TString> processId_MX = { {"240","1"},  {"280","2"},  {"300","3"},  {"320","4"},  {"360","5"},
+                                            {"400","6"},  {"450","7"},  {"500","8"},  {"550","9"},  {"600","10"},
+                                            {"650","11"}, {"700","12"}, {"750","13"}, {"800","14"}, {"850","15"},
+                                            {"900","16"}, {"950","17"}, {"1000","18"} };
+      map<TString,TString> processId_MY = { {"70","11"},  {"80","12"},  {"90","13"},  {"100","14"}, {"125","15"},
+                                            {"150","16"}, {"170","17"}, {"190","18"}, {"250","19"}, {"300","20"},
+                                            {"350","21"}, {"400","22"}, {"450","23"}, {"500","24"}, {"550","25"},
+                                            {"600","26"}, {"650","27"}, {"700","28"}, {"800","29"} };
+
+      map<TString,vector<TString>> MComb = { { "240",  { "70","80","90","100" } },
+                                             { "280",  { "70",/*"80",*/"90","100","125","150" } },
+                                             { "300",  { "70",/*"80","90","100",*/"125","150","170" } },
+                                             { "320",  { "70","80","90","100","125","150","170","190" } },
+                                             { "360",  { "70",/*"80",*/"90","100","125","150","170","190" } },
+                                             { "400",  { /*"70","80","90","100","125",*/"150","170","190","250" } },
+                                             { "450",  { "70","80","90",/*"100",*/"125","150","170",/*"190",*/"250","300" } },
+                                             { "500",  { "70","80","90",/*"100",*/"125",/*"150","170",*/"190","250","300","350" } },
+                                             { "550",  { "70","80","90","100","125","150","170","190","250","300",/*"350",*/"400" } },
+                                             { "600",  { /*"70",*/"80","90",/*"100",*/"125","150","170","190","250",/*"300","350",*/"400",
+                                                         "450" } },
+                                             { "650",  { "70","80","90","100","125","150","170","190","250","300","350","400",
+                                                         "450","500" } },
+                                             { "700",  { "70","80","90","100","125","150","170","190","250","300","350","400",
+                                                         "450","500"/*,"550"*/ } },
+                                             { "750",  { "70","80","90","100","125",/*"150",*/"170","190","250","300","350","400",
+                                                         "450",/*"500",*/"550","600" } },
+                                             { "800",  { "70",/*"80","90","100",*/"125","150",/*"170",*/"190","250","300","350","400",
+                                                         "450","500",/*"550",*/"600","650" } },
+                                             { "850",  { /*"70",*/"80","90",/*"100",*/"125","150","170","190","250","300","350","400",
+                                                         "450","500",/*"550",*/"600"/*,"650","700"*/ } },
+                                             { "900",  { /*"70",*/"80","90","100","125","150","170","190","250","300",/*"350",*/"400",
+                                                         "450",/*"500",*/"550","600","650"/*,"700"*/ } },
+                                             { "950",  { /*"70",*/"80","90","100","125","150",/*"170","190","250",*/"300","350","400",
+                                                         "450","500","550","600",/*"650",*/"700","800" } },
+                                             { "1000",  { "70","80","90","100","125","150","170","190","250","300","350","400",
+                                                         "450","500","550","600","650","700","800" } } };
+
+      map<TString,vector<TString>> M;
+      if ( sampleArg.Contains("_low" ) ) // Includes MX of 1000, 240 - 400 GeV
+        M.insert( MComb.begin(), next(MComb.begin(),7) );
+      else if ( sampleArg.Contains("_med" ) ) // Includes MX of 450 - 750 GeV
+        M.insert( next(MComb.begin(),7), next(MComb.begin(),14) );
+      else if ( sampleArg.Contains("_high" ) ) // Includes MX of 800 - 950 GeV
+        M.insert( next(MComb.begin(),14), MComb.end() );
+      else
+        M.insert( MComb.begin(),  MComb.end() );
+
+      map<TString,vector<TString>>::iterator it = M.begin();
+
+      while ( it != M.end() ) {
+        TString MX = it->first;
+        vector<TString> MYs = it->second;
+        for ( auto MY : MYs ) {
+          TString sampleName = "NMSSM_XToYHTo2G2B_MX-"+MX+"_MY-"+MY;
+          TString v = ( sampleName == "NMSSM_XToYHTo2G2B_MX-1000_MY-90" ? "v1" : "v2" );
+          samples.push_back(sampleName);
+          sample_procids.insert({sampleName, (processId_MX[MX]+processId_MY[MY]).Atoi()});
+          sample_names.insert({sampleName, sampleName+"_TuneCP5_13TeV-madgraph-pythia8"});
+          sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-"+v } },
+                                            { "2017",       { "" } },
+                                            { "2016APV",    { "" } },
+                                            { "2016nonAPV", { "" } } } });
+        }
+        ++it;
+      }
+    }
+  }
+
+  if ( samples.size()==0 ) {
+    std::cout << "No samples selected! Exiting...\n";
+    return 0;
+  }
+
+
+  if (onlyCreateJSON) {
+    // Create summary json
+    ofstream file;
+    file.open("summary.json");
+    file << "{" << endl;
+    file << "\t\"sample_id_map\": {" << endl;
+    file << "\t\t\""<<samples[0]<<"\": "<<sample_procids[samples[0]];
+    for ( int isample=1; isample<samples.size(); isample++ ) {
+      file << "," <<endl;
+      TString sample = samples[isample];
+      if ( sample.Contains("NMSSM_XToYHTo2G2B") ) {
+        sample.ReplaceAll("-","_");
+      }
+      file << "\t\t\""<<sample<<"\": "<<sample_procids[samples[isample]];
+    }
+    file << endl;
+    file << "\t}" << endl;
+    file << "}" << endl;
+    file.close();
+  }
+  else {
+    // Main loops
+    TString baseDir = "/ceph/cms/store/group/Hgg/XToYHToggbb/skimmedNanoAOD";
+    TString version = "v0";
+
+    for ( int iyear=0; iyear<years.size(); iyear++ ) {
+      TString year = years[iyear];
+      std::cout<<"\n";
+      std::cout<<"Year: "<<year<<"\n";
+      std::cout<<"------------\n";
+
+      for ( int isample=0; isample<samples.size(); isample++ ) {
+        TString sample = samples[isample];
+        TString dataformat = "MINIAODSIM";
+        bool isMC = 1;
+
+        if (sample == "Data") {
+          sample_names[sample] = ( year=="2018" ? "EGamma" : "DoubleEG" );
+          dataformat = "MINIAOD";
+          isMC = 0;
+        }
+        TString sample_name = sample_names[sample];
+        int sample_procid = sample_procids[sample];
+
+        TChain *ch_temp = new TChain("Events");
+        TChain *chaux_temp = new TChain("Runs");
+        for ( unsigned int d=0; d<sample_prod[sample][year].size(); d++ ) {
+          TString trees = baseDir+"/"+year+"/"+sample_name+"_"+sample_prod[sample][year][d]+"_"+dataformat+"_"+version+"/"+"tree_*.root";
+
+          ch_temp->Add(trees);
+          chaux_temp->Add(trees);
+        }
+
+        std::cout<<"Sample: "<<sample<<" --> Process ID: "<<sample_procid<<"\n\n";
+        ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp, isMC),year,sample,sample_procid,outdir,PUWeight,bTagSF,JECUnc);
+      }
+    }
+  }
+
+  return 0;
 }

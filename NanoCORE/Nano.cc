@@ -5212,6 +5212,8 @@ void Nano::Init(TTree *tree) {
     if (b_Photon_charge_) { b_Photon_charge_->SetAddress(&Photon_charge_); }
     b_Photon_chargedHadronIso_ = tree->GetBranch("Photon_chargedHadronIso");
     if (b_Photon_chargedHadronIso_) { b_Photon_chargedHadronIso_->SetAddress(&Photon_chargedHadronIso_); }
+    b_Photon_pfChargedIsoPFPV_ = tree->GetBranch("Photon_pfChargedIsoPFPV");
+    if (b_Photon_pfChargedIsoPFPV_) { b_Photon_pfChargedIsoPFPV_->SetAddress(&Photon_pfChargedIsoPFPV_); }
     b_Photon_cleanmask_ = tree->GetBranch("Photon_cleanmask");
     if (b_Photon_cleanmask_) { b_Photon_cleanmask_->SetAddress(&Photon_cleanmask_); }
     b_Photon_cutBased_ = tree->GetBranch("Photon_cutBased");
@@ -5632,6 +5634,8 @@ void Nano::Init(TTree *tree) {
     if (b_fixedGridRhoAll_) { b_fixedGridRhoAll_->SetAddress(&fixedGridRhoAll_); }
     b_fixedGridRhoFastjetAll_ = tree->GetBranch("fixedGridRhoFastjetAll");
     if (b_fixedGridRhoFastjetAll_) { b_fixedGridRhoFastjetAll_->SetAddress(&fixedGridRhoFastjetAll_); }
+    b_Rho_fixedGridRhoFastjetAll_ = tree->GetBranch("Rho_fixedGridRhoFastjetAll");
+    if (b_Rho_fixedGridRhoFastjetAll_) { b_Rho_fixedGridRhoFastjetAll_->SetAddress(&Rho_fixedGridRhoFastjetAll_); }
     b_fixedGridRhoFastjetCentral_ = tree->GetBranch("fixedGridRhoFastjetCentral");
     if (b_fixedGridRhoFastjetCentral_) { b_fixedGridRhoFastjetCentral_->SetAddress(&fixedGridRhoFastjetCentral_); }
     b_fixedGridRhoFastjetCentralCalo_ = tree->GetBranch("fixedGridRhoFastjetCentralCalo");
@@ -8378,6 +8382,7 @@ void Nano::PrintUsage() {
     std::cout << "PV_z (uncached/cached calls): " << counter_uncached_PV_z_ << " / " << counter_cached_PV_z_ << std::endl;;
     std::cout << "Photon_charge (uncached/cached calls): " << counter_uncached_Photon_charge_ << " / " << counter_cached_Photon_charge_ << std::endl;;
     std::cout << "Photon_chargedHadronIso (uncached/cached calls): " << counter_uncached_Photon_chargedHadronIso_ << " / " << counter_cached_Photon_chargedHadronIso_ << std::endl;;
+    std::cout << "Photon_pfChargedIsoPFPV (uncached/cached calls): " << counter_uncached_Photon_pfChargedIsoPFPV_ << " / " << counter_cached_Photon_pfChargedIsoPFPV_ << std::endl;;
     std::cout << "Photon_cleanmask (uncached/cached calls): " << counter_uncached_Photon_cleanmask_ << " / " << counter_cached_Photon_cleanmask_ << std::endl;;
     std::cout << "Photon_cutBased (uncached/cached calls): " << counter_uncached_Photon_cutBased_ << " / " << counter_cached_Photon_cutBased_ << std::endl;;
     std::cout << "Photon_cutBased_Fall17V1Bitmap (uncached/cached calls): " << counter_uncached_Photon_cutBased_Fall17V1Bitmap_ << " / " << counter_cached_Photon_cutBased_Fall17V1Bitmap_ << std::endl;;
@@ -8594,6 +8599,7 @@ void Nano::PrintUsage() {
     std::cout << "event (uncached/cached calls): " << counter_uncached_event_ << " / " << counter_cached_event_ << std::endl;;
     std::cout << "fixedGridRhoAll (uncached/cached calls): " << counter_uncached_fixedGridRhoAll_ << " / " << counter_cached_fixedGridRhoAll_ << std::endl;;
     std::cout << "fixedGridRhoFastjetAll (uncached/cached calls): " << counter_uncached_fixedGridRhoFastjetAll_ << " / " << counter_cached_fixedGridRhoFastjetAll_ << std::endl;;
+    std::cout << "Rho_fixedGridRhoFastjetAll (uncached/cached calls): " << counter_uncached_Rho_fixedGridRhoFastjetAll_ << " / " << counter_cached_Rho_fixedGridRhoFastjetAll_ << std::endl;;
     std::cout << "fixedGridRhoFastjetCentral (uncached/cached calls): " << counter_uncached_fixedGridRhoFastjetCentral_ << " / " << counter_cached_fixedGridRhoFastjetCentral_ << std::endl;;
     std::cout << "fixedGridRhoFastjetCentralCalo (uncached/cached calls): " << counter_uncached_fixedGridRhoFastjetCentralCalo_ << " / " << counter_cached_fixedGridRhoFastjetCentralCalo_ << std::endl;;
     std::cout << "fixedGridRhoFastjetCentralChargedPileUp (uncached/cached calls): " << counter_uncached_fixedGridRhoFastjetCentralChargedPileUp_ << " / " << counter_cached_fixedGridRhoFastjetCentralChargedPileUp_ << std::endl;;
@@ -11258,6 +11264,7 @@ void Nano::GetEntry(unsigned int idx) {
     loaded_PV_z_ = false;
     loaded_Photon_charge_ = false;
     loaded_Photon_chargedHadronIso_ = false;
+    loaded_Photon_pfChargedIsoPFPV_ = false;
     loaded_Photon_cleanmask_ = false;
     loaded_Photon_cutBased_ = false;
     loaded_Photon_cutBased_Fall17V1Bitmap_ = false;
@@ -11474,6 +11481,7 @@ void Nano::GetEntry(unsigned int idx) {
     loaded_event_ = false;
     loaded_fixedGridRhoAll_ = false;
     loaded_fixedGridRhoFastjetAll_ = false;
+    loaded_Rho_fixedGridRhoFastjetAll_ = false;
     loaded_fixedGridRhoFastjetCentral_ = false;
     loaded_fixedGridRhoFastjetCentralCalo_ = false;
     loaded_fixedGridRhoFastjetCentralChargedPileUp_ = false;
@@ -38236,6 +38244,17 @@ const vector<float> &Nano::Photon_chargedHadronIso() {
     }
     return v_Photon_chargedHadronIso_;
 }
+const vector<float> &Nano::Photon_pfChargedIsoPFPV() {
+    if (!loaded_Photon_pfChargedIsoPFPV_) counter_uncached_Photon_pfChargedIsoPFPV_++;
+    else counter_cached_Photon_pfChargedIsoPFPV_++;
+    if (!loaded_Photon_pfChargedIsoPFPV_) {
+        if (!b_Photon_pfChargedIsoPFPV_) throw std::runtime_error("Photon_pfChargedIsoPFPV branch doesn't exist");
+        int bytes = b_Photon_pfChargedIsoPFPV_->GetEntry(index);
+        v_Photon_pfChargedIsoPFPV_ = vector<float>(Photon_pfChargedIsoPFPV_,Photon_pfChargedIsoPFPV_+bytes/sizeof(Photon_pfChargedIsoPFPV_[0]));
+        loaded_Photon_pfChargedIsoPFPV_ = true;
+    }
+    return v_Photon_pfChargedIsoPFPV_;
+}
 const vector<UChar_t> &Nano::Photon_cleanmask() {
     if (!loaded_Photon_cleanmask_) counter_uncached_Photon_cleanmask_++;
     else counter_cached_Photon_cleanmask_++;
@@ -40595,6 +40614,16 @@ const float &Nano::fixedGridRhoFastjetAll() {
         loaded_fixedGridRhoFastjetAll_ = true;
     }
     return fixedGridRhoFastjetAll_;
+}
+const float &Nano::Rho_fixedGridRhoFastjetAll() {
+    if (!loaded_Rho_fixedGridRhoFastjetAll_) counter_uncached_Rho_fixedGridRhoFastjetAll_++;
+    else counter_cached_Rho_fixedGridRhoFastjetAll_++;
+    if (!loaded_Rho_fixedGridRhoFastjetAll_) {
+        if (!b_Rho_fixedGridRhoFastjetAll_) throw std::runtime_error("Rho_fixedGridRhoFastjetAll branch doesn't exist");
+        b_Rho_fixedGridRhoFastjetAll_->GetEntry(index);
+        loaded_Rho_fixedGridRhoFastjetAll_ = true;
+    }
+    return Rho_fixedGridRhoFastjetAll_;
 }
 const float &Nano::fixedGridRhoFastjetCentral() {
     if (!loaded_fixedGridRhoFastjetCentral_) counter_uncached_fixedGridRhoFastjetCentral_++;
@@ -43645,6 +43674,7 @@ namespace tas {
     const float &PV_z() { return nt.PV_z(); }
     const vector<int> &Photon_charge() { return nt.Photon_charge(); }
     const vector<float> &Photon_chargedHadronIso() { return nt.Photon_chargedHadronIso(); }
+    const vector<float> &Photon_pfChargedIsoPFPV() { return nt.Photon_pfChargedIsoPFPV(); }
     const vector<UChar_t> &Photon_cleanmask() { return nt.Photon_cleanmask(); }
     const vector<int> &Photon_cutBased() { return nt.Photon_cutBased(); }
     const vector<int> &Photon_cutBased_Fall17V1Bitmap() { return nt.Photon_cutBased_Fall17V1Bitmap(); }
@@ -43861,6 +43891,7 @@ namespace tas {
     const ULong64_t &event() { return nt.event(); }
     const float &fixedGridRhoAll() { return nt.fixedGridRhoAll(); }
     const float &fixedGridRhoFastjetAll() { return nt.fixedGridRhoFastjetAll(); }
+    const float &Rho_fixedGridRhoFastjetAll() { return nt.Rho_fixedGridRhoFastjetAll(); }
     const float &fixedGridRhoFastjetCentral() { return nt.fixedGridRhoFastjetCentral(); }
     const float &fixedGridRhoFastjetCentralCalo() { return nt.fixedGridRhoFastjetCentralCalo(); }
     const float &fixedGridRhoFastjetCentralChargedPileUp() { return nt.fixedGridRhoFastjetCentralChargedPileUp(); }
@@ -44256,6 +44287,7 @@ namespace tas {
         else if (name == "OtherPV_z") return nt.OtherPV_z();
         else if (name == "PSWeight") return nt.PSWeight();
         else if (name == "Photon_chargedHadronIso") return nt.Photon_chargedHadronIso();
+        else if (name == "Photon_pfChargedIsoPFPV") return nt.Photon_pfChargedIsoPFPV();
         else if (name == "Photon_dEscaleDown") return nt.Photon_dEscaleDown();
         else if (name == "Photon_dEscaleUp") return nt.Photon_dEscaleUp();
         else if (name == "Photon_dEsigmaDown") return nt.Photon_dEsigmaDown();
@@ -44529,6 +44561,7 @@ namespace tas {
         else if (name == "btagWeight_DeepCSVB") return nt.btagWeight_DeepCSVB();
         else if (name == "fixedGridRhoAll") return nt.fixedGridRhoAll();
         else if (name == "fixedGridRhoFastjetAll") return nt.fixedGridRhoFastjetAll();
+        else if (name == "Rho_fixedGridRhoFastjetAll") return nt.Rho_fixedGridRhoFastjetAll();
         else if (name == "fixedGridRhoFastjetCentral") return nt.fixedGridRhoFastjetCentral();
         else if (name == "fixedGridRhoFastjetCentralCalo") return nt.fixedGridRhoFastjetCentralCalo();
         else if (name == "fixedGridRhoFastjetCentralChargedPileUp") return nt.fixedGridRhoFastjetCentralChargedPileUp();
