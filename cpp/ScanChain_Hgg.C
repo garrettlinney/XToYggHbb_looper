@@ -251,37 +251,35 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   else if (year=="2018") year_out = 2018;
   else year_out = 0;
   
-  if (isMC) {
-    tout->Branch("LeadPhoton_genPartFlav",&LeadPhoton_genPartFlav,"LeadPhoton_genPartFlav/I");
-    tout->Branch("SubleadPhoton_genPartFlav",&SubleadPhoton_genPartFlav,"SubleadPhoton_genPartFlav/I");
-    tout->Branch("n_gen_matched_jets",&n_gen_matched_jets,"n_gen_matched_jets/I");
-    tout->Branch("n_gen_matched_in_dijet",&n_gen_matched_in_dijet,"n_gen_matched_in_dijet/I");
-    tout->Branch("dijet_lead_gen_match",&dijet_lead_gen_match,"dijet_lead_gen_match/B");
-    tout->Branch("dijet_sublead_gen_match",&dijet_sublead_gen_match,"dijet_sublead_gen_match/B");
-    tout->Branch("GenHiggs_pt",&GenHiggs_pt,"GenHiggs_pt/F");
-    tout->Branch("GenHiggs_eta",&GenHiggs_eta,"GenHiggs_eta/F");
-    tout->Branch("GenHiggs_phi",&GenHiggs_phi,"GenHiggs_phi/F");
-    tout->Branch("GenHiggs_mass",&GenHiggs_mass,"GenHiggs_mass/F");
-    tout->Branch("GenHiggs_dR",&GenHiggs_dR,"GenHiggs_dR/F");
-    tout->Branch("GenY_pt",&GenY_pt,"GenY_pt/F");
-    tout->Branch("GenY_eta",&GenY_eta,"GenY_eta/F");
-    tout->Branch("GenY_phi",&GenY_phi,"GenY_phi/F");
-    tout->Branch("GenY_mass",&GenY_mass,"GenY_mass/F");
-    tout->Branch("GenY_dR",&GenY_dR,"GenY_dR/F");
-    tout->Branch("GenX_pt",&GenX_pt,"GenX_pt/F");
-    tout->Branch("GenX_eta",&GenX_eta,"GenX_eta/F");
-    tout->Branch("GenX_phi",&GenX_phi,"GenX_phi/F");
-    tout->Branch("GenX_mass",&GenX_mass,"GenX_mass/F");
-    tout->Branch("GenX_dR",&GenX_dR,"GenX_dR/F");
-    tout->Branch("GenBFromHiggs_1_pt",&GenBFromHiggs_1_pt,"GenBFromHiggs_1_pt/F");
-    tout->Branch("GenBFromHiggs_1_eta",&GenBFromHiggs_1_eta,"GenBFromHiggs_1_eta/F");
-    tout->Branch("GenBFromHiggs_1_phi",&GenBFromHiggs_1_phi,"GenBFromHiggs_1_phi/F");
-    tout->Branch("GenBFromHiggs_1_mass",&GenBFromHiggs_1_mass,"GenBFromHiggs_1_mass/F");
-    tout->Branch("GenBFromHiggs_2_pt",&GenBFromHiggs_2_pt,"GenBFromHiggs_2_pt/F");
-    tout->Branch("GenBFromHiggs_2_eta",&GenBFromHiggs_2_eta,"GenBFromHiggs_2_eta/F");
-    tout->Branch("GenBFromHiggs_2_phi",&GenBFromHiggs_2_phi,"GenBFromHiggs_2_phi/F");
-    tout->Branch("GenBFromHiggs_2_mass",&GenBFromHiggs_2_mass,"GenBFromHiggs_2_mass/F");
-  }
+  tout->Branch("LeadPhoton_genPartFlav",&LeadPhoton_genPartFlav,"LeadPhoton_genPartFlav/I");
+  tout->Branch("SubleadPhoton_genPartFlav",&SubleadPhoton_genPartFlav,"SubleadPhoton_genPartFlav/I");
+  tout->Branch("n_gen_matched_jets",&n_gen_matched_jets,"n_gen_matched_jets/I");
+  tout->Branch("n_gen_matched_in_dijet",&n_gen_matched_in_dijet,"n_gen_matched_in_dijet/I");
+  tout->Branch("dijet_lead_gen_match",&dijet_lead_gen_match,"dijet_lead_gen_match/B");
+  tout->Branch("dijet_sublead_gen_match",&dijet_sublead_gen_match,"dijet_sublead_gen_match/B");
+  tout->Branch("GenHiggs_pt",&GenHiggs_pt,"GenHiggs_pt/F");
+  tout->Branch("GenHiggs_eta",&GenHiggs_eta,"GenHiggs_eta/F");
+  tout->Branch("GenHiggs_phi",&GenHiggs_phi,"GenHiggs_phi/F");
+  tout->Branch("GenHiggs_mass",&GenHiggs_mass,"GenHiggs_mass/F");
+  tout->Branch("GenHiggs_dR",&GenHiggs_dR,"GenHiggs_dR/F");
+  tout->Branch("GenY_pt",&GenY_pt,"GenY_pt/F");
+  tout->Branch("GenY_eta",&GenY_eta,"GenY_eta/F");
+  tout->Branch("GenY_phi",&GenY_phi,"GenY_phi/F");
+  tout->Branch("GenY_mass",&GenY_mass,"GenY_mass/F");
+  tout->Branch("GenY_dR",&GenY_dR,"GenY_dR/F");
+  tout->Branch("GenX_pt",&GenX_pt,"GenX_pt/F");
+  tout->Branch("GenX_eta",&GenX_eta,"GenX_eta/F");
+  tout->Branch("GenX_phi",&GenX_phi,"GenX_phi/F");
+  tout->Branch("GenX_mass",&GenX_mass,"GenX_mass/F");
+  tout->Branch("GenX_dR",&GenX_dR,"GenX_dR/F");
+  tout->Branch("GenBFromHiggs_1_pt",&GenBFromHiggs_1_pt,"GenBFromHiggs_1_pt/F");
+  tout->Branch("GenBFromHiggs_1_eta",&GenBFromHiggs_1_eta,"GenBFromHiggs_1_eta/F");
+  tout->Branch("GenBFromHiggs_1_phi",&GenBFromHiggs_1_phi,"GenBFromHiggs_1_phi/F");
+  tout->Branch("GenBFromHiggs_1_mass",&GenBFromHiggs_1_mass,"GenBFromHiggs_1_mass/F");
+  tout->Branch("GenBFromHiggs_2_pt",&GenBFromHiggs_2_pt,"GenBFromHiggs_2_pt/F");
+  tout->Branch("GenBFromHiggs_2_eta",&GenBFromHiggs_2_eta,"GenBFromHiggs_2_eta/F");
+  tout->Branch("GenBFromHiggs_2_phi",&GenBFromHiggs_2_phi,"GenBFromHiggs_2_phi/F");
+  tout->Branch("GenBFromHiggs_2_mass",&GenBFromHiggs_2_mass,"GenBFromHiggs_2_mass/F");
 
 
   // Define histo info maps
@@ -327,37 +325,38 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       float weight = 1.0;
       if ( isMC ) {
         weight = nt.genWeight();
-        n_gen_matched_jets = 0;
-        n_gen_matched_in_dijet = 0;
-        LeadPhoton_genPartFlav = 0;
-        SubleadPhoton_genPartFlav = 0;
-        n_gen_matched_jets = 0;
-        n_gen_matched_in_dijet = 0;
-        dijet_lead_gen_match=false;
-        dijet_sublead_gen_match=false;
-        GenHiggs_pt=-999;
-        GenHiggs_eta=-999;
-        GenHiggs_phi=-999;
-        GenHiggs_mass=-999;
-        GenHiggs_dR=-999;
-        GenY_pt=-999;
-        GenY_eta=-999;
-        GenY_phi=-999;
-        GenY_mass=-999;
-        GenY_dR=-999;
-        GenX_pt=-999;
-        GenX_eta=-999;
-        GenX_phi=-999;
-        GenX_mass=-999;
-        GenX_dR=-999;
-        GenBFromHiggs_1_pt=-999;
-        GenBFromHiggs_1_eta=-999;
-        GenBFromHiggs_1_phi=-999;
-        GenBFromHiggs_1_mass=-999;
-        GenBFromHiggs_2_pt=-999; 
-        GenBFromHiggs_2_eta=-999;
-        GenBFromHiggs_2_phi=-999;
-        GenBFromHiggs_2_mass=-999;
+      }
+      n_gen_matched_jets = 0;
+      n_gen_matched_in_dijet = 0;
+      LeadPhoton_genPartFlav = 0;
+      SubleadPhoton_genPartFlav = 0;
+      n_gen_matched_jets = 0;
+      n_gen_matched_in_dijet = 0;
+      dijet_lead_gen_match=false;
+      dijet_sublead_gen_match=false;
+      GenHiggs_pt=-999;
+      GenHiggs_eta=-999;
+      GenHiggs_phi=-999;
+      GenHiggs_mass=-999;
+      GenHiggs_dR=-999;
+      GenY_pt=-999;
+      GenY_eta=-999;
+      GenY_phi=-999;
+      GenY_mass=-999;
+      GenY_dR=-999;
+      GenX_pt=-999;
+      GenX_eta=-999;
+      GenX_phi=-999;
+      GenX_mass=-999;
+      GenX_dR=-999;
+      GenBFromHiggs_1_pt=-999;
+      GenBFromHiggs_1_eta=-999;
+      GenBFromHiggs_1_phi=-999;
+      GenBFromHiggs_1_mass=-999;
+      GenBFromHiggs_2_pt=-999; 
+      GenBFromHiggs_2_eta=-999;
+      GenBFromHiggs_2_phi=-999;
+      GenBFromHiggs_2_mass=-999;
         //if(removeSpikes && weight*factor>1e2) continue; //comment out for synchronizing
 
         // Apply PU reweight // FIXME to be enabled later?
@@ -373,7 +372,6 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
           if (event <  100) cout << "genWeight after PU reWeight is: " << weight << endl;
         }
 */        
-      }
 
       h_weight_full->Fill(0.5, weight*factor);
 
