@@ -63,10 +63,10 @@ int main(int argc, char **argv) {
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 0});
       sample_names.insert({sampleName, sampleName});
-      sample_prod.insert({sampleName, { { "2018",       { /*"Run2018A-UL2018_MiniAODv2_GT36-v1",*/
-                                                          /*"Run2018B-UL2018_MiniAODv2_GT36-v1",*/
-                                                          "Run2018C-UL2018_MiniAODv2_GT36-v1"//,
-                                                          /*"Run2018D-UL2018_MiniAODv2-v2"*/ } },
+      sample_prod.insert({sampleName, { { "2018",       { "Run2018A-UL2018_MiniAODv2_GT36-v1",
+                                                          "Run2018B-UL2018_MiniAODv2_GT36-v1",
+                                                          "Run2018C-UL2018_MiniAODv2_GT36-v1",
+                                                          "Run2018D-UL2018_MiniAODv2-v2" } },
                                         { "2017",       { "" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
