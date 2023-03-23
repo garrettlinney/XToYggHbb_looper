@@ -116,7 +116,11 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   gconf.nanoAOD_ver = 9;
   gconf.GetConfigs(year.Atoi());
   lumi = gconf.lumi;
-  if (year == "2018") lumi = 59.8; //synchronizing with HiggsDNA
+  if (year == "2018") lumi = 54.5;
+  if (year == "2017") lumi = 41.5;
+  if (year == "2016APV") lumi = 19.5;
+  if (year == "2016nonAPV") lumi = 16.8;
+  // FIXME: Use high mass triggers for high mass points? => Full luminosity
 
   // Golden JSON files
   if ( !isMC ) {
@@ -145,22 +149,22 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   H1(LeadPhoton_sieie, 20, 0, 0.05, "");
   H1(LeadPhoton_pfPhoIso03, 20, 0, 10, "");
   H1(LeadPhoton_chargedHadronIso, 20, 0, 10, "");
-  //H1(LeadPhoton_trkSumPtHollowConeDR03, 20, 0, 10, ""); // To be readded
+  H1(LeadPhoton_trkSumPtHollowConeDR03, 20, 0, 10, "");
   H1(SubleadPhoton_sieie, 20, 0, 0.05, "");
   H1(SubleadPhoton_pfPhoIso03, 20, 0, 10, "");
   H1(SubleadPhoton_chargedHadronIso, 20, 0, 10, "");
-  //H1(SubleadPhoton_trkSumPtHollowConeDR03, 20, 0, 10, ""); // To be readded
+  H1(SubleadPhoton_trkSumPtHollowConeDR03, 20, 0, 10, "");
 
 
   // Variables for output branches
   float xcand_pt, xcand_eta, xcand_phi, xcand_mass;
 
-  float LeadPhoton_pt, LeadPhoton_eta, LeadPhoton_phi, LeadPhoton_mvaID; // LeadPhoton_mass 
+  float LeadPhoton_pt, LeadPhoton_eta, LeadPhoton_phi, LeadPhoton_mvaID;
   bool LeadPhoton_pixelSeed, SubleadPhoton_pixelSeed;
-  float SubleadPhoton_pt, SubleadPhoton_eta, SubleadPhoton_phi, SubleadPhoton_mvaID; // SubleadPhoton_mass
+  float SubleadPhoton_pt, SubleadPhoton_eta, SubleadPhoton_phi, SubleadPhoton_mvaID;
   float Diphoton_pt, Diphoton_eta, Diphoton_phi, Diphoton_mass, Diphoton_pt_mgg, Diphoton_dR;
-  float LeadPhoton_sieie, LeadPhoton_pfPhoIso03, LeadPhoton_chargedHadronIso, LeadPhoton_r9; // LeadPhoton_trkSumPtHollowConeDR03 
-  float SubleadPhoton_sieie, SubleadPhoton_pfPhoIso03, SubleadPhoton_chargedHadronIso, SubleadPhoton_r9; // SubleadPhoton_trkSumPtHollowConeDR03
+  float LeadPhoton_sieie, LeadPhoton_pfPhoIso03, LeadPhoton_chargedHadronIso, LeadPhoton_r9, LeadPhoton_trkSumPtHollowConeDR03;
+  float SubleadPhoton_sieie, SubleadPhoton_pfPhoIso03, SubleadPhoton_chargedHadronIso, SubleadPhoton_r9, SubleadPhoton_trkSumPtHollowConeDR03;
 
   int n_jets;
   float dijet_lead_pt, dijet_lead_eta, dijet_lead_phi, dijet_lead_mass, dijet_lead_btagDeepFlavB;
@@ -189,24 +193,22 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   tout->Branch("LeadPhoton_pt",&LeadPhoton_pt,"LeadPhoton_pt/F");
   tout->Branch("LeadPhoton_eta",&LeadPhoton_eta,"LeadPhoton_eta/F");
   tout->Branch("LeadPhoton_phi",&LeadPhoton_phi,"LeadPhoton_phi/F");
-  //tout->Branch("LeadPhoton_mass",&LeadPhoton_mass,"LeadPhoton_mass/F");
   tout->Branch("LeadPhoton_pixelSeed",&LeadPhoton_pixelSeed,"LeadPhoton_pixelSeed/B");
   tout->Branch("LeadPhoton_r9",&LeadPhoton_r9,"LeadPhoton_r9/F");
   tout->Branch("LeadPhoton_sieie",&LeadPhoton_sieie,"LeadPhoton_sieie/F");
   tout->Branch("LeadPhoton_pfPhoIso03",&LeadPhoton_pfPhoIso03,"LeadPhoton_pfPhoIso03/F");
-  //tout->Branch("LeadPhoton_trkSumPtHollowConeDR03",&LeadPhoton_trkSumPtHollowConeDR03,"LeadPhoton_trkSumPtHollowConeDR03/F"); // To be readded
+  tout->Branch("LeadPhoton_trkSumPtHollowConeDR03",&LeadPhoton_trkSumPtHollowConeDR03,"LeadPhoton_trkSumPtHollowConeDR03/F");
   tout->Branch("LeadPhoton_chargedHadronIso",&LeadPhoton_chargedHadronIso,"LeadPhoton_chargedHadronIso/F");
   tout->Branch("LeadPhoton_mvaID",&LeadPhoton_mvaID,"LeadPhoton_mvaID/F");
 
   tout->Branch("SubleadPhoton_pt",&SubleadPhoton_pt,"SubleadPhoton_pt/F");
   tout->Branch("SubleadPhoton_eta",&SubleadPhoton_eta,"SubleadPhoton_eta/F");
   tout->Branch("SubleadPhoton_phi",&SubleadPhoton_phi,"SubleadPhoton_phi/F");
-  //tout->Branch("SubleadPhoton_mass",&SubleadPhoton_mass,"SubleadPhoton_mass/F");
   tout->Branch("SubleadPhoton_pixelSeed",&SubleadPhoton_pixelSeed,"SubleadPhoton_pixelSeed/B");  
   tout->Branch("SubleadPhoton_r9",&SubleadPhoton_r9,"SubleadPhoton_r9/F");
   tout->Branch("SubleadPhoton_sieie",&SubleadPhoton_sieie,"SubleadPhoton_sieie/F");
   tout->Branch("SubleadPhoton_pfPhoIso03",&SubleadPhoton_pfPhoIso03,"SubleadPhoton_pfPhoIso03/F");
-  //tout->Branch("SubleadPhoton_trkSumPtHollowConeDR03",&SubleadPhoton_trkSumPtHollowConeDR03,"SubleadPhoton_trkSumPtHollowConeDR03/F"); // To be readded
+  tout->Branch("SubleadPhoton_trkSumPtHollowConeDR03",&SubleadPhoton_trkSumPtHollowConeDR03,"SubleadPhoton_trkSumPtHollowConeDR03/F");
   tout->Branch("SubleadPhoton_chargedHadronIso",&SubleadPhoton_chargedHadronIso,"SubleadPhoton_chargedHadronIso/F");
   tout->Branch("SubleadPhoton_mvaID",&SubleadPhoton_mvaID,"SubleadPhoton_mvaID/F");
 
@@ -367,16 +369,13 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
 
       // HLT selection
-      // HLT selection not applied in MC for synchronizing (same as HiggsDNA) - FIXME: To be applied later
-      if (!isMC){
-        if ( (year=="2016nonAPV" || year=="2016APV") &&
-            !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0)
-              || (tree->GetBranch("HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0) ) ) continue;
-        if ( (year=="2017") &&
-            !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55() : 0)  )  ) continue;
-        if ( (year=="2018") &&
-            !( (tree->GetBranch("HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto") ? nt.HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto() : 0) ) ) continue;
-      }
+      if ( (year=="2016nonAPV" || year=="2016APV") &&
+          !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0)
+            || (tree->GetBranch("HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0) ) ) continue;
+      if ( (year=="2017") &&
+          !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55() : 0)  )  ) continue;
+      if ( (year=="2018") &&
+          !( (tree->GetBranch("HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto") ? nt.HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto() : 0) ) ) continue;
 
 
       // Object selection
@@ -420,23 +419,21 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       LeadPhoton_pt = selectedDiPhoton.leadPho.pt();
       LeadPhoton_eta = selectedDiPhoton.leadPho.eta();
       LeadPhoton_phi = selectedDiPhoton.leadPho.phi();
-      //LeadPhoton_mass = selectedDiPhoton.leadPho.mass();
       LeadPhoton_r9 = selectedDiPhoton.leadPho.r9();
       LeadPhoton_pixelSeed = selectedDiPhoton.leadPho.pixelSeed();
       LeadPhoton_sieie = selectedDiPhoton.leadPho.sieie();
       LeadPhoton_pfPhoIso03 = selectedDiPhoton.leadPho.phoIso();
-      //LeadPhoton_trkSumPtHollowConeDR03 = selectedDiPhoton.leadPho.trkIso(); // To be readded
+      LeadPhoton_trkSumPtHollowConeDR03 = selectedDiPhoton.leadPho.trkIso();
       LeadPhoton_chargedHadronIso = selectedDiPhoton.leadPho.chargedHadIso();
 
       SubleadPhoton_pt = selectedDiPhoton.subleadPho.pt();
       SubleadPhoton_eta = selectedDiPhoton.subleadPho.eta();
       SubleadPhoton_phi = selectedDiPhoton.subleadPho.phi();
-      //SubleadPhoton_mass = selectedDiPhoton.subleadPho.mass();
       SubleadPhoton_r9 = selectedDiPhoton.subleadPho.r9();
       SubleadPhoton_pixelSeed = selectedDiPhoton.subleadPho.pixelSeed();
       SubleadPhoton_sieie = selectedDiPhoton.subleadPho.sieie();
       SubleadPhoton_pfPhoIso03 = selectedDiPhoton.subleadPho.phoIso();
-      //SubleadPhoton_trkSumPtHollowConeDR03 = selectedDiPhoton.subleadPho.trkIso(); // To be readded
+      SubleadPhoton_trkSumPtHollowConeDR03 = selectedDiPhoton.subleadPho.trkIso();
       SubleadPhoton_chargedHadronIso = selectedDiPhoton.subleadPho.chargedHadIso();
 
       Diphoton_pt = selectedDiPhoton.p4.Pt();
@@ -531,11 +528,11 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       h_LeadPhoton_sieie->Fill(LeadPhoton_sieie);
       h_LeadPhoton_pfPhoIso03->Fill(LeadPhoton_pfPhoIso03);
       h_LeadPhoton_chargedHadronIso->Fill(LeadPhoton_chargedHadronIso);
-      //h_LeadPhoton_trkSumPtHollowConeDR03->Fill(LeadPhoton_trkSumPtHollowConeDR03); // To be readded
+      h_LeadPhoton_trkSumPtHollowConeDR03->Fill(LeadPhoton_trkSumPtHollowConeDR03);
       h_SubleadPhoton_sieie->Fill(SubleadPhoton_sieie);
       h_SubleadPhoton_pfPhoIso03->Fill(SubleadPhoton_pfPhoIso03);
       h_SubleadPhoton_chargedHadronIso->Fill(SubleadPhoton_chargedHadronIso);
-      //h_SubleadPhoton_trkSumPtHollowConeDR03->Fill(SubleadPhoton_trkSumPtHollowConeDR03); // To be readded
+      h_SubleadPhoton_trkSumPtHollowConeDR03->Fill(SubleadPhoton_trkSumPtHollowConeDR03);
       h_weight->Fill(0.5, weight*factor);
 
       tout->Fill();

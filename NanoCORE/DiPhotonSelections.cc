@@ -10,16 +10,15 @@ bool UseLowR9Photon(Photon pho, bool isEB) {
     bool loweta = abs(pho.eta())<1.5;
     if (isEB) {
         if ( !(pho.sieie() < 0.015) ) return useThisPhoton;       
-        //if ( !(pho.trkSumPtHollowConeDR03() < 6.0) ) return useThisPhoton;     // if not use central nano // To be readded
+        if ( !(pho.trkSumPtHollowConeDR03() < 6.0) ) return useThisPhoton;
         if ( loweta && !(pho.phoIso() - 0.16544*pho.perEvtRho() < 4.0) ) return useThisPhoton;       
         if ( !(loweta) && !(pho.phoIso() - 0.13212*pho.perEvtRho() < 4.0) ) return useThisPhoton;
     } else {
         if ( !(pho.sieie() < 0.035) ) return useThisPhoton;       
-        //if ( !(pho.trkSumPtHollowConeDR03() < 6.0) ) return useThisPhoton;     // if not use central nano // To be readded
+        if ( !(pho.trkSumPtHollowConeDR03() < 6.0) ) return useThisPhoton;
         if ( loweta && !(pho.phoIso() - 0.16544*pho.perEvtRho() < 4.0) ) return useThisPhoton;       
         if ( !(loweta) && !(pho.phoIso() - 0.13212*pho.perEvtRho() < 4.0) ) return useThisPhoton;      
     }
-
     // 0.16544 and 0.13212 are copied from flashggPreselectedDiPhotons_cfi.py
     useThisPhoton = true;
     return useThisPhoton;
@@ -29,13 +28,11 @@ Photons getPhotons() {
     Photons photons;
     for (unsigned int ipho = 0; ipho < nt.nPhoton(); ipho++) {
         Photon pho = Photon(ipho);
-        //cout << "eta: " << pho.eta() << ", r9: " << pho.r9() << endl;
         if ( !(pho.pt()>18) ) continue;
-        if (! (pho.isScEtaEB() || pho.isScEtaEE())) continue;
-        if ( !(pho.hoe()<0.08) ) continue;//?
-        if (pho.pixelSeed() > 0.5) continue; // this is not standard photon selections, but Sam used this to suppress electrons on the DY peak
-        if (pho.eveto() < 0.5) continue; //?
-//        if ( !(pho.mvaID() > -0.7) ) continue;
+        if ( !(pho.isScEtaEB() || pho.isScEtaEE()) ) continue;
+        if ( !(pho.hoe()<0.08) ) continue;
+        if ( pho.pixelSeed() > 0.5 ) continue; // Not standard photon selection, but used to suppress electrons on the DY peak
+        if ( pho.eveto() < 0.5 ) continue;
 
         if ( !(pho.r9() > 0.8 || pho.chargedHadIso() < 20 || pho.chargedHadIso()/pho.pt() < 0.3) ) continue;
 
@@ -52,7 +49,7 @@ Photons getPhotons() {
     return photons;
 }
 
-DiPhotons DiPhotonPreselection(Photons &photons/*, bool verbose=false*/) {
+DiPhotons DiPhotonPreselection(Photons &photons) {
     DiPhotons diphotons; 
     float maxSumDiphoPt = 0;    
     for (unsigned int i1 = 0; i1 < photons.size(); i1++) {
@@ -65,7 +62,7 @@ DiPhotons DiPhotonPreselection(Photons &photons/*, bool verbose=false*/) {
 //it's a historical cut ,when searching for Higgs, people don't know the dipho mass, then for higher mass they require tighter pt
 //also, trigger cut around 20/30 , bkg mgg shape is not a smooth falling distribution ~100GeV (need to be tested)
 
-            if ( !(dipho.p4.M() >= 55 && dipho.p4.M() <= 999999) ) continue; //(this line has bugs, it has no effects after applying)
+            if ( !(dipho.p4.M() >= 55 && dipho.p4.M() <= 999999) ) continue;
 
             float sumDiPhoPt = dipho.leadPho.pt() + dipho.subleadPho.pt();
 

@@ -67,7 +67,11 @@ int main(int argc, char **argv) {
                                                           "Run2018B-UL2018_MiniAODv2_GT36-v1",
                                                           "Run2018C-UL2018_MiniAODv2_GT36-v1",
                                                           "Run2018D-UL2018_MiniAODv2-v2" } },
-                                        { "2017",       { "" } },
+                                        { "2017",       { "Run2017B-UL2017_MiniAODv2-v1",
+                                                          "Run2017C-UL2017_MiniAODv2-v1",
+                                                          "Run2017D-UL2017_MiniAODv2-v1",
+                                                          "Run2017E-UL2017_MiniAODv2-v1",
+                                                          "Run2017F-UL2017_MiniAODv2-v1" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
     }
@@ -82,7 +86,7 @@ int main(int argc, char **argv) {
       sample_procids.insert({sampleName, 1});
       sample_names.insert({sampleName, "DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
-                                        { "2017",       { "" } },
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
     }
@@ -93,7 +97,7 @@ int main(int argc, char **argv) {
       sample_procids.insert({sampleName, 2});
       sample_names.insert({sampleName, "TTGG_0Jets_TuneCP5_13TeV-amcatnlo-madspin-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
-                                        { "2017",       { "" } },
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
 
@@ -102,7 +106,7 @@ int main(int argc, char **argv) {
       sample_procids.insert({sampleName, 3});
       sample_names.insert({sampleName, "TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
-                                        { "2017",       { "" } },
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
 
@@ -111,7 +115,7 @@ int main(int argc, char **argv) {
       sample_procids.insert({sampleName, 4});
       sample_names.insert({sampleName, "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
-                                        { "2017",       { "" } },
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
     }
@@ -122,7 +126,7 @@ int main(int argc, char **argv) {
       sample_procids.insert({sampleName, 5});
       sample_names.insert({sampleName, "VHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
-                                        { "2017",       { "" } },
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });  
 
@@ -131,7 +135,7 @@ int main(int argc, char **argv) {
       sample_procids.insert({sampleName, 6});
       sample_names.insert({sampleName,"VBFHToGG_M125_TuneCP5_13TeV-amcatnlo-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
-                                        { "2017",       { "" } },
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
 
@@ -140,7 +144,7 @@ int main(int argc, char **argv) {
       sample_procids.insert({sampleName, 7});
       sample_names.insert({sampleName, "ttHJetToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
-                                        { "2017",       { "" } },
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
 
@@ -149,7 +153,7 @@ int main(int argc, char **argv) {
       sample_procids.insert({sampleName, 8});
       sample_names.insert({sampleName, "GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
-                                        { "2017",       { "" } },
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
     }
@@ -162,8 +166,12 @@ int main(int argc, char **argv) {
         samples.push_back(sampleName);
         sample_procids.insert({sampleName, 9+processId_M[M[imass]]});
         sample_names.insert({sampleName, sampleName+"_TuneCP5_13TeV-madgraphMLM-pythia8"});
-        sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
-                                          { "2017",       { "" } },
+        sample_prod.insert({sampleName, { { "2018",       { ( M[imass] =="100" ?
+                                                              "RunIISummer20UL18MiniAODv2-4cores5k_106X_upgrade2018_realistic_v16_L1v1-v2" :
+                                                              "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" ) } },
+                                          { "2017",       { ( M[imass] =="100" ?
+                                                              "RunIISummer20UL17MiniAODv2-4cores5k_106X_mc2017_realistic_v9-v2" :
+                                                              "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" ) } },
                                           { "2016APV",    { "" } },
                                           { "2016nonAPV", { "" } } } });
       }
@@ -175,7 +183,7 @@ int main(int argc, char **argv) {
       sample_procids.insert({sampleName, 14});
       sample_names.insert({sampleName, "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
-                                        { "2017",       { "" } },
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
     }
@@ -187,9 +195,11 @@ int main(int argc, char **argv) {
         TString sampleName = V[iV]+"G";
         samples.push_back(sampleName);
         sample_procids.insert({sampleName, 15+processId_V[V[iV]]});
-        sample_names.insert({sampleName, sampleName+"ToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
+        sample_names.insert({sampleName, ( V[iV]=="W" ?
+                                           sampleName+"ToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8" :
+                                           sampleName+"ToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8" ) });
         sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
-                                          { "2017",       { "" } },
+                                          { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1" } },
                                           { "2016APV",    { "" } },
                                           { "2016nonAPV", { "" } } } });
       }
@@ -201,7 +211,7 @@ int main(int argc, char **argv) {
       sample_procids.insert({sampleName, 17});
       sample_names.insert({sampleName, "GluGluToHHTo2B2G_node_cHHH1_TuneCP5_13TeV-powheg-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "privateUL18" } },
-                                        { "2017",       { "" } },
+                                        { "2017",       { "privateUL17" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
     }
@@ -228,7 +238,7 @@ int main(int argc, char **argv) {
         sample_prod.insert({sampleName, { { "2018",       { ( V[iV] == "ZZ" ?
                                                               "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" :
                                                               "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" ) } },
-                                          { "2017",       { "" } },
+                                          { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1" } },
                                           { "2016APV",    { "" } },
                                           { "2016nonAPV", { "" } } } });
       }
@@ -247,33 +257,64 @@ int main(int argc, char **argv) {
                                             {"350","21"}, {"400","22"}, {"450","23"}, {"500","24"}, {"550","25"},
                                             {"600","26"}, {"650","27"}, {"700","28"}, {"800","29"} };
 
+      // Temporary MComb maps separate for each year - will be combined when all year become available
+      // 2017
       map<TString,vector<TString>> MComb = { { "240",  { "70","80","90","100" } },
-                                             { "280",  { "70",/*"80",*/"90","100","125","150" } },
-                                             { "300",  { "70",/*"80","90","100",*/"125","150","170" } },
+                                             { "280",  { "70","80","90","100","125","150" } },
+                                             { "300",  { "70","80","90","100","125","150","170" } },
                                              { "320",  { "70","80","90","100","125","150","170","190" } },
-                                             { "360",  { "70",/*"80",*/"90","100","125","150","170","190" } },
-                                             { "400",  { /*"70","80","90","100","125",*/"150","170","190","250" } },
-                                             { "450",  { "70","80","90",/*"100",*/"125","150","170",/*"190",*/"250","300" } },
-                                             { "500",  { "70","80","90",/*"100",*/"125",/*"150","170",*/"190","250","300","350" } },
-                                             { "550",  { "70","80","90","100","125","150","170","190","250","300",/*"350",*/"400" } },
-                                             { "600",  { /*"70",*/"80","90",/*"100",*/"125","150","170","190","250",/*"300","350",*/"400",
+                                             { "360",  { "70","80","90",/*"100",*/"125","150","170","190" } },
+                                             { "400",  { "70","80","90","100","125","150","170","190","250" } },
+                                             { "450",  { "70","80",/*"90",*/"100","125","150","170","190","250","300" } },
+                                             { "500",  { /*"70",*/"80","90","100","125","150","170","190","250","300","350" } },
+                                             { "550",  { "70","80","90","100","125","150","170","190","250","300","350","400" } },
+                                             { "600",  { "70","80","90","100","125","150","170","190","250","300","350","400",
                                                          "450" } },
                                              { "650",  { "70","80","90","100","125","150","170","190","250","300","350","400",
                                                          "450","500" } },
                                              { "700",  { "70","80","90","100","125","150","170","190","250","300","350","400",
-                                                         "450","500"/*,"550"*/ } },
-                                             { "750",  { "70","80","90","100","125",/*"150",*/"170","190","250","300","350","400",
-                                                         "450",/*"500",*/"550","600" } },
-                                             { "800",  { "70",/*"80","90","100",*/"125","150",/*"170",*/"190","250","300","350","400",
-                                                         "450","500",/*"550",*/"600","650" } },
-                                             { "850",  { /*"70",*/"80","90",/*"100",*/"125","150","170","190","250","300","350","400",
-                                                         "450","500",/*"550",*/"600"/*,"650","700"*/ } },
-                                             { "900",  { /*"70",*/"80","90","100","125","150","170","190","250","300",/*"350",*/"400",
-                                                         "450",/*"500",*/"550","600","650"/*,"700"*/ } },
-                                             { "950",  { /*"70",*/"80","90","100","125","150",/*"170","190","250",*/"300","350","400",
-                                                         "450","500","550","600",/*"650",*/"700","800" } },
-                                             { "1000",  { "70","80","90","100","125","150","170","190","250","300","350","400",
+                                                         "450",/*"500",*/"550" } },
+                                             { "750",  { "70","80","90","100","125","150","170","190","250","300","350","400",
+                                                         "450","500","550","600" } },
+                                             { "800",  { "70",/*"80",*/"90","100","125","150","170","190","250","300","350","400",
+                                                         "450","500","550","600","650" } },
+                                             { "850",  { "70","80","90","100","125","150","170","190","250","300","350","400",
+                                                         "450","500","550","600","650","700" } },
+                                             { "900",  { "70","80","90",/*"100",*/"125","150","170","190","250","300","350","400",
+                                                         "450","500","550","600","650","700" } },
+                                             { "950",  { "70","80","90","100","125","150","170","190","250","300","350","400",
+                                                         "450","500","550","600","650","700","800" } },
+                                             { "1000",  { "70","80","90",/*"100",*/"125","150","170","190","250","300","350","400",
                                                          "450","500","550","600","650","700","800" } } };
+
+      //// 2018
+      //map<TString,vector<TString>> MComb = { { "240",  { "70","80","90","100" } },
+      //                                       { "280",  { "70",/*"80",*/"90","100","125","150" } },
+      //                                       { "300",  { "70",/*"80","90","100",*/"125","150","170" } },
+      //                                       { "320",  { "70","80","90","100","125","150","170","190" } },
+      //                                       { "360",  { "70",/*"80",*/"90","100","125","150","170","190" } },
+      //                                       { "400",  { /*"70","80","90","100","125",*/"150","170","190","250" } },
+      //                                       { "450",  { "70","80","90",/*"100",*/"125","150","170",/*"190",*/"250","300" } },
+      //                                       { "500",  { "70","80","90",/*"100",*/"125",/*"150","170",*/"190","250","300","350" } },
+      //                                       { "550",  { "70","80","90","100","125","150","170","190","250","300",/*"350",*/"400" } },
+      //                                       { "600",  { /*"70",*/"80","90",/*"100",*/"125","150","170","190","250",/*"300","350",*/"400",
+      //                                                   "450" } },
+      //                                       { "650",  { "70","80","90","100","125","150","170","190","250","300","350","400",
+      //                                                   "450","500" } },
+      //                                       { "700",  { "70","80","90","100","125","150","170","190","250","300","350","400",
+      //                                                   "450","500"/*,"550"*/ } },
+      //                                       { "750",  { "70","80","90","100","125",/*"150",*/"170","190","250","300","350","400",
+      //                                                   "450",/*"500",*/"550","600" } },
+      //                                       { "800",  { "70",/*"80","90","100",*/"125","150",/*"170",*/"190","250","300","350","400",
+      //                                                   "450","500",/*"550",*/"600","650" } },
+      //                                       { "850",  { /*"70",*/"80","90",/*"100",*/"125","150","170","190","250","300","350","400",
+      //                                                   "450","500",/*"550",*/"600"/*,"650","700"*/ } },
+      //                                       { "900",  { /*"70",*/"80","90","100","125","150","170","190","250","300",/*"350",*/"400",
+      //                                                   "450",/*"500",*/"550","600","650"/*,"700"*/ } },
+      //                                       { "950",  { /*"70",*/"80","90","100","125","150",/*"170","190","250",*/"300","350","400",
+      //                                                   "450","500","550","600",/*"650",*/"700","800" } },
+      //                                       { "1000",  { "70","80","90","100","125","150","170","190","250","300","350","400",
+      //                                                   "450","500","550","600","650","700","800" } } };
 
       map<TString,vector<TString>> M;
       if ( sampleArg.Contains("_low" ) ) // Includes MX of 1000, 240 - 400 GeV
@@ -297,7 +338,7 @@ int main(int argc, char **argv) {
           sample_procids.insert({sampleName, (processId_MX[MX]+processId_MY[MY]).Atoi()});
           sample_names.insert({sampleName, sampleName+"_TuneCP5_13TeV-madgraph-pythia8"});
           sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-"+v } },
-                                            { "2017",       { "" } },
+                                            { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
                                             { "2016APV",    { "" } },
                                             { "2016nonAPV", { "" } } } });
         }
