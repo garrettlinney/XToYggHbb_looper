@@ -7,16 +7,16 @@
 
 struct Jet {
     Jet(unsigned int idx = 0) : idx_(idx) {
-        try
-        {
-            pt_ = nt.Jet_pt_nom()[idx_];
-        }
-        catch(const std::exception& e)
-        {
-            pt_ = nt.Jet_pt()[idx_];
-        }
-        
-//        pt_ = nt.Jet_pt_nom()[idx_] ? nt.Jet_pt_nom()[idx_] : nt.Jet_pt()[idx_];
+        try { pt_ = nt.Jet_pt_nom()[idx_]; }
+        catch(const std::exception& e) { pt_ = nt.Jet_pt()[idx_]; }
+        try { pt_jerUp_ = nt.Jet_pt_jerUp()[idx_]; }
+        catch(const std::exception& e) { pt_jerUp_ = nt.Jet_pt()[idx_]; }
+        try { pt_jerDown_ = nt.Jet_pt_jerDown()[idx_]; }
+        catch(const std::exception& e) { pt_jerDown_ = nt.Jet_pt()[idx_]; }
+        try { pt_jesTotalUp_ = nt.Jet_pt_jesTotalUp()[idx_]; }
+        catch(const std::exception& e) { pt_jesTotalUp_ = nt.Jet_pt()[idx_]; }
+        try { pt_jesTotalDown_ = nt.Jet_pt_jesTotalDown()[idx_]; }
+        catch(const std::exception& e) { pt_jesTotalDown_ = nt.Jet_pt()[idx_]; }
         mass_ = nt.Jet_mass()[idx_];
         eta_ = nt.Jet_eta()[idx_];
         phi_ = nt.Jet_phi()[idx_];
@@ -24,11 +24,16 @@ struct Jet {
         p4_.SetPtEtaPhiM(pt_, nt.Jet_eta()[idx_], nt.Jet_phi()[idx_], nt.Jet_mass()[idx_]);
         btagDeepFlavB_ = nt.Jet_btagDeepFlavB()[idx_];
     }
+    void setPt(float pt) { pt_ = pt; }
     //void set_idlevel(int idlevel) { idlevel_ = idlevel; }
     int id() { return id_; }
     unsigned int idx() { return idx_; }
     TLorentzVector p4() { return p4_; }
     float pt() { return pt_; }
+    float pt_jerUp() { return pt_jerUp_; }
+    float pt_jerDown() { return pt_jerDown_; }
+    float pt_jesTotalUp() { return pt_jesTotalUp_; }
+    float pt_jesTotalDown() { return pt_jesTotalDown_; }
     float mass() { return mass_; }
     float eta() { return eta_; }
     float phi() { return phi_; }
@@ -38,6 +43,10 @@ struct Jet {
   private:
     int id_;
     float pt_ = 0.;
+    float pt_jerUp_ = 0.;
+    float pt_jerDown_ = 0.;
+    float pt_jesTotalUp_ = 0.;
+    float pt_jesTotalDown_ = 0.;
     float eta_ = 0.;
     float mass_ = 0;
     TLorentzVector p4_;
@@ -47,7 +56,7 @@ struct Jet {
     float btagDeepFlavB_ = 0;
 };
 
-vector<Jet> getJets(Photons photons);
+vector<Jet> getJets(Photons photons, const int JESUnc, const int JERUnc);
 typedef std::vector<Jet> Jets;
 
 struct DiJet{

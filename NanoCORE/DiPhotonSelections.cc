@@ -1,7 +1,6 @@
 #include "DiPhotonSelections.h"
-#include "Config.h"
-#include "ElectronSelections.h"
-#include "MuonSelections.h"
+#include "Tools/fnufUnc.h"
+#include "Tools/materialUnc.h"
 
 using namespace tas;
 
@@ -24,10 +23,40 @@ bool UseLowR9Photon(Photon pho, bool isEB) {
     return useThisPhoton;
 }
 
-Photons getPhotons() {
+Photons getPhotons(const TString year, const int fnufUnc, const int materialUnc, const int PhoScaleUnc, const int PhoSmearUnc) {
     Photons photons;
+
+    if ( fnufUnc != 0) fnufUnc::set_fnufUnc();
+    if ( materialUnc != 0) materialUnc::set_materialUnc();
+
     for (unsigned int ipho = 0; ipho < nt.nPhoton(); ipho++) {
         Photon pho = Photon(ipho);
+
+        // Apply fnuf unc
+        if ( fnufUnc!=0 ) {
+          // fnufUnc is only an uncertainty => fnufUnc==1 leads to dummy multiplication by unity
+          if ( fnufUnc==2  ) pho.setPt( pho.pt()*fnufUnc::get_fnufUnc(pho.eta(), pho.r9(), year, "up") );
+          if ( fnufUnc==-2 ) pho.setPt( pho.pt()*fnufUnc::get_fnufUnc(pho.eta(), pho.r9(), year, "down") );
+        }
+        // Apply material unc
+        if ( materialUnc!=0 ) {
+          // materialUnc is only an uncertainty => materialUnc==1 leads to dummy multiplication by unity
+          if ( materialUnc==2  ) pho.setPt( pho.pt()*materialUnc::get_materialUnc(pho.eta(), pho.r9(), year, "up") );
+          if ( materialUnc==-2 ) pho.setPt( pho.pt()*materialUnc::get_materialUnc(pho.eta(), pho.r9(), year, "down") );
+        }
+        // Apply photon scale unc
+        if ( PhoScaleUnc!=0 ) {
+          // PhoScaleUnc is only an uncertainty => PhoScaleUnc==1 leads to dummy multiplication by unity
+          if ( PhoScaleUnc==2  ) pho.setPt( pho.pt_ScaleUp() );
+          if ( PhoScaleUnc==-2 ) pho.setPt( pho.pt_ScaleDown() );
+        }
+        // Apply photon smear unc
+        if ( PhoSmearUnc!=0 ) {
+          // PhoSmearUnc is only an uncertainty => PhoSmearUnc==1 leads to dummy multiplication by unity
+          if ( PhoSmearUnc==2  ) pho.setPt( pho.pt()+pho.dEsigmaUp() );
+          if ( PhoSmearUnc==-2 ) pho.setPt( pho.pt()+pho.dEsigmaDown() );
+        }
+
         if ( !(pho.pt()>18) ) continue;
         if ( !(pho.isScEtaEB() || pho.isScEtaEE()) ) continue;
         if ( !(pho.hoe()<0.08) ) continue;
@@ -45,6 +74,9 @@ Photons getPhotons() {
     }
 
     sort(photons.begin(), photons.end(), sortByPt);
+
+    if ( fnufUnc != 0) fnufUnc::reset_fnufUnc();
+    if ( materialUnc != 0) materialUnc::reset_materialUnc();
 
     return photons;
 }

@@ -24,8 +24,10 @@
 #include "../NanoCORE/XYMETCorrection_withUL17andUL18andUL16.h"
 #include "../NanoCORE/Tools/goodrun.h"
 #include "../NanoCORE/Tools/dorky.h"
-#include "../NanoCORE/Tools/puWeight.h"
 #include "../NanoCORE/Tools/bTagEff.h"
+#include "../NanoCORE/Tools/electronVetoSF.h"
+#include "../NanoCORE/Tools/lowMassHggTriggerSF.h"
+#include "../NanoCORE/Tools/lowMassHggPreselSF.h"
 #include "../NanoCORE/Tools/btagsf/BTagCalibrationStandalone_v2.h"
 #include "../NanoCORE/DiPhotonSelections.h"
 #include "../NanoCORE/LeptonSelections.h"
@@ -56,7 +58,7 @@ int count_test=0;
 
 ofstream txtout("evtnb.txt", ofstream::app);
 
-int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process, int process_id, const char* outdir="temp_data", int PUWeight=1, int bTagSF=1, int JECUnc=0) {
+int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process, int process_id, const char* outdir="temp_data", int prefireWeight=1, int PUWeight=1, int electronVetoSF=1, int lowMassHggTriggerSF=1, int lowMassHggPreselSF=1, int bTagSF=1, int fnufUnc=0, int materialUnc=0, int PhoScaleUnc=0, int PhoSmearUnc=0, int JESUnc=0, int JERUnc=0) {
 // Event weights / scale factors:
 //  0: Do not apply
 //  1: Apply central value
@@ -296,8 +298,9 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   H1(weight,1,0,1,"");
   H1(weight_full,1,0,1,"");
 
-
-  //if ( PUWeight!=0 ) set_puWeights(); // FIXME to be enabled later?
+  if ( electronVetoSF != 0) electronVetoSF::set_electronVetoSF();
+  if ( lowMassHggTriggerSF != 0) lowMassHggTriggerSF::set_lowMassHggTriggerSF();
+  if ( lowMassHggPreselSF != 0) lowMassHggPreselSF::set_lowMassHggPreselSF();
 
   int nEventsTotal = 0;
   int nDuplicates = 0;
@@ -359,21 +362,20 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       if ( isMC ) {
         weight = nt.genWeight();
 
+        // Apply PreFiring weight
+        if ( prefireWeight!=0 ) {
+          if ( prefireWeight==1  ) weight *= nt.L1PreFiringWeight_ECAL_Nom();
+          if ( prefireWeight==2  ) weight *= nt.L1PreFiringWeight_ECAL_Up();
+          if ( prefireWeight==-2 ) weight *= nt.L1PreFiringWeight_ECAL_Dn();
+        }
         //if(removeSpikes && weight*factor>1e2) continue; //comment out for synchronizing
 
-        // Apply PU reweight // FIXME to be enabled later?
-/*        
+        // Apply PU weight
         if ( PUWeight!=0 ) {
-          unsigned int nTrueInt = nt.Pileup_nTrueInt();
-          TString whichPUWeight = "central";
-          if ( PUWeight==2 ) whichPUWeight = "up";
-          else if ( PUWeight==-2 ) whichPUWeight = "down";
-          TString puyear = year;
-          if ( useOnlyRun2018B ) puyear = "2018B";
-          weight *= get_puWeight(nTrueInt, puyear, whichPUWeight);
-          if (event <  100) cout << "genWeight after PU reWeight is: " << weight << endl;
+          if ( PUWeight==1  ) weight *= nt.puWeight();
+          if ( PUWeight==2  ) weight *= nt.puWeightUp();
+          if ( PUWeight==-2 ) weight *= nt.puWeightDown();
         }
-*/        
       }
 
       h_weight_full->Fill(0.5, weight*factor);
@@ -409,7 +411,15 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
 
       // Object selection
-      Photons photons = getPhotons();
+      Photons photons;
+      if (isMC) {
+        photons = getPhotons(year, fnufUnc, materialUnc, PhoScaleUnc, PhoSmearUnc);
+        for (auto pho : photons)
+          pho.setGenPartFlav(pho.idx());
+      }
+      else {
+        photons = getPhotons(year, 0, 0, 0, 0);
+      }
       DiPhotons diphotons = DiPhotonPreselection(photons);
 
       if (diphotons.size() == 0 ) continue; 
@@ -426,13 +436,49 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       if (electrons.size() != 0 ) continue; 
       if (muons.size() != 0 ) continue; 
 
-      Jets jets = getJets(selectedPhotons);
+      Jets jets;
+      if (isMC) jets = getJets(selectedPhotons, JESUnc, JERUnc);
+      else jets = getJets(selectedPhotons, 0, 0);
       if (jets.size() < 2) continue; 
 
       DiJets dijets = DiJetPreselection(jets);
       DiJet selectedDiJet = dijets[0];
 
       if (dijets[0].p4.M()<50) continue;
+
+      if (isMC) {
+        // Apply electron veto SF
+        if ( electronVetoSF!=0 ) {
+          if ( electronVetoSF==1  ) {
+            weight *= electronVetoSF::get_electronVetoSF(selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), year, "central")*electronVetoSF::get_electronVetoSF(selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), year, "central");
+          }
+          if ( electronVetoSF==2  ) weight *= electronVetoSF::get_electronVetoSF(selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), year, "up")*electronVetoSF::get_electronVetoSF(selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), year, "up");
+          if ( electronVetoSF==-2 ) weight *= electronVetoSF::get_electronVetoSF(selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), year, "down")*electronVetoSF::get_electronVetoSF(selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), year, "down");
+        }
+
+        // Apply low mass trigger SF
+        if ( lowMassHggTriggerSF!=0 ) {
+          bool leadEBHiR9=false, subleadEBHiR9=false;
+          if ( year=="2016nonAPV" || year=="2016APV" ) {
+            leadEBHiR9 = fabs(selectedDiPhoton.leadPho.eta()) < 1.5 && selectedDiPhoton.leadPho.r9() > 0.85 && fabs(selectedDiPhoton.subleadPho.eta()) < 1.5;
+            subleadEBHiR9 = fabs(selectedDiPhoton.subleadPho.eta()) < 1.5 && selectedDiPhoton.subleadPho.r9() > 0.85 && fabs(selectedDiPhoton.leadPho.eta()) < 1.5;
+          }
+          if ( lowMassHggTriggerSF==1  ) {
+            weight *= lowMassHggTriggerSF::get_lowMassHggTriggerSF(selectedDiPhoton.leadPho.pt(), selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), "Lead", leadEBHiR9, year, "central")*lowMassHggTriggerSF::get_lowMassHggTriggerSF(selectedDiPhoton.subleadPho.pt(), selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), "Sublead", subleadEBHiR9, year, "central");
+          }
+          if ( lowMassHggTriggerSF==2  ) weight *= lowMassHggTriggerSF::get_lowMassHggTriggerSF(selectedDiPhoton.leadPho.pt(), selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), "Lead", leadEBHiR9, year, "up")*lowMassHggTriggerSF::get_lowMassHggTriggerSF(selectedDiPhoton.subleadPho.pt(), selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), "Sublead", subleadEBHiR9, year, "up");
+          if ( lowMassHggTriggerSF==-2 ) weight *= lowMassHggTriggerSF::get_lowMassHggTriggerSF(selectedDiPhoton.leadPho.pt(), selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), "Lead", leadEBHiR9, year, "down")*lowMassHggTriggerSF::get_lowMassHggTriggerSF(selectedDiPhoton.subleadPho.pt(), selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), "Sublead", subleadEBHiR9, year, "down");
+        }
+
+        // Apply low mass preselection SF
+        if ( lowMassHggPreselSF!=0 ) {
+          if ( lowMassHggPreselSF==1  ) {
+            weight *= lowMassHggPreselSF::get_lowMassHggPreselSF(selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), year, "central")*lowMassHggPreselSF::get_lowMassHggPreselSF(selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), year, "central");
+          }
+          if ( lowMassHggPreselSF==2  ) weight *= lowMassHggPreselSF::get_lowMassHggPreselSF(selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), year, "up")*lowMassHggPreselSF::get_lowMassHggPreselSF(selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), year, "up");
+          if ( lowMassHggPreselSF==-2 ) weight *= lowMassHggPreselSF::get_lowMassHggPreselSF(selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), year, "down")*lowMassHggPreselSF::get_lowMassHggPreselSF(selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), year, "down");
+        }
+      }
 
       // Setting output variables
       TLorentzVector x_cand = selectedDiPhoton.p4 + selectedDiJet.p4;
@@ -570,6 +616,9 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   } // File loop
     
   bar.finish();
+  if ( electronVetoSF != 0) electronVetoSF::reset_electronVetoSF();
+  if ( lowMassHggTriggerSF != 0) lowMassHggTriggerSF::reset_lowMassHggTriggerSF();
+  if ( lowMassHggPreselSF != 0) lowMassHggPreselSF::reset_lowMassHggPreselSF();
   cout << "nTotal: " << h_weight_full->GetBinContent(1) << ", nPass: " << h_weight->GetBinContent(1) << ", eff: " << h_weight->GetBinContent(1)/h_weight_full->GetBinContent(1) << endl;
   cout << endl;
 

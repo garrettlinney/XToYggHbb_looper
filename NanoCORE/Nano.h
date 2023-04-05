@@ -13823,6 +13823,18 @@ protected:
     bool loaded_Photon_pt_;
     unsigned int counter_cached_Photon_pt_;
     unsigned int counter_uncached_Photon_pt_;
+    float Photon_pt_ScaleUp_[NPHOTON_MAX];
+    vector<float> v_Photon_pt_ScaleUp_;
+    TBranch *b_Photon_pt_ScaleUp_;
+    bool loaded_Photon_pt_ScaleUp_;
+    unsigned int counter_cached_Photon_pt_ScaleUp_;
+    unsigned int counter_uncached_Photon_pt_ScaleUp_;
+    float Photon_pt_ScaleDown_[NPHOTON_MAX];
+    vector<float> v_Photon_pt_ScaleDown_;
+    TBranch *b_Photon_pt_ScaleDown_;
+    bool loaded_Photon_pt_ScaleDown_;
+    unsigned int counter_cached_Photon_pt_ScaleDown_;
+    unsigned int counter_uncached_Photon_pt_ScaleDown_;
     float Photon_r9_[NPHOTON_MAX];
     vector<float> v_Photon_r9_;
     TBranch *b_Photon_r9_;
@@ -17748,6 +17760,8 @@ public:
     const vector<float> &Photon_pfPhoIso03();
     const vector<bool> &Photon_pixelSeed();
     const vector<float> &Photon_pt();
+    const vector<float> &Photon_pt_ScaleUp();
+    const vector<float> &Photon_pt_ScaleDown();
     const vector<float> &Photon_r9();
     const vector<UChar_t> &Photon_seedGain();
     const vector<float> &Photon_sieie();
@@ -20635,6 +20649,8 @@ namespace tas {
     const vector<float> &Photon_pfPhoIso03(); // photon iso
     const vector<bool> &Photon_pixelSeed(); // has pixel seed
     const vector<float> &Photon_pt(); // p_{T}
+    const vector<float> &Photon_pt_ScaleUp(); // p_{T}, scaled Up
+    const vector<float> &Photon_pt_ScaleDown(); // p_{T}, scaled Down
     const vector<float> &Photon_r9(); // R9 of the supercluster, calculated with full 5x5 region
     const vector<UChar_t> &Photon_seedGain(); // Gain of the seed crystal
     const vector<float> &Photon_sieie(); // sigma_IetaIeta of the supercluster, calculated with full 5x5 region

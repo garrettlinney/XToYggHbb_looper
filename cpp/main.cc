@@ -30,9 +30,18 @@ int main(int argc, char **argv) {
   TString sampleArg  = ( argc > 6 ? argv[6]               : "all" );
   int onlyCreateJSON = ( argc > 7 ? ((int)*argv[7] - 48 ) : 0 );  // '0' has the ASCII code of 48
   
+  int prefireWeight=1;
   int PUWeight=1;
+  int electronVetoSF=1;
+  int lowMassHggTriggerSF=1;
+  int lowMassHggPreselSF=1;
   int bTagSF=1;
-  int JECUnc=0; // No central value, set to +/-2 to get
+  int fnufUnc=0; // No central value, set to +/-2 to get uncertainty
+  int materialUnc=0; // No central value, set to +/-2 to get uncertainty
+  int PhoScaleUnc=0; // No central value, set to +/-2 to get uncertainty
+  int PhoSmearUnc=0; // No central value, set to +/-2 to get uncertainty
+  int JESUnc=0; // No central value, set to +/-2 to get uncertainty
+  int JERUnc=0; // No central value, set to +/-2 to get uncertainty
   
 
   // Map definitions
@@ -407,7 +416,7 @@ int main(int argc, char **argv) {
         }
 
         std::cout<<"Sample: "<<sample<<" --> Process ID: "<<sample_procid<<"\n\n";
-        ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp, isMC),year,sample,sample_procid,outdir,PUWeight,bTagSF,JECUnc);
+        ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp, isMC),year,sample,sample_procid,outdir,prefireWeight,PUWeight,electronVetoSF,lowMassHggTriggerSF,lowMassHggPreselSF,bTagSF,fnufUnc,materialUnc,PhoScaleUnc,PhoSmearUnc,JESUnc,JERUnc);
       }
     }
   }
