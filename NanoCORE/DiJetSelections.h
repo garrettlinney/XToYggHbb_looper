@@ -23,6 +23,44 @@ struct Jet {
         jetId_ = nt.Jet_jetId()[idx_];
         p4_.SetPtEtaPhiM(pt_, nt.Jet_eta()[idx_], nt.Jet_phi()[idx_], nt.Jet_mass()[idx_]);
         btagDeepFlavB_ = nt.Jet_btagDeepFlavB()[idx_];
+        try {btagSF_deepjet_shape_ = nt.Jet_btagSF_deepjet_shape()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_=1;}
+        try {btagSF_deepjet_shape_up_hf_ = nt.Jet_btagSF_deepjet_shape_up_hf()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_up_hf_=1;}
+        try {btagSF_deepjet_shape_down_hf_ = nt.Jet_btagSF_deepjet_shape_down_hf()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_down_hf_=1;}
+        try {btagSF_deepjet_shape_up_hfstats1_ = nt.Jet_btagSF_deepjet_shape_up_hfstats1()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_up_hfstats1_=1;}
+        try {btagSF_deepjet_shape_down_hfstats1_ = nt.Jet_btagSF_deepjet_shape_down_hfstats1()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_down_hfstats1_=1;}
+        try {btagSF_deepjet_shape_up_hfstats2_ = nt.Jet_btagSF_deepjet_shape_up_hfstats2()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_up_hfstats2_=1;}
+        try {btagSF_deepjet_shape_down_hfstats2_ = nt.Jet_btagSF_deepjet_shape_down_hfstats2()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_down_hfstats2_=1;}
+        try {btagSF_deepjet_shape_up_lf_ = nt.Jet_btagSF_deepjet_shape_up_lf()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_up_lf_=1;}
+        try {btagSF_deepjet_shape_down_lf_ = nt.Jet_btagSF_deepjet_shape_down_lf()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_down_lf_=1;}
+        try {btagSF_deepjet_shape_up_lfstats1_ = nt.Jet_btagSF_deepjet_shape_up_lfstats1()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_up_lfstats1_=1;}
+        try {btagSF_deepjet_shape_down_lfstats1_ = nt.Jet_btagSF_deepjet_shape_down_lfstats1()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_down_lfstats1_=1;}
+        try {btagSF_deepjet_shape_up_lfstats2_ = nt.Jet_btagSF_deepjet_shape_up_lfstats2()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_up_lfstats2_=1;}
+        try {btagSF_deepjet_shape_down_lfstats2_ = nt.Jet_btagSF_deepjet_shape_down_lfstats2()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_down_lfstats2_=1;}
+        try {btagSF_deepjet_shape_up_jes_ = nt.Jet_btagSF_deepjet_shape_up_jes()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_up_jes_=1;}
+        try {btagSF_deepjet_shape_down_jes_ = nt.Jet_btagSF_deepjet_shape_down_jes()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_down_jes_=1;}
+        try {btagSF_deepjet_shape_up_cferr1_ = nt.Jet_btagSF_deepjet_shape_up_cferr1()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_up_cferr1_=1;}
+        try {btagSF_deepjet_shape_down_cferr1_ = nt.Jet_btagSF_deepjet_shape_down_cferr1()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_down_cferr1_=1;}
+        try {btagSF_deepjet_shape_up_cferr2_ = nt.Jet_btagSF_deepjet_shape_up_cferr2()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_up_cferr2_=1;}
+        try {btagSF_deepjet_shape_down_cferr2_ = nt.Jet_btagSF_deepjet_shape_down_cferr2()[idx_];}
+        catch(const std::exception& e) {btagSF_deepjet_shape_down_cferr2_=1;}
     }
     void setPt(float pt) { pt_ = pt; }
     //void set_idlevel(int idlevel) { idlevel_ = idlevel; }
@@ -39,6 +77,25 @@ struct Jet {
     float phi() { return phi_; }
     int jetId() { return jetId_; }
     float btagDeepFlavB() { return btagDeepFlavB_; }
+    float btagSF_deepjet_shape() { return btagSF_deepjet_shape_; }
+    float btagSF_deepjet_shape_up_hf() { return btagSF_deepjet_shape_up_hf_; }
+    float btagSF_deepjet_shape_down_hf() { return btagSF_deepjet_shape_down_hf_; }
+    float btagSF_deepjet_shape_up_hfstats1() { return btagSF_deepjet_shape_up_hfstats1_; }
+    float btagSF_deepjet_shape_down_hfstats1() { return btagSF_deepjet_shape_down_hfstats1_; }
+    float btagSF_deepjet_shape_up_hfstats2() { return btagSF_deepjet_shape_up_hfstats2_; }
+    float btagSF_deepjet_shape_down_hfstats2() { return btagSF_deepjet_shape_down_hfstats2_; }
+    float btagSF_deepjet_shape_up_lf() { return btagSF_deepjet_shape_up_lf_; }
+    float btagSF_deepjet_shape_down_lf() { return btagSF_deepjet_shape_down_lf_; }
+    float btagSF_deepjet_shape_up_lfstats1() { return btagSF_deepjet_shape_up_lfstats1_; }
+    float btagSF_deepjet_shape_down_lfstats1() { return btagSF_deepjet_shape_down_lfstats1_; }
+    float btagSF_deepjet_shape_up_lfstats2() { return btagSF_deepjet_shape_up_lfstats2_; }
+    float btagSF_deepjet_shape_down_lfstats2() { return btagSF_deepjet_shape_down_lfstats2_; }
+    float btagSF_deepjet_shape_up_jes() { return btagSF_deepjet_shape_up_jes_; }
+    float btagSF_deepjet_shape_down_jes() { return btagSF_deepjet_shape_down_jes_; }
+    float btagSF_deepjet_shape_up_cferr1() { return btagSF_deepjet_shape_up_cferr1_; }
+    float btagSF_deepjet_shape_down_cferr1() { return btagSF_deepjet_shape_down_cferr1_; }
+    float btagSF_deepjet_shape_up_cferr2() { return btagSF_deepjet_shape_up_cferr2_; }
+    float btagSF_deepjet_shape_down_cferr2() { return btagSF_deepjet_shape_down_cferr2_; }
 
   private:
     int id_;
@@ -53,7 +110,26 @@ struct Jet {
     float phi_ = 0.;
     int jetId_ = 0;
     unsigned int idx_;
-    float btagDeepFlavB_ = 0;
+    float btagDeepFlavB_ = 0.;
+    float btagSF_deepjet_shape_ = 1.0;
+    float btagSF_deepjet_shape_up_hf_ = 1.0;
+    float btagSF_deepjet_shape_down_hf_ = 1.0;
+    float btagSF_deepjet_shape_up_hfstats1_ = 1.0;
+    float btagSF_deepjet_shape_down_hfstats1_ = 1.0;
+    float btagSF_deepjet_shape_up_hfstats2_ = 1.0;
+    float btagSF_deepjet_shape_down_hfstats2_ = 1.0;
+    float btagSF_deepjet_shape_up_lf_ = 1.0;
+    float btagSF_deepjet_shape_down_lf_ = 1.0;
+    float btagSF_deepjet_shape_up_lfstats1_ = 1.0;
+    float btagSF_deepjet_shape_down_lfstats1_ = 1.0;
+    float btagSF_deepjet_shape_up_lfstats2_ = 1.0;
+    float btagSF_deepjet_shape_down_lfstats2_ = 1.0;
+    float btagSF_deepjet_shape_up_jes_ = 1.0;
+    float btagSF_deepjet_shape_down_jes_ = 1.0;
+    float btagSF_deepjet_shape_up_cferr1_ = 1.0;
+    float btagSF_deepjet_shape_down_cferr1_ = 1.0;
+    float btagSF_deepjet_shape_up_cferr2_ = 1.0;
+    float btagSF_deepjet_shape_down_cferr2_ = 1.0;
 };
 
 vector<Jet> getJets(Photons photons, const int JESUnc, const int JERUnc);
