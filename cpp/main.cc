@@ -38,12 +38,12 @@ int main(int argc, char **argv) {
   // Map definitions
   vector<TString> years = { };
   if ( yearArg=="all" ) {
-    years.push_back("2018_old");
+    years.push_back("2018");
     years.push_back("2017");
     years.push_back("2016APV");
     years.push_back("2016nonAPV");
   }
-  else if ( yearArg=="2018_old" || yearArg=="2017" || yearArg=="2016APV" || yearArg=="2016nonAPV" ) {
+  else if ( yearArg=="2018" || yearArg=="2017" || yearArg=="2016APV" || yearArg=="2016nonAPV" ) {
     years.push_back(yearArg);
   }
   else {
@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 0});
       sample_names.insert({sampleName, sampleName});
-      sample_prod.insert({sampleName, { { "2018_old",       { "Run2018A-UL2018_MiniAODv2_GT36-v1",
+      sample_prod.insert({sampleName, { { "2018",       { "Run2018A-UL2018_MiniAODv2_GT36-v1",
                                                           "Run2018B-UL2018_MiniAODv2_GT36-v1",
                                                           "Run2018C-UL2018_MiniAODv2_GT36-v1",
                                                           "Run2018D-UL2018_MiniAODv2-v2" } },
@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 1});
       sample_names.insert({sampleName, "DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa"});
-      sample_prod.insert({sampleName, { { "2018_old",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
                                         { "2017",       { "" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 2});
       sample_names.insert({sampleName, "TTGG_0Jets_TuneCP5_13TeV-amcatnlo-madspin-pythia8"});
-      sample_prod.insert({sampleName, { { "2018_old",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
                                         { "2017",       { "" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 3});
       sample_names.insert({sampleName, "TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
-      sample_prod.insert({sampleName, { { "2018_old",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
                                         { "2017",       { "" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 4});
       sample_names.insert({sampleName, "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
-      sample_prod.insert({sampleName, { { "2018_old",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
                                         { "2017",       { "" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 5});
       sample_names.insert({sampleName, "VHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
-      sample_prod.insert({sampleName, { { "2018_old",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
                                         { "2017",       { "" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });  
@@ -130,7 +130,7 @@ int main(int argc, char **argv) {
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 6});
       sample_names.insert({sampleName,"VBFHToGG_M125_TuneCP5_13TeV-amcatnlo-pythia8"});
-      sample_prod.insert({sampleName, { { "2018_old",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
                                         { "2017",       { "" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
@@ -139,7 +139,7 @@ int main(int argc, char **argv) {
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 7});
       sample_names.insert({sampleName, "ttHJetToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
-      sample_prod.insert({sampleName, { { "2018_old",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
                                         { "2017",       { "" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
@@ -148,7 +148,7 @@ int main(int argc, char **argv) {
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 8});
       sample_names.insert({sampleName, "GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
-      sample_prod.insert({sampleName, { { "2018_old",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
                                         { "2017",       { "" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
@@ -162,7 +162,7 @@ int main(int argc, char **argv) {
         samples.push_back(sampleName);
         sample_procids.insert({sampleName, 9+processId_M[M[imass]]});
         sample_names.insert({sampleName, sampleName+"_TuneCP5_13TeV-madgraphMLM-pythia8"});
-        sample_prod.insert({sampleName, { { "2018_old",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
+        sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
                                           { "2017",       { "" } },
                                           { "2016APV",    { "" } },
                                           { "2016nonAPV", { "" } } } });
@@ -174,7 +174,7 @@ int main(int argc, char **argv) {
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 14});
       sample_names.insert({sampleName, "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
-      sample_prod.insert({sampleName, { { "2018_old",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
+      sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
                                         { "2017",       { "" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
@@ -188,7 +188,7 @@ int main(int argc, char **argv) {
         samples.push_back(sampleName);
         sample_procids.insert({sampleName, 15+processId_V[V[iV]]});
         sample_names.insert({sampleName, sampleName+"ToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
-        sample_prod.insert({sampleName, { { "2018_old",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
+        sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
                                           { "2017",       { "" } },
                                           { "2016APV",    { "" } },
                                           { "2016nonAPV", { "" } } } });
@@ -200,7 +200,7 @@ int main(int argc, char **argv) {
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 17});
       sample_names.insert({sampleName, "GluGluToHHTo2B2G_node_cHHH1_TuneCP5_13TeV-powheg-pythia8"});
-      sample_prod.insert({sampleName, { { "2018_old",       { "privateUL18" } },
+      sample_prod.insert({sampleName, { { "2018",       { "privateUL18" } },
                                         { "2017",       { "" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
@@ -211,7 +211,7 @@ int main(int argc, char **argv) {
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 18});
       sample_names.insert({sampleName, "DiPhotonJetsBox_MGG-40to80_13TeV-sherpa"});
-      sample_prod.insert({sampleName, { { "2018_old",       { "privateUL18Leonardo" } },
+      sample_prod.insert({sampleName, { { "2018",       { "privateUL18Leonardo" } },
                                         { "2017",       { "" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
@@ -225,7 +225,7 @@ int main(int argc, char **argv) {
         samples.push_back(sampleName);
         sample_procids.insert({sampleName, 19+processId_V[V[iV]]});
         sample_names.insert({sampleName, sampleName+"_TuneCP5_13TeV-pythia8"});
-        sample_prod.insert({sampleName, { { "2018_old",       { ( V[iV] == "ZZ" ?
+        sample_prod.insert({sampleName, { { "2018",       { ( V[iV] == "ZZ" ?
                                                               "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" :
                                                               "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" ) } },
                                           { "2017",       { "" } },
@@ -296,7 +296,7 @@ int main(int argc, char **argv) {
           samples.push_back(sampleName);
           sample_procids.insert({sampleName, (processId_MX[MX]+processId_MY[MY]).Atoi()});
           sample_names.insert({sampleName, sampleName+"_TuneCP5_13TeV-madgraph-pythia8"});
-          sample_prod.insert({sampleName, { { "2018_old",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-"+v } },
+          sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-"+v } },
                                             { "2017",       { "" } },
                                             { "2016APV",    { "" } },
                                             { "2016nonAPV", { "" } } } });
@@ -349,7 +349,7 @@ int main(int argc, char **argv) {
         bool isMC = 1;
 
         if (sample == "Data") {
-          sample_names[sample] = ( year=="2018_old" ? "EGamma" : "DoubleEG" );
+          sample_names[sample] = ( year=="2018" ? "EGamma" : "DoubleEG" );
           dataformat = "MINIAOD";
           isMC = 0;
         }
