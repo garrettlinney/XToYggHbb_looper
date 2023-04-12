@@ -116,7 +116,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   gconf.nanoAOD_ver = 9;
   gconf.GetConfigs(year.Atoi());
   lumi = gconf.lumi;
-  if (year == "2018") lumi = 59.8; //synchronizing with HiggsDNA
+  if (year == "2018_old") lumi = 59.8; //synchronizing with HiggsDNA
 
   // Golden JSON files
   if ( !isMC ) {
@@ -126,7 +126,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       set_goodrun_file_json("../utils/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt");
     if ( year == "2017" )
       set_goodrun_file_json("../utils/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt");
-    if ( year == "2018" )
+    if ( year == "2018_old" )
       set_goodrun_file_json("../utils/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt");
   }
 
@@ -248,7 +248,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
   if (year=="2016nonAPV" || year=="2016APV") year_out = 2016;
   else if (year=="2017") year_out = 2017;
-  else if (year=="2018") year_out = 2018;
+  else if (year=="2018_old") year_out = 2018;
   else year_out = 0;
   
   tout->Branch("LeadPhoton_genPartFlav",&LeadPhoton_genPartFlav,"LeadPhoton_genPartFlav/I");
@@ -403,17 +403,13 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
               || (tree->GetBranch("HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0) ) ) continue;
         if ( (year=="2017") &&
             !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55() : 0)  )  ) continue;
-        if ( (year=="2018") &&
+        if ( (year=="2018_old") &&
             !( (tree->GetBranch("HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto") ? nt.HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto() : 0) ) ) continue;
       }
 
 
       // Object selection
       Photons photons = getPhotons();
-      if (isMC) {
-        for (auto pho : photons)
-          pho.setGenPartFlav(pho.idx());
-      }
       DiPhotons diphotons = DiPhotonPreselection(photons);
 
       if (diphotons.size() == 0 ) continue; 
@@ -471,9 +467,6 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
               GenHiggs_mass = GenHiggs.M();
             }
           }
-        TLorentzVector sort_GenPart;
-//          if (gen_child_xyh[0].Pt()<gen_child_xyh[1].Pt()) {sort_GenPart = gen_child_xyh[0]; gen_child_xyh[0]= gen_child_xyh[1]; gen_child_xyh[1] = sort_GenPart;}
-//          if (gen_child_ygg[0].Pt()<gen_child_ygg[1].Pt()) {sort_GenPart = gen_child_ygg[0]; gen_child_ygg[0]= gen_child_ygg[1]; gen_child_ygg[1] = sort_GenPart;}
         if (!abs(GenX_pt+999)<0.0001){
           GenX_dR = gen_child_xyh[0].DeltaR(gen_child_xyh[1]);
         }
@@ -482,7 +475,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
         }
         if (!abs(GenHiggs_pt+999)<0.0001){
           GenHiggs_dR = gen_child_hbb[0].DeltaR(gen_child_hbb[1]);
-          if (gen_child_hbb[0].Pt()<gen_child_hbb[1].Pt()) {sort_GenPart = gen_child_hbb[0]; gen_child_hbb[0]= gen_child_hbb[1]; gen_child_hbb[1] = sort_GenPart;}
+          TLorentzVector gen_child_hbb_temp;
+          if (gen_child_hbb[0].Pt()<gen_child_hbb[1].Pt()) {gen_child_hbb_temp = gen_child_hbb[0]; gen_child_hbb[0]= gen_child_hbb[1]; gen_child_hbb[1] = gen_child_hbb_temp;}
           GenBFromHiggs_1_pt = gen_child_hbb[0].Pt();
           GenBFromHiggs_1_eta = gen_child_hbb[0].Eta();
           GenBFromHiggs_1_phi = gen_child_hbb[0].Phi();
