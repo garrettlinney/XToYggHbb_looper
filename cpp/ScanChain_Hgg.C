@@ -170,14 +170,14 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   int year_out, eventNum;
   float weight_central, weight_central_initial, weight_central_no_lumi;
 
-  unsigned int LeadPhoton_genPartFlav = 0, SubleadPhoton_genPartFlav = 0;
-  int n_gen_matched_jets = 0, n_gen_matched_in_dijet = 0;
-  bool dijet_lead_gen_match=false, dijet_sublead_gen_match=false;
-  float GenHiggs_pt=-999, GenHiggs_eta=-999, GenHiggs_phi=-999, GenHiggs_mass=-999, GenHiggs_dR=-999;
-  float GenY_pt=-999, GenY_eta=-999, GenY_phi=-999, GenY_mass=-999, GenY_dR=-999;
-  float GenX_pt=-999, GenX_eta=-999, GenX_phi=-999, GenX_mass=-999, GenX_dR=-999;
-  float GenBFromHiggs_1_pt=-999, GenBFromHiggs_1_eta=-999, GenBFromHiggs_1_phi=-999, GenBFromHiggs_1_mass=-999;
-  float GenBFromHiggs_2_pt=-999, GenBFromHiggs_2_eta=-999, GenBFromHiggs_2_phi=-999, GenBFromHiggs_2_mass=-999;
+  unsigned int LeadPhoton_genPartFlav, SubleadPhoton_genPartFlav;
+  int n_gen_matched_jets, n_gen_matched_in_dijet;
+  bool dijet_lead_gen_match, dijet_sublead_gen_match;
+  float GenHiggs_pt, GenHiggs_eta, GenHiggs_phi, GenHiggs_mass, GenHiggs_dR;
+  float GenY_pt, GenY_eta, GenY_phi, GenY_mass, GenY_dR;
+  float GenX_pt, GenX_eta, GenX_phi, GenX_mass, GenX_dR;
+  float GenBFromHiggs_1_pt, GenBFromHiggs_1_eta, GenBFromHiggs_1_phi, GenBFromHiggs_1_mass;
+  float GenBFromHiggs_2_pt, GenBFromHiggs_2_eta, GenBFromHiggs_2_phi, GenBFromHiggs_2_mass;
 
 
   // Branch booking
@@ -251,37 +251,35 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   else if (year=="2018") year_out = 2018;
   else year_out = 0;
   
-  if (isMC) {
-    tout->Branch("LeadPhoton_genPartFlav",&LeadPhoton_genPartFlav,"LeadPhoton_genPartFlav/C");
-    tout->Branch("SubleadPhoton_genPartFlav",&SubleadPhoton_genPartFlav,"SubleadPhoton_genPartFlav/C");
-    tout->Branch("n_gen_matched_jets",&n_gen_matched_jets,"n_gen_matched_jets/I");
-    tout->Branch("n_gen_matched_in_dijet",&n_gen_matched_in_dijet,"n_gen_matched_in_dijet/I");
-    tout->Branch("dijet_lead_gen_match",&dijet_lead_gen_match,"dijet_lead_gen_match/B");
-    tout->Branch("dijet_sublead_gen_match",&dijet_sublead_gen_match,"dijet_sublead_gen_match/B");
-    tout->Branch("GenHiggs_pt",&GenHiggs_pt,"GenHiggs_pt/F");
-    tout->Branch("GenHiggs_eta",&GenHiggs_eta,"GenHiggs_eta/F");
-    tout->Branch("GenHiggs_phi",&GenHiggs_phi,"GenHiggs_phi/F");
-    tout->Branch("GenHiggs_mass",&GenHiggs_mass,"GenHiggs_mass/F");
-    tout->Branch("GenHiggs_dR",&GenHiggs_dR,"GenHiggs_dR/F");
-    tout->Branch("GenY_pt",&GenY_pt,"GenY_pt/F");
-    tout->Branch("GenY_eta",&GenY_eta,"GenY_eta/F");
-    tout->Branch("GenY_phi",&GenY_phi,"GenY_phi/F");
-    tout->Branch("GenY_mass",&GenY_mass,"GenY_mass/F");
-    tout->Branch("GenY_dR",&GenY_dR,"GenY_dR/F");
-    tout->Branch("GenX_pt",&GenX_pt,"GenX_pt/F");
-    tout->Branch("GenX_eta",&GenX_eta,"GenX_eta/F");
-    tout->Branch("GenX_phi",&GenX_phi,"GenX_phi/F");
-    tout->Branch("GenX_mass",&GenX_mass,"GenX_mass/F");
-    tout->Branch("GenX_dR",&GenX_dR,"GenX_dR/F");
-    tout->Branch("GenBFromHiggs_1_pt",&GenBFromHiggs_1_pt,"GenBFromHiggs_1_pt/F");
-    tout->Branch("GenBFromHiggs_1_eta",&GenBFromHiggs_1_eta,"GenBFromHiggs_1_eta/F");
-    tout->Branch("GenBFromHiggs_1_phi",&GenBFromHiggs_1_phi,"GenBFromHiggs_1_phi/F");
-    tout->Branch("GenBFromHiggs_1_mass",&GenBFromHiggs_1_mass,"GenBFromHiggs_1_mass/F");
-    tout->Branch("GenBFromHiggs_2_pt",&GenBFromHiggs_2_pt,"GenBFromHiggs_2_pt/F");
-    tout->Branch("GenBFromHiggs_2_eta",&GenBFromHiggs_2_eta,"GenBFromHiggs_2_eta/F");
-    tout->Branch("GenBFromHiggs_2_phi",&GenBFromHiggs_2_phi,"GenBFromHiggs_2_phi/F");
-    tout->Branch("GenBFromHiggs_2_mass",&GenBFromHiggs_2_mass,"GenBFromHiggs_2_mass/F");
-  }
+  tout->Branch("LeadPhoton_genPartFlav",&LeadPhoton_genPartFlav,"LeadPhoton_genPartFlav/I");
+  tout->Branch("SubleadPhoton_genPartFlav",&SubleadPhoton_genPartFlav,"SubleadPhoton_genPartFlav/I");
+  tout->Branch("n_gen_matched_jets",&n_gen_matched_jets,"n_gen_matched_jets/I");
+  tout->Branch("n_gen_matched_in_dijet",&n_gen_matched_in_dijet,"n_gen_matched_in_dijet/I");
+  tout->Branch("dijet_lead_gen_match",&dijet_lead_gen_match,"dijet_lead_gen_match/B");
+  tout->Branch("dijet_sublead_gen_match",&dijet_sublead_gen_match,"dijet_sublead_gen_match/B");
+  tout->Branch("GenHiggs_pt",&GenHiggs_pt,"GenHiggs_pt/F");
+  tout->Branch("GenHiggs_eta",&GenHiggs_eta,"GenHiggs_eta/F");
+  tout->Branch("GenHiggs_phi",&GenHiggs_phi,"GenHiggs_phi/F");
+  tout->Branch("GenHiggs_mass",&GenHiggs_mass,"GenHiggs_mass/F");
+  tout->Branch("GenHiggs_dR",&GenHiggs_dR,"GenHiggs_dR/F");
+  tout->Branch("GenY_pt",&GenY_pt,"GenY_pt/F");
+  tout->Branch("GenY_eta",&GenY_eta,"GenY_eta/F");
+  tout->Branch("GenY_phi",&GenY_phi,"GenY_phi/F");
+  tout->Branch("GenY_mass",&GenY_mass,"GenY_mass/F");
+  tout->Branch("GenY_dR",&GenY_dR,"GenY_dR/F");
+  tout->Branch("GenX_pt",&GenX_pt,"GenX_pt/F");
+  tout->Branch("GenX_eta",&GenX_eta,"GenX_eta/F");
+  tout->Branch("GenX_phi",&GenX_phi,"GenX_phi/F");
+  tout->Branch("GenX_mass",&GenX_mass,"GenX_mass/F");
+  tout->Branch("GenX_dR",&GenX_dR,"GenX_dR/F");
+  tout->Branch("GenBFromHiggs_1_pt",&GenBFromHiggs_1_pt,"GenBFromHiggs_1_pt/F");
+  tout->Branch("GenBFromHiggs_1_eta",&GenBFromHiggs_1_eta,"GenBFromHiggs_1_eta/F");
+  tout->Branch("GenBFromHiggs_1_phi",&GenBFromHiggs_1_phi,"GenBFromHiggs_1_phi/F");
+  tout->Branch("GenBFromHiggs_1_mass",&GenBFromHiggs_1_mass,"GenBFromHiggs_1_mass/F");
+  tout->Branch("GenBFromHiggs_2_pt",&GenBFromHiggs_2_pt,"GenBFromHiggs_2_pt/F");
+  tout->Branch("GenBFromHiggs_2_eta",&GenBFromHiggs_2_eta,"GenBFromHiggs_2_eta/F");
+  tout->Branch("GenBFromHiggs_2_phi",&GenBFromHiggs_2_phi,"GenBFromHiggs_2_phi/F");
+  tout->Branch("GenBFromHiggs_2_mass",&GenBFromHiggs_2_mass,"GenBFromHiggs_2_mass/F");
 
 
   // Define histo info maps
@@ -324,9 +322,41 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       nEventsTotal++;
       bar.progress(nEventsTotal, nEventsChain);
 
+      //initialize variables in each event loop
+      LeadPhoton_genPartFlav = 0;
+      SubleadPhoton_genPartFlav = 0;
+      n_gen_matched_jets = 0;
+      n_gen_matched_in_dijet = 0;
+      dijet_lead_gen_match=false;
+      dijet_sublead_gen_match=false;
+      GenHiggs_pt=-999;
+      GenHiggs_eta=-999;
+      GenHiggs_phi=-999;
+      GenHiggs_mass=-999;
+      GenHiggs_dR=-999;
+      GenY_pt=-999;
+      GenY_eta=-999;
+      GenY_phi=-999;
+      GenY_mass=-999;
+      GenY_dR=-999;
+      GenX_pt=-999;
+      GenX_eta=-999;
+      GenX_phi=-999;
+      GenX_mass=-999;
+      GenX_dR=-999;
+      GenBFromHiggs_1_pt=-999;
+      GenBFromHiggs_1_eta=-999;
+      GenBFromHiggs_1_phi=-999;
+      GenBFromHiggs_1_mass=-999;
+      GenBFromHiggs_2_pt=-999;
+      GenBFromHiggs_2_eta=-999;
+      GenBFromHiggs_2_phi=-999;
+      GenBFromHiggs_2_mass=-999;
+
       float weight = 1.0;
       if ( isMC ) {
         weight = nt.genWeight();
+
         //if(removeSpikes && weight*factor>1e2) continue; //comment out for synchronizing
 
         // Apply PU reweight // FIXME to be enabled later?
@@ -381,10 +411,6 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
       // Object selection
       Photons photons = getPhotons();
-      if (isMC) {
-        for (auto pho : photons)
-          pho.setGenPartFlav(pho.idx());
-      }
       DiPhotons diphotons = DiPhotonPreselection(photons);
 
       if (diphotons.size() == 0 ) continue; 
@@ -408,7 +434,6 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       DiJet selectedDiJet = dijets[0];
 
       if (dijets[0].p4.M()<50) continue;
-
 
       // Setting output variables
       TLorentzVector x_cand = selectedDiPhoton.p4 + selectedDiJet.p4;
@@ -472,43 +497,49 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
       count_test++;
 
-      // Gen info - FIXME: Doesn't work because all if-statements are trivially false
-      if (isMC) {
-        LeadPhoton_genPartFlav = selectedDiPhoton.leadPho.genPartFlav();
-        SubleadPhoton_genPartFlav = selectedDiPhoton.subleadPho.genPartFlav();
-
+      if (isMC){
+        LeadPhoton_genPartFlav = int(selectedDiPhoton.leadPho.genPartFlav());
+        SubleadPhoton_genPartFlav = int(selectedDiPhoton.subleadPho.genPartFlav());
         TLorentzVector GenHiggs, GenX, GenY;
         GenParts genparts = getGenParts();
         vector<TLorentzVector> gen_child_xyh, gen_child_ygg, gen_child_hbb;
-        for (int igenpart=0; igenpart<genparts.size(); igenpart++) {
-          if (genparts[igenpart].isxyh()) {GenX = genparts[igenpart].mother_p4(); gen_child_xyh.push_back(genparts[igenpart].p4());}
-          if (genparts[igenpart].isygg()) {GenY = genparts[igenpart].mother_p4(); gen_child_ygg.push_back(genparts[igenpart].p4());}
-          if (genparts[igenpart].ishbb()) {GenHiggs = genparts[igenpart].mother_p4(); gen_child_hbb.push_back(genparts[igenpart].p4());}
-        }
-        TLorentzVector sort_GenPart;
-        //if (gen_child_xyh[0].Pt()<gen_child_xyh[1].Pt()) {sort_GenPart = gen_child_xyh[0]; gen_child_xyh[0]= gen_child_xyh[1]; gen_child_xyh[1] = sort_GenPart;}
-        //if (gen_child_ygg[0].Pt()<gen_child_ygg[1].Pt()) {sort_GenPart = gen_child_ygg[0]; gen_child_ygg[0]= gen_child_ygg[1]; gen_child_ygg[1] = sort_GenPart;}
-        if (!abs(GenX_pt+999)<0.0001) {
-          GenX_pt = GenX.Pt();
-          GenX_eta = GenX.Eta();
-          GenX_phi = GenX.Phi();
-          GenX_mass = GenX.M();
+        for (int igenpart=0; igenpart<genparts.size(); igenpart++)
+          {
+            if (genparts[igenpart].isxyh()) {
+              GenX = genparts[igenpart].mother_p4(); 
+              gen_child_xyh.push_back(genparts[igenpart].p4());
+              GenX_pt = GenX.Pt();
+              GenX_eta = GenX.Eta();
+              GenX_phi = GenX.Phi();
+              GenX_mass = GenX.M();
+            }
+            if (genparts[igenpart].isygg()) {
+              GenY = genparts[igenpart].mother_p4(); 
+              gen_child_ygg.push_back(genparts[igenpart].p4());
+              GenY_pt = GenY.Pt();
+              GenY_eta = GenY.Eta();
+              GenY_phi = GenY.Phi();
+              GenY_mass = GenY.M();
+            }
+            if (genparts[igenpart].ishbb()) {
+              GenHiggs = genparts[igenpart].mother_p4();
+              gen_child_hbb.push_back(genparts[igenpart].p4());
+              GenHiggs_pt = GenHiggs.Pt();
+              GenHiggs_eta = GenHiggs.Eta();
+              GenHiggs_phi = GenHiggs.Phi();
+              GenHiggs_mass = GenHiggs.M();
+            }
+          }
+        if (!abs(GenX_pt+999)<0.0001){
           GenX_dR = gen_child_xyh[0].DeltaR(gen_child_xyh[1]);
         }
-        if (!abs(GenY_pt+999)<0.0001) {
-          GenY_pt = GenY.Pt();
-          GenY_eta = GenY.Eta();
-          GenY_phi = GenY.Phi();
-          GenY_mass = GenY.M();
+        if (!abs(GenY_pt+999)<0.0001){
           GenY_dR = gen_child_ygg[0].DeltaR(gen_child_ygg[1]);
         }
-        if (!abs(GenHiggs_pt+999)<0.0001) {
-          GenHiggs_pt = GenHiggs.Pt();
-          GenHiggs_eta = GenHiggs.Eta();
-          GenHiggs_phi = GenHiggs.Phi();
-          GenHiggs_mass = GenHiggs.M();
+        if (!abs(GenHiggs_pt+999)<0.0001){
           GenHiggs_dR = gen_child_hbb[0].DeltaR(gen_child_hbb[1]);
-          if (gen_child_hbb[0].Pt()<gen_child_hbb[1].Pt()) {sort_GenPart = gen_child_hbb[0]; gen_child_hbb[0]= gen_child_hbb[1]; gen_child_hbb[1] = sort_GenPart;}
+          TLorentzVector gen_child_hbb_temp;
+          if (gen_child_hbb[0].Pt()<gen_child_hbb[1].Pt()) {gen_child_hbb_temp = gen_child_hbb[0]; gen_child_hbb[0]= gen_child_hbb[1]; gen_child_hbb[1] = gen_child_hbb_temp;}
           GenBFromHiggs_1_pt = gen_child_hbb[0].Pt();
           GenBFromHiggs_1_eta = gen_child_hbb[0].Eta();
           GenBFromHiggs_1_phi = gen_child_hbb[0].Phi();
@@ -519,13 +550,11 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
           GenBFromHiggs_2_mass = gen_child_hbb[1].M();
           if (selectedDiJet.leadJet.p4().DeltaR(gen_child_hbb[0])<=0.4 || selectedDiJet.leadJet.p4().DeltaR(gen_child_hbb[1])<=0.4) {dijet_lead_gen_match=true; n_gen_matched_in_dijet++;}
           if (selectedDiJet.subleadJet.p4().DeltaR(gen_child_hbb[0])<=0.4 || selectedDiJet.subleadJet.p4().DeltaR(gen_child_hbb[1])<=0.4) {dijet_sublead_gen_match=true; n_gen_matched_in_dijet++;}
-          for (int ijet=0; ijet<jets.size(); ijet++) {
+          for (int ijet=0; ijet<jets.size(); ijet++)
             if (jets[ijet].p4().DeltaR(gen_child_hbb[0])<=0.4 || jets[ijet].p4().DeltaR(gen_child_hbb[1])<=0.4)
               n_gen_matched_jets++;
-          }
         }
       }
-
 
       // Histo filling
       h_LeadPhoton_sieie->Fill(LeadPhoton_sieie);

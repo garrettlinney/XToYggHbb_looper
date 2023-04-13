@@ -26,8 +26,8 @@ struct Photon {
         //trkSumPtHollowConeDR03_ = nt.Photon_trkSumPtHollowConeDR03()[idx_]; // To be readded
         //idlevel_ = whichPhotonLevel(id_, idx_);
         try { fixedGridRhoFastjetAll_ = nt.Rho_fixedGridRhoFastjetAll(); } catch(const std::exception& e) { fixedGridRhoFastjetAll_ = nt.fixedGridRhoFastjetAll(); }
+        try { genPartFlav_ = nt.Photon_genPartFlav()[idx_]; } catch(const std::exception& e) { genPartFlav_ = 0; }
     }
-    void setGenPartFlav(unsigned int idx) { genPartFlav_ = nt.Photon_genPartFlav()[idx_]; }
     //void set_idlevel(int idlevel) { idlevel_ = idlevel; }
     //int id() { return id_; } // Not in newest custom NanoAOD
     unsigned int idx() { return idx_; }
