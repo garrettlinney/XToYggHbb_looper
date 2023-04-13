@@ -2,6 +2,19 @@
 #include "ScanChain_Hgg.C"
 #include <fstream>
 
+unsigned char2unsigned(const char *c) {
+  char p = *c;
+  unsigned res = 0;
+  while (p) {
+      res = res*10 + (p - '0');
+      c++;
+      p = *c;
+  }
+  return res;
+}
+int char2int(const char *c) {
+  return (*c == '-') ? -char2unsigned(c+1) : char2unsigned(c);
+}
 
 double getSumOfGenEventSumw(TChain *chaux, bool isMC)
 {
@@ -22,27 +35,28 @@ double getSumOfGenEventSumw(TChain *chaux, bool isMC)
 
 int main(int argc, char **argv) {
   //Arguments
-  const char* outdir = ( argc > 1 ? argv[1]               : "temp_data" );
-  TString yearArg    = ( argc > 2 ? argv[2]               : "all" );
-  int run_data       = ( argc > 3 ? ((int)*argv[3] - 48 ) : 1 );  // '0' has the ASCII code of 48
-  int run_MCbkg      = ( argc > 4 ? ((int)*argv[4] - 48 ) : 1 );  // '0' has the ASCII code of 48
-  int run_signal     = ( argc > 5 ? ((int)*argv[5] - 48 ) : 1 );  // '0' has the ASCII code of 48
-  TString sampleArg  = ( argc > 6 ? argv[6]               : "all" );
-  int onlyCreateJSON = ( argc > 7 ? ((int)*argv[7] - 48 ) : 0 );  // '0' has the ASCII code of 48
-  
-  int prefireWeight=1;
-  int PUWeight=1;
-  int electronVetoSF=1;
-  int lowMassHggTriggerSF=1;
-  int lowMassHggPreselSF=1;
-  int phoMVAIDWP90SF=1;
-  int bTagSF=1; // Set to +/-X to get uncertainty, X in [2,10]
-  int fnufUnc=0; // No central value, set to +/-2 to get uncertainty
-  int materialUnc=0; // No central value, set to +/-2 to get uncertainty
-  int PhoScaleUnc=0; // No central value, set to +/-2 to get uncertainty
-  int PhoSmearUnc=0; // No central value, set to +/-2 to get uncertainty
-  int JESUnc=0; // No central value, set to +/-2 to get uncertainty
-  int JERUnc=0; // No central value, set to +/-2 to get uncertainty
+  const char* outdir      = ( argc > 1  ? argv[1]            : "temp_data" );
+  TString yearArg         = ( argc > 2  ? argv[2]            : "all" );
+  int run_data            = ( argc > 3  ? char2int(argv[3])  : 1 );
+  int run_MCbkg           = ( argc > 4  ? char2int(argv[4])  : 1 );
+  int run_signal          = ( argc > 5  ? char2int(argv[5])  : 1 );
+  TString sampleArg       = ( argc > 6  ? argv[6]            : "all" );
+  // Set to 0 to disable, set to 1 for central value, set to +/-2 to get uncertainty
+  int prefireWeight       = ( argc > 7  ? char2int(argv[7])  : 1 );
+  int PUWeight            = ( argc > 8  ? char2int(argv[8])  : 1 );
+  int electronVetoSF      = ( argc > 9  ? char2int(argv[9])  : 1 );
+  int lowMassHggTriggerSF = ( argc > 10 ? char2int(argv[10]) : 1 );
+  int lowMassHggPreselSF  = ( argc > 11 ? char2int(argv[11]) : 1 );
+  int phoMVAIDWP90SF      = ( argc > 12 ? char2int(argv[12]) : 1 );
+  int bTagSF              = ( argc > 13 ? char2int(argv[13]) : 1 ); // Set to +/-X to get uncertainty, X in [2,10]
+  int fnufUnc             = ( argc > 14 ? char2int(argv[14]) : 0 ); // No central value
+  int materialUnc         = ( argc > 15 ? char2int(argv[15]) : 0 ); // No central value
+  int PhoScaleUnc         = ( argc > 16 ? char2int(argv[16]) : 0 ); // No central value
+  int PhoSmearUnc         = ( argc > 17 ? char2int(argv[17]) : 0 ); // No central value
+  int JESUnc              = ( argc > 18 ? char2int(argv[18]) : 0 ); // No central value
+  int JERUnc              = ( argc > 19 ? char2int(argv[19]) : 0 ); // No central value
+  // Option to reproduce the summary.json
+  int onlyCreateJSON      = ( argc > 20 ? char2int(argv[20]) : 0 );
   
 
   // Map definitions
