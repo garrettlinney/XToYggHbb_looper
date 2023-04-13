@@ -35,6 +35,7 @@ int main(int argc, char **argv) {
   int electronVetoSF=1;
   int lowMassHggTriggerSF=1;
   int lowMassHggPreselSF=1;
+  int phoMVAIDWP90SF=1;
   int bTagSF=1; // Set to +/-X to get uncertainty, X in [2,10]
   int fnufUnc=0; // No central value, set to +/-2 to get uncertainty
   int materialUnc=0; // No central value, set to +/-2 to get uncertainty
@@ -416,7 +417,7 @@ int main(int argc, char **argv) {
         }
 
         std::cout<<"Sample: "<<sample<<" --> Process ID: "<<sample_procid<<"\n\n";
-        ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp, isMC),year,sample,sample_procid,outdir,prefireWeight,PUWeight,electronVetoSF,lowMassHggTriggerSF,lowMassHggPreselSF,bTagSF,fnufUnc,materialUnc,PhoScaleUnc,PhoSmearUnc,JESUnc,JERUnc);
+        ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp, isMC),year,sample,sample_procid,outdir,prefireWeight,PUWeight,electronVetoSF,lowMassHggTriggerSF,lowMassHggPreselSF,phoMVAIDWP90SF,bTagSF,fnufUnc,materialUnc,PhoScaleUnc,PhoSmearUnc,JESUnc,JERUnc);
       }
     }
   }
