@@ -427,9 +427,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       DiPhoton selectedDiPhoton = diphotons[0];
       Photons selectedPhotons={selectedDiPhoton.leadPho, selectedDiPhoton.subleadPho};
 
-      LeadPhoton_mvaID = selectedDiPhoton.leadPho.mvaID();
-      SubleadPhoton_mvaID = selectedDiPhoton.subleadPho.mvaID();
-      if ( !(SubleadPhoton_mvaID>-0.7 && LeadPhoton_mvaID>-0.7) ) continue;
+      // Select photons passing the photon MVA ID WP 90
+      if ( !( (fabs(selectedDiPhoton.leadPho.eta())<1.442 ? selectedDiPhoton.leadPho.mvaID()>-0.02 : selectedDiPhoton.subleadPho.mvaID()>-0.26) && (fabs(selectedDiPhoton.leadPho.eta())<1.442 ? selectedDiPhoton.subleadPho.mvaID()>-0.02 : selectedDiPhoton.subleadPho.mvaID()>-0.26) ) ) continue;
 
       Electrons electrons = getElectrons(selectedPhotons);
       Muons muons = getMuons(selectedPhotons);
@@ -583,6 +582,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       LeadPhoton_pfPhoIso03 = selectedDiPhoton.leadPho.phoIso();
       LeadPhoton_trkSumPtHollowConeDR03 = selectedDiPhoton.leadPho.trkIso();
       LeadPhoton_chargedHadronIso = selectedDiPhoton.leadPho.chargedHadIso();
+      LeadPhoton_mvaID = selectedDiPhoton.leadPho.mvaID();
 
       SubleadPhoton_pt = selectedDiPhoton.subleadPho.pt();
       SubleadPhoton_eta = selectedDiPhoton.subleadPho.eta();
@@ -593,6 +593,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       SubleadPhoton_pfPhoIso03 = selectedDiPhoton.subleadPho.phoIso();
       SubleadPhoton_trkSumPtHollowConeDR03 = selectedDiPhoton.subleadPho.trkIso();
       SubleadPhoton_chargedHadronIso = selectedDiPhoton.subleadPho.chargedHadIso();
+      SubleadPhoton_mvaID = selectedDiPhoton.subleadPho.mvaID();
 
       Diphoton_pt = selectedDiPhoton.p4.Pt();
       Diphoton_eta = selectedDiPhoton.p4.Eta();
