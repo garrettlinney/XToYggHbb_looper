@@ -170,14 +170,14 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   int year_out, eventNum;
   float weight_central, weight_central_initial, weight_central_no_lumi;
 
-  unsigned int LeadPhoton_genPartFlav = 0, SubleadPhoton_genPartFlav = 0;
-  int n_gen_matched_jets = 0, n_gen_matched_in_dijet = 0;
-  bool dijet_lead_gen_match=false, dijet_sublead_gen_match=false;
-  float GenHiggs_pt=-999, GenHiggs_eta=-999, GenHiggs_phi=-999, GenHiggs_mass=-999, GenHiggs_dR=-999;
-  float GenY_pt=-999, GenY_eta=-999, GenY_phi=-999, GenY_mass=-999, GenY_dR=-999;
-  float GenX_pt=-999, GenX_eta=-999, GenX_phi=-999, GenX_mass=-999, GenX_dR=-999;
-  float GenBFromHiggs_1_pt=-999, GenBFromHiggs_1_eta=-999, GenBFromHiggs_1_phi=-999, GenBFromHiggs_1_mass=-999;
-  float GenBFromHiggs_2_pt=-999, GenBFromHiggs_2_eta=-999, GenBFromHiggs_2_phi=-999, GenBFromHiggs_2_mass=-999;
+  unsigned int LeadPhoton_genPartFlav, SubleadPhoton_genPartFlav;
+  int n_gen_matched_jets, n_gen_matched_in_dijet;
+  bool dijet_lead_gen_match, dijet_sublead_gen_match;
+  float GenHiggs_pt, GenHiggs_eta, GenHiggs_phi, GenHiggs_mass, GenHiggs_dR;
+  float GenY_pt, GenY_eta, GenY_phi, GenY_mass, GenY_dR;
+  float GenX_pt, GenX_eta, GenX_phi, GenX_mass, GenX_dR;
+  float GenBFromHiggs_1_pt, GenBFromHiggs_1_eta, GenBFromHiggs_1_phi, GenBFromHiggs_1_mass;
+  float GenBFromHiggs_2_pt, GenBFromHiggs_2_eta, GenBFromHiggs_2_phi, GenBFromHiggs_2_mass;
 
 
   // Branch booking
@@ -322,12 +322,36 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       nEventsTotal++;
       bar.progress(nEventsTotal, nEventsChain);
 
-      n_gen_matched_jets = 0;
-      n_gen_matched_in_dijet = 0;
+      //initialize variables in each event loop
+      LeadPhoton_genPartFlav = 0;
+      SubleadPhoton_genPartFlav = 0;
       n_gen_matched_jets = 0;
       n_gen_matched_in_dijet = 0;
       dijet_lead_gen_match=false;
       dijet_sublead_gen_match=false;
+      GenHiggs_pt=-999;
+      GenHiggs_eta=-999;
+      GenHiggs_phi=-999;
+      GenHiggs_mass=-999;
+      GenHiggs_dR=-999;
+      GenY_pt=-999;
+      GenY_eta=-999;
+      GenY_phi=-999;
+      GenY_mass=-999;
+      GenY_dR=-999;
+      GenX_pt=-999;
+      GenX_eta=-999;
+      GenX_phi=-999;
+      GenX_mass=-999;
+      GenX_dR=-999;
+      GenBFromHiggs_1_pt=-999;
+      GenBFromHiggs_1_eta=-999;
+      GenBFromHiggs_1_phi=-999;
+      GenBFromHiggs_1_mass=-999;
+      GenBFromHiggs_2_pt=-999;
+      GenBFromHiggs_2_eta=-999;
+      GenBFromHiggs_2_phi=-999;
+      GenBFromHiggs_2_mass=-999;
 
       float weight = 1.0;
       if ( isMC ) {
