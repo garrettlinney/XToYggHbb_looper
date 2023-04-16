@@ -157,11 +157,11 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   float xcand_pt, xcand_eta, xcand_phi, xcand_mass;
 
   float LeadPhoton_pt, LeadPhoton_eta, LeadPhoton_phi, LeadPhoton_mvaID;
-  bool LeadPhoton_pixelSeed, SubleadPhoton_pixelSeed;
   float SubleadPhoton_pt, SubleadPhoton_eta, SubleadPhoton_phi, SubleadPhoton_mvaID;
   float Diphoton_pt, Diphoton_eta, Diphoton_phi, Diphoton_mass, Diphoton_pt_mgg, Diphoton_dR;
   float LeadPhoton_sieie, LeadPhoton_pfPhoIso03, LeadPhoton_chargedHadronIso, LeadPhoton_r9, LeadPhoton_trkSumPtHollowConeDR03;
   float SubleadPhoton_sieie, SubleadPhoton_pfPhoIso03, SubleadPhoton_chargedHadronIso, SubleadPhoton_r9, SubleadPhoton_trkSumPtHollowConeDR03;
+  bool LeadPhoton_pixelSeed, SubleadPhoton_pixelSeed;
 
   int n_jets;
   float dijet_lead_pt, dijet_lead_eta, dijet_lead_phi, dijet_lead_mass, dijet_lead_btagDeepFlavB;
@@ -328,35 +328,31 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       bar.progress(nEventsTotal, nEventsChain);
 
       //initialize variables in each event loop
-      LeadPhoton_genPartFlav = 0;
-      SubleadPhoton_genPartFlav = 0;
-      n_gen_matched_jets = 0;
-      n_gen_matched_in_dijet = 0;
-      dijet_lead_gen_match=false;
-      dijet_sublead_gen_match=false;
-      GenHiggs_pt=-999;
-      GenHiggs_eta=-999;
-      GenHiggs_phi=-999;
-      GenHiggs_mass=-999;
-      GenHiggs_dR=-999;
-      GenY_pt=-999;
-      GenY_eta=-999;
-      GenY_phi=-999;
-      GenY_mass=-999;
-      GenY_dR=-999;
-      GenX_pt=-999;
-      GenX_eta=-999;
-      GenX_phi=-999;
-      GenX_mass=-999;
-      GenX_dR=-999;
-      GenBFromHiggs_1_pt=-999;
-      GenBFromHiggs_1_eta=-999;
-      GenBFromHiggs_1_phi=-999;
-      GenBFromHiggs_1_mass=-999;
-      GenBFromHiggs_2_pt=-999;
-      GenBFromHiggs_2_eta=-999;
-      GenBFromHiggs_2_phi=-999;
-      GenBFromHiggs_2_mass=-999;
+      xcand_pt=-999, xcand_eta=-999, xcand_phi=-999, xcand_mass=-999;
+
+      LeadPhoton_pt=-999, LeadPhoton_eta=-999, LeadPhoton_phi=-999, LeadPhoton_mvaID=-999;
+      SubleadPhoton_pt=-999, SubleadPhoton_eta=-999, SubleadPhoton_phi=-999, SubleadPhoton_mvaID=-999;
+      Diphoton_pt=-999, Diphoton_eta=-999, Diphoton_phi=-999, Diphoton_mass=-999, Diphoton_pt_mgg=-999, Diphoton_dR=-999;
+      LeadPhoton_sieie=-999, LeadPhoton_pfPhoIso03=-999, LeadPhoton_chargedHadronIso=-999, LeadPhoton_r9=-999, LeadPhoton_trkSumPtHollowConeDR03=-999;
+      SubleadPhoton_sieie=-999, SubleadPhoton_pfPhoIso03=-999, SubleadPhoton_chargedHadronIso=-999, SubleadPhoton_r9=-999, SubleadPhoton_trkSumPtHollowConeDR03=-999;
+      LeadPhoton_pixelSeed=true, SubleadPhoton_pixelSeed=true;
+
+      n_jets=-1;
+      dijet_lead_pt=-999, dijet_lead_eta=-999, dijet_lead_phi=-999, dijet_lead_mass=-999, dijet_lead_btagDeepFlavB=-999;
+      dijet_sublead_pt=-999, dijet_sublead_eta=-999, dijet_sublead_phi=-999, dijet_sublead_mass=-999, dijet_sublead_btagDeepFlavB=-999;
+      dijet_pt=-999, dijet_eta=-999, dijet_phi=-999, dijet_mass=-999, dijet_dR=-999;
+      pfmet_pt=-999, puppimet_pt=-999;
+      year_out=0, eventNum=0;
+      weight_central=1.0, weight_central_initial=1.0, weight_central_no_lumi=1.0, weight_beforeBTagSF=1.0, weight_afterBTagSF=1.0;
+
+      LeadPhoton_genPartFlav=0; SubleadPhoton_genPartFlav=0;
+      n_gen_matched_jets=0; n_gen_matched_in_dijet=0;
+      dijet_lead_gen_match=false; dijet_sublead_gen_match=false;
+      GenHiggs_pt=-999; GenHiggs_eta=-999; GenHiggs_phi=-999; GenHiggs_mass=-999; GenHiggs_dR=-999;
+      GenY_pt=-999; GenY_eta=-999; GenY_phi=-999; GenY_mass=-999; GenY_dR=-999;
+      GenX_pt=-999; GenX_eta=-999; GenX_phi=-999; GenX_mass=-999; GenX_dR=-999;
+      GenBFromHiggs_1_pt=-999; GenBFromHiggs_1_eta=-999; GenBFromHiggs_1_phi=-999; GenBFromHiggs_1_mass=-999;
+      GenBFromHiggs_2_pt=-999; GenBFromHiggs_2_eta=-999; GenBFromHiggs_2_phi=-999; GenBFromHiggs_2_mass=-999;
 
       float weight = 1.0;
       if ( isMC ) {
@@ -414,8 +410,6 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       Photons photons;
       if (isMC) {
         photons = getPhotons(year, fnufUnc, materialUnc, PhoScaleUnc, PhoSmearUnc);
-        for (auto pho : photons)
-          pho.setGenPartFlav(pho.idx());
       }
       else {
         photons = getPhotons(year, 0, 0, 0, 0);
