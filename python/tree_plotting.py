@@ -649,7 +649,7 @@ if __name__=="__main__":
   # SM MC
   if True: #if not args.dataOnly:
     samples.append("GJets")
-    samples.append("DiPhotonLow")
+    #samples.append("DiPhotonLow")
     samples.append("DiPhoton")
     samples.append("TTGG")
     samples.append("TTGJets")
@@ -696,10 +696,6 @@ if __name__=="__main__":
     #cut = "fabs(LeadPhoton_eta) > 1.566 && fabs(SubleadPhoton_eta) > 1.566"
 
     # Proper mvaPhoID-RunIIFall17-v2-wp90 cut
-    # cut on max(LeadPhoton_mvaID,SubleadPhoton_mvaID)
-    #cut = "( LeadPhoton_mvaID > SubleadPhoton_mvaID ? (fabs(LeadPhoton_eta)<1.442 ? LeadPhoton_mvaID>-0.02 : LeadPhoton_mvaID>-0.26) : (fabs(SubleadPhoton_eta)<1.442 ? SubleadPhoton_mvaID>-0.02 : SubleadPhoton_mvaID>-0.26) )"
-    # cut on min(LeadPhoton_mvaID,SubleadPhoton_mvaID)
-    #cut = "( LeadPhoton_mvaID < SubleadPhoton_mvaID ? (fabs(LeadPhoton_eta)<1.442 ? LeadPhoton_mvaID>-0.02 : LeadPhoton_mvaID>-0.26) : (fabs(SubleadPhoton_eta)<1.442 ? SubleadPhoton_mvaID>-0.02 : SubleadPhoton_mvaID>-0.26) )"
     #cut = "(fabs(LeadPhoton_eta)<1.442 ? LeadPhoton_mvaID>-0.02 : LeadPhoton_mvaID>-0.26) && (fabs(SubleadPhoton_eta)<1.442 ? SubleadPhoton_mvaID>-0.02 : SubleadPhoton_mvaID>-0.26)"
     # Proper mvaPhoID-RunIIFall17-v2-wp80 cut
     #cut = "(fabs(LeadPhoton_eta)<1.442 ? LeadPhoton_mvaID>0.42 : LeadPhoton_mvaID>0.14) && (fabs(SubleadPhoton_eta)<1.442 ? SubleadPhoton_mvaID>0.42 : SubleadPhoton_mvaID>0.14)"
@@ -741,9 +737,6 @@ if __name__=="__main__":
     plotNames.append("SubleadPhoton_pfPhoIso03"); plotBins["SubleadPhoton_pfPhoIso03"] = [50,0,20]; plotXTitles["SubleadPhoton_pfPhoIso03"] = "PF Iso_{abs}^{#gamma}(#gamma_{2})"
     plotNames.append("SubleadPhoton_chargedHadronIso"); plotBins["SubleadPhoton_chargedHadronIso"] = [50,0,20]; plotXTitles["SubleadPhoton_chargedHadronIso"] = "PF Iso_{abs}^{ch}(#gamma_{2})"
     plotNames.append("SubleadPhoton_mvaID"); plotBins["SubleadPhoton_mvaID"] = [20,-1,1]; plotXTitles["SubleadPhoton_mvaID"] = "MVA ID(#gamma_{2})"
-
-    plotName = "max(LeadPhoton_mvaID,SubleadPhoton_mvaID)"; plotNames.append(plotName); plotBins[plotName] = [20,-1,1]; plotXTitles[plotName] = "max(MVA ID(#gamma_{1},#gamma_{2}))"
-    plotName = "min(LeadPhoton_mvaID,SubleadPhoton_mvaID)"; plotNames.append(plotName); plotBins[plotName] = [20,-1,1]; plotXTitles[plotName] = "min(MVA ID(#gamma_{1},#gamma_{2}))"
 
     plotNames.append("Diphoton_pt"); plotBins["Diphoton_pt"] = [50,0,500]; plotXTitles["Diphoton_pt"] = "p_{T}(#gamma#gamma)"
     plotNames.append("Diphoton_eta"); plotBins["Diphoton_eta"] = [50,-3,3]; plotXTitles["Diphoton_eta"] = "#eta(#gamma#gamma)"
