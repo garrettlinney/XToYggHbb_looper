@@ -10,7 +10,7 @@ struct Photon {
         eta_ = nt.Photon_eta()[idx_];
         phi_ = nt.Photon_phi()[idx_];
         //mass_ = nt.Photon_mass()[idx_]; // Not in newest custom NanoAOD
-//        p4_ = nt.Photon_p4()[idx_]; need to convert to TLorentzVector to compute DeltaR later
+        //p4_ = nt.Photon_p4()[idx_]; need to convert to TLorentzVector to compute DeltaR later
         p4_.SetPtEtaPhiM(pt_, eta_, phi_, 0 );
         //id_ = nt.Photon_pdgId()[idx_]; // Not in newest custom NanoAOD
         r9_ = nt.Photon_r9()[idx_];
@@ -23,7 +23,7 @@ struct Photon {
         mvaID_ = nt.Photon_mvaID()[idx_];
         isScEtaEB_ = nt.Photon_isScEtaEB()[idx_];
         isScEtaEE_ = nt.Photon_isScEtaEE()[idx_];
-        //trkSumPtHollowConeDR03_ = nt.Photon_trkSumPtHollowConeDR03()[idx_]; // To be readded
+        trkSumPtHollowConeDR03_ = nt.Photon_trkSumPtHollowConeDR03()[idx_];
         //idlevel_ = whichPhotonLevel(id_, idx_);
         try { fixedGridRhoFastjetAll_ = nt.Rho_fixedGridRhoFastjetAll(); } catch(const std::exception& e) { fixedGridRhoFastjetAll_ = nt.fixedGridRhoFastjetAll(); }
         try { genPartFlav_ = nt.Photon_genPartFlav()[idx_]; } catch(const std::exception& e) { genPartFlav_ = 0; }
@@ -49,7 +49,7 @@ struct Photon {
     float perEvtRho() { return fixedGridRhoFastjetAll_; }
     float isScEtaEE() { return isScEtaEE_; }
     float isScEtaEB() { return isScEtaEB_; }
-    //float trkSumPtHollowConeDR03() { return trkSumPtHollowConeDR03_; } // To be readded
+    float trkSumPtHollowConeDR03() { return trkSumPtHollowConeDR03_; }
     unsigned char genPartFlav() { return genPartFlav_; }
 
   private:
@@ -69,10 +69,10 @@ struct Photon {
     bool eveto_ = 0.;
     bool pixelSeed_ = 0.;
     float mvaID_ = 0.;
-    float fixedGridRhoFastjetAll_ = 0.; // this variable is the same for each event
+    float fixedGridRhoFastjetAll_ = 0.;
     float isScEtaEB_ = 0;
     float isScEtaEE_ = 0;
-    //float trkSumPtHollowConeDR03_ = 0; // To be readded
+    float trkSumPtHollowConeDR03_ = 0;
     //int idlevel_ = SS::IDdefault;
     unsigned char genPartFlav_ = 0;
 };
