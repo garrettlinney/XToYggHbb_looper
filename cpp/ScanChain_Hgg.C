@@ -342,7 +342,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       dijet_sublead_pt=-999, dijet_sublead_eta=-999, dijet_sublead_phi=-999, dijet_sublead_mass=-999, dijet_sublead_btagDeepFlavB=-999;
       dijet_pt=-999, dijet_eta=-999, dijet_phi=-999, dijet_mass=-999, dijet_dR=-999;
       pfmet_pt=-999, puppimet_pt=-999;
-      year_out=0, eventNum=0;
+      eventNum=0;
       weight_central=1.0, weight_central_initial=1.0, weight_central_no_lumi=1.0, weight_beforeBTagSF=1.0, weight_afterBTagSF=1.0;
 
       LeadPhoton_genPartFlav=0; SubleadPhoton_genPartFlav=0;
@@ -422,7 +422,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       Photons selectedPhotons={selectedDiPhoton.leadPho, selectedDiPhoton.subleadPho};
 
       // Select photons passing the photon MVA ID WP 90
-      if ( !( (fabs(selectedDiPhoton.leadPho.eta())<1.442 ? selectedDiPhoton.leadPho.mvaID()>-0.02 : selectedDiPhoton.subleadPho.mvaID()>-0.26) && (fabs(selectedDiPhoton.leadPho.eta())<1.442 ? selectedDiPhoton.subleadPho.mvaID()>-0.02 : selectedDiPhoton.subleadPho.mvaID()>-0.26) ) ) continue;
+      if ( !( (fabs(selectedDiPhoton.leadPho.eta())<1.442 ? selectedDiPhoton.leadPho.mvaID()>-0.02 : selectedDiPhoton.leadPho.mvaID()>-0.26) && \
+              (fabs(selectedDiPhoton.subleadPho.eta())<1.442 ? selectedDiPhoton.subleadPho.mvaID()>-0.02 : selectedDiPhoton.subleadPho.mvaID()>-0.26) ) ) continue;
 
       Electrons electrons = getElectrons(selectedPhotons);
       Muons muons = getMuons(selectedPhotons);
