@@ -3,6 +3,7 @@ import argparse
 from collections import OrderedDict
 import copy
 from datetime import date    
+import glob
 import numpy
 import os
 import plotUtils
@@ -88,6 +89,16 @@ sampleLegend["NMSSM_XToYHTo2G2B"] = "XYH"
 
 epsilon = 1e-6
 
+def BTagSF(tree):
+  tree.Draw("weight_beforeBTagSF>>hBefore","","goff")
+  hBefore = ROOT.gDirectory.Get("hBefore")
+  wBefore = hBefore.GetEntries()*hBefore.GetMean()
+  tree.Draw("weight_afterBTagSF>>hAfter","","goff")
+  hAfter = ROOT.gDirectory.Get("hAfter")
+  wAfter = hAfter.GetEntries()*hAfter.GetMean()
+  SF = wBefore / wAfter
+  return SF
+
 def get_plots(samples, year, plotname, cut, plotBins, plotXTitles):
 
   htempDict=OrderedDict()
@@ -104,36 +115,42 @@ def get_plots(samples, year, plotname, cut, plotBins, plotXTitles):
     for i,sample in enumerate(samples):
       if "NMSSM_XToYHTo2G2B" in sample:
         for mass in args.signalMass:
-          if (sample+"_"+mass) not in htempDict.keys():
-            htempDict[sample+"_"+mass]=[]
           infile = ROOT.TFile(args.inDir+"output_"+sample+"_"+mass+"_"+tyear+".root")
           tree = infile.Get("tout")
+          if tree.GetEntries() == 0:
+            print("0 entries for sample %s%s, skipping..."%(sample,mass))
+            continue
           tree.Draw(plotname+">>htemp("+str(nBins)+","+str(lowBin)+","+str(highBin)+")",cut,"goff")
+          if (sample+"_"+mass) not in htempDict.keys():
+            htempDict[sample+"_"+mass]=[]
           htemp = ROOT.gDirectory.Get("htemp")
           htemp.GetYaxis().SetTitle("Events")
           htemp.GetXaxis().SetTitle(plotXTitles[plotname])
           htempDict[sample+"_"+mass].append(copy.deepcopy(htemp))
+          htempDict[sample+"_"+mass][-1].Scale(BTagSF(tree))
       elif sample=="GJets":
         for m1,m2 in zip(["40","100","200","400","600"],["100","200","400","600","Inf"]): 
-          if sample not in htempDict.keys():
-            htempDict[sample]=[]
           infile = ROOT.TFile(args.inDir+"output_GJets_HT-"+m1+"To"+m2+"_"+tyear+".root")
           tree = infile.Get("tout")
           tree.Draw(plotname+">>htemp("+str(nBins)+","+str(lowBin)+","+str(highBin)+")",cut,"goff")
+          if sample not in htempDict.keys():
+            htempDict[sample]=[]
           htemp = ROOT.gDirectory.Get("htemp")
           htemp.GetYaxis().SetTitle("Events")
           htemp.GetXaxis().SetTitle(plotXTitles[plotname])
           htempDict[sample].append(copy.deepcopy(htemp))
+          htempDict[sample][-1].Scale(BTagSF(tree))
       else:
-        if sample not in htempDict.keys():
-          htempDict[sample]=[]
         infile = ROOT.TFile(args.inDir+"output_"+sample+"_"+tyear+".root")
         tree = infile.Get("tout")
         tree.Draw(plotname+">>htemp("+str(nBins)+","+str(lowBin)+","+str(highBin)+")",cut,"goff")
+        if sample not in htempDict.keys():
+          htempDict[sample]=[]
         htemp = ROOT.gDirectory.Get("htemp")
         htemp.GetYaxis().SetTitle("Events")
         htemp.GetXaxis().SetTitle(plotXTitles[plotname])
         htempDict[sample].append(copy.deepcopy(htemp))
+        htempDict[sample][-1].Scale(BTagSF(tree))
 
   plotDict=OrderedDict()
   groupedSamples = OrderedDict()
@@ -226,6 +243,38 @@ def customize_plot(sample, plot, fillColor, lineColor, lineWidth, markerStyle, m
 
   return plot
 
+def get_yields(plotDict, plotname, lumi, year, plotData=False):
+  curYields=OrderedDict()
+  curErrors=OrderedDict()
+  totalSMYield = None
+  totalSMError = None
+
+  for i,sample in enumerate(plotDict.keys()):
+    # Signal
+    if "NMSSM_XToYHTo2G2B" in sample:
+      curYields[sample] = plotDict[sample].GetBinContent(1)
+      curErrors[sample] = plotDict[sample].GetBinError(1)
+      print(sample.replace(" ","_")+":\t%.2f +/- %.2f"%(curYields[sample],curErrors[sample]))
+    # Data
+    elif sample=="Data": 
+      if plotData:
+        curYields[sample] = plotDict[sample].GetBinContent(1)
+        curErrors[sample] = plotDict[sample].GetBinError(1)
+        print(sample.replace(" ","_")+":\t%.2f +/- %.2f"%(curYields[sample],curErrors[sample]))
+    # Bkg
+    else:
+      curYields[sample] = plotDict[sample].GetBinContent(1)
+      curErrors[sample] = plotDict[sample].GetBinError(1)
+      print(sample.replace(" ","_")+":\t%.2f +/- %.2f"%(curYields[sample],curErrors[sample]))
+      if not totalSMYield:
+        totalSMYield = curYields[sample]
+        totalSMError = curErrors[sample]*curErrors[sample]
+      else:
+        totalSMYield = totalSMYield + curYields[sample]
+        totalSMError = totalSMError + curErrors[sample]
+  totalSMError = ROOT.TMath.Sqrt(totalSMError)
+  print("Total_SM:\t%.2f +/- %.2f"%(totalSMYield,totalSMError))
+
 def draw_plot(plotDict, plotname, lumi, year, logY=True, logX=False, plotData=False, doRatio=True):
 
   # Labels
@@ -274,8 +323,6 @@ def draw_plot(plotDict, plotname, lumi, year, logY=True, logX=False, plotData=Fa
     if "NMSSM_XToYHTo2G2B" in sample:
       model = sample.split("_M")[0]
       mass = sample.split("B_")[1]
-      #if "mmumu" not in plotname and mass in massToExclude:
-      #    continue
       curPlots[sample] = copy.deepcopy(customize_plot(sample,plotDict[sample],sampleFillColor[model],sampleLineColor[model]+i%len(args.signalMass),sampleLineWidth[model],sampleMarkerStyle[model],sampleMarkerSize[model]))
       if args.shape and curPlots[sample].Integral(0,-1)>0.0:
         curPlots[sample].Scale(1.0/curPlots[sample].Integral(0,-1))
@@ -398,8 +445,6 @@ def draw_plot(plotDict, plotname, lumi, year, logY=True, logX=False, plotData=Fa
       if "NMSSM_XToYHTo2G2B" in sample:
         model = sample.split("_M")[0] 
         mass = sample.split("B_")[1]
-        if mass in massToExclude:
-          continue
         g_signal_temp = ROOT.TGraphAsymmErrors()
         plotUtils.ConvertToPoissonGraph(curPlots[sample], g_signal_temp, drawZeros=False, drawXerr=False, drawYerr=False)
         g_signal_temp.SetMarkerStyle(20)
@@ -606,7 +651,7 @@ def draw_plot(plotDict, plotname, lumi, year, logY=True, logX=False, plotData=Fa
   if args.cumulative:
     extension = extension+"_cumulative"
   
-  canvas.SaveAs(args.outDir + plotname + extension + (".pdf" if args.pdf else ".png"))
+  canvas.SaveAs(args.outDir + plotname.replace("/","Over") + extension + (".pdf" if args.pdf else ".png"))
 
 if __name__=="__main__":
   ROOT.gStyle.SetOptStat(0)
@@ -626,6 +671,7 @@ if __name__=="__main__":
   parser.add_argument("--cumulative", default=False, action="store_true", help="Cumulative distributions")
   parser.add_argument("--years", default=[], nargs="+", help="List of years to be plotted. Default: all years")
   parser.add_argument("--pdf", default=False, action="store_true", help="Output format: .pdf. Default: .png")
+  parser.add_argument("--yields", default=False, action="store_true", help="Print yields instead of plotting")
   args = parser.parse_args()
 
   args.inDir = args.inDir.rstrip("/")+"/"
@@ -637,6 +683,12 @@ if __name__=="__main__":
 
   if len(args.signalMass)==0: 
     args.signalMass = ["MX_700_MY_100"]
+  if args.signalMass==["all"]: 
+    args.signalMass = []
+    fileNames = glob.glob(args.inDir+"*NMSSM*")
+    for fileName in fileNames:
+      fileName = fileName.split("/")[-1].split(".")[0].split("B_")[1].split("_201")[0]
+      args.signalMass.append(fileName)
 
   if len(args.years)==0:
     args.years = ["all"]
@@ -708,6 +760,9 @@ if __name__=="__main__":
     # Diphoton mass cut
     #cut = "Diphoton_mass > 95"
 
+    # pT/ Mgg cut
+    #cut = "LeadPhoton_pt / Diphoton_mass > 0.33 && SubleadPhoton_pt / Diphoton_mass > 0.25"
+
     cut = weight + "*(" + cut + ")"
 
 
@@ -727,6 +782,7 @@ if __name__=="__main__":
     plotNames.append("LeadPhoton_pfPhoIso03"); plotBins["LeadPhoton_pfPhoIso03"] = [50,0,20]; plotXTitles["LeadPhoton_pfPhoIso03"] = "PF Iso_{abs}^{#gamma}(#gamma_{1})"
     plotNames.append("LeadPhoton_chargedHadronIso"); plotBins["LeadPhoton_chargedHadronIso"] = [50,0,20]; plotXTitles["LeadPhoton_chargedHadronIso"] = "PF Iso_{abs}^{ch}(#gamma_{1})"
     plotNames.append("LeadPhoton_mvaID"); plotBins["LeadPhoton_mvaID"] = [20,-1,1]; plotXTitles["LeadPhoton_mvaID"] = "MVA ID(#gamma_{1})"
+    plotNames.append("LeadPhoton_pt/Diphoton_mass"); plotBins["LeadPhoton_pt/Diphoton_mass"] = [50,0,2]; plotXTitles["LeadPhoton_pt/Diphoton_mass"] = "p_{T}(#gamma_{1}) / M(#gamma#gamma)"
 
     plotNames.append("SubleadPhoton_pt"); plotBins["SubleadPhoton_pt"] = [50,0,500]; plotXTitles["SubleadPhoton_pt"] = "p_{T}(#gamma_{2})"
     plotNames.append("SubleadPhoton_eta"); plotBins["SubleadPhoton_eta"] = [50,-3,3]; plotXTitles["SubleadPhoton_eta"] = "#eta(#gamma_{2})"
@@ -737,6 +793,7 @@ if __name__=="__main__":
     plotNames.append("SubleadPhoton_pfPhoIso03"); plotBins["SubleadPhoton_pfPhoIso03"] = [50,0,20]; plotXTitles["SubleadPhoton_pfPhoIso03"] = "PF Iso_{abs}^{#gamma}(#gamma_{2})"
     plotNames.append("SubleadPhoton_chargedHadronIso"); plotBins["SubleadPhoton_chargedHadronIso"] = [50,0,20]; plotXTitles["SubleadPhoton_chargedHadronIso"] = "PF Iso_{abs}^{ch}(#gamma_{2})"
     plotNames.append("SubleadPhoton_mvaID"); plotBins["SubleadPhoton_mvaID"] = [20,-1,1]; plotXTitles["SubleadPhoton_mvaID"] = "MVA ID(#gamma_{2})"
+    plotNames.append("SubleadPhoton_pt/Diphoton_mass"); plotBins["SubleadPhoton_pt/Diphoton_mass"] = [50,0,2]; plotXTitles["SubleadPhoton_pt/Diphoton_mass"] = "p_{T}(#gamma_{2}) / M(#gamma#gamma)"
 
     plotNames.append("Diphoton_pt"); plotBins["Diphoton_pt"] = [50,0,500]; plotXTitles["Diphoton_pt"] = "p_{T}(#gamma#gamma)"
     plotNames.append("Diphoton_eta"); plotBins["Diphoton_eta"] = [50,-3,3]; plotXTitles["Diphoton_eta"] = "#eta(#gamma#gamma)"
@@ -769,9 +826,14 @@ if __name__=="__main__":
     plotNames.append("puppimet_pt"); plotBins["puppimet_pt"] = [50,0,200]; plotXTitles["puppimet_pt"] = "PUPPI MET P_{T}"
     toexclude = []
 
-    for plotname in plotNames:
-      if plotname in toexclude:
-          continue
-      # Open files and get trees and return plots
+    if args.yields:
+      plotname = "LeadPhoton_pixelSeed"
       plotDict = get_plots(samples, year, plotname, cut, plotBins, plotXTitles)
-      draw_plot(plotDict, plotname, lumi, year, True, False, args.data)
+      get_yields(plotDict, plotname, lumi, year, args.data)
+    else:
+      for plotname in plotNames:
+        if plotname in toexclude:
+            continue
+        # Open files and get trees and return plots
+        plotDict = get_plots(samples, year, plotname, cut, plotBins, plotXTitles)
+        draw_plot(plotDict, plotname, lumi, year, True, False, args.data)
