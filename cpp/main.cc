@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
   int PUWeight            = ( argc > 8  ? char2int(argv[8])  : 1 );
   int electronVetoSF      = ( argc > 9  ? char2int(argv[9])  : 1 );
   int lowMassHggTriggerSF = ( argc > 10 ? char2int(argv[10]) : 1 );
-  int lowMassHggPreselSF  = ( argc > 11 ? char2int(argv[11]) : 1 );
+  int lowMassHggPreselSF  = ( argc > 11 ? char2int(argv[11]) : 0 );
   int phoMVAIDWP90SF      = ( argc > 12 ? char2int(argv[12]) : 1 );
   int bTagSF              = ( argc > 13 ? char2int(argv[13]) : 1 ); // Set to +/-X to get uncertainty, X in [2,10]
   int fnufUnc             = ( argc > 14 ? char2int(argv[14]) : 0 ); // No central value
