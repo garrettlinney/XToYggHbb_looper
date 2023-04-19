@@ -662,11 +662,11 @@ if __name__=="__main__":
 
   parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
   parser.add_argument("--inDir", default="./cpp/temp_data/", help="Choose input directory. Default: './cpp/temp_data/'")
-  parser.add_argument("--outDir", default="/home/users/"+user+"/public_html/XToYHToggbb/plots_"+today, help="Choose output directory. Default: '/home/users/"+user+"/public_html/Zprime/pots_"+today+"'")
+  parser.add_argument("--outDir", default="/home/users/"+user+"/public_html/XToYHToggbb/plots_"+today, help="Choose output directory. Default: '/home/users/"+user+"/public_html/XToYHToggbb/plots_"+today+"'")
   parser.add_argument("--data", default=False, action="store_true", help="Plot data")
   parser.add_argument("--dataOnly", default=False, action="store_true", help="Plot only data, no MC bkg")
   parser.add_argument("--noSignal", default=False, action="store_true", help="Do not plot signals")
-  parser.add_argument("--signalMass", default=[], nargs="+", help="Signal mass points to plot. Default: All")
+  parser.add_argument("--signalMass", default=[], nargs="+", help="Signal mass points to plot. 'all' plots/prints all of the mass points. Default: 'MX_700_MY_100'")
   parser.add_argument("--shape", default=False, action="store_true", help="Shape normalization")
   parser.add_argument("--cumulative", default=False, action="store_true", help="Cumulative distributions")
   parser.add_argument("--years", default=[], nargs="+", help="List of years to be plotted. Default: all years")
