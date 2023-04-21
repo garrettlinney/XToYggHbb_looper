@@ -3116,6 +3116,44 @@ void Nano::Init(TTree *tree) {
     if (b_Jet_btagDeepFlavCvL_) { b_Jet_btagDeepFlavCvL_->SetAddress(&Jet_btagDeepFlavCvL_); }
     b_Jet_btagDeepFlavQG_ = tree->GetBranch("Jet_btagDeepFlavQG");
     if (b_Jet_btagDeepFlavQG_) { b_Jet_btagDeepFlavQG_->SetAddress(&Jet_btagDeepFlavQG_); }
+    b_Jet_btagSF_deepjet_shape_ = tree->GetBranch("Jet_btagSF_deepjet_shape");
+    if (b_Jet_btagSF_deepjet_shape_) { b_Jet_btagSF_deepjet_shape_->SetAddress(&Jet_btagSF_deepjet_shape_); }
+    b_Jet_btagSF_deepjet_shape_up_hf_ = tree->GetBranch("Jet_btagSF_deepjet_shape_up_hf");
+    if (b_Jet_btagSF_deepjet_shape_up_hf_) { b_Jet_btagSF_deepjet_shape_up_hf_->SetAddress(&Jet_btagSF_deepjet_shape_up_hf_); }
+    b_Jet_btagSF_deepjet_shape_down_hf_ = tree->GetBranch("Jet_btagSF_deepjet_shape_down_hf");
+    if (b_Jet_btagSF_deepjet_shape_down_hf_) { b_Jet_btagSF_deepjet_shape_down_hf_->SetAddress(&Jet_btagSF_deepjet_shape_down_hf_); }
+    b_Jet_btagSF_deepjet_shape_up_hfstats1_ = tree->GetBranch("Jet_btagSF_deepjet_shape_up_hfstats1");
+    if (b_Jet_btagSF_deepjet_shape_up_hfstats1_) { b_Jet_btagSF_deepjet_shape_up_hfstats1_->SetAddress(&Jet_btagSF_deepjet_shape_up_hfstats1_); }
+    b_Jet_btagSF_deepjet_shape_down_hfstats1_ = tree->GetBranch("Jet_btagSF_deepjet_shape_down_hfstats1");
+    if (b_Jet_btagSF_deepjet_shape_down_hfstats1_) { b_Jet_btagSF_deepjet_shape_down_hfstats1_->SetAddress(&Jet_btagSF_deepjet_shape_down_hfstats1_); }
+    b_Jet_btagSF_deepjet_shape_up_hfstats2_ = tree->GetBranch("Jet_btagSF_deepjet_shape_up_hfstats2");
+    if (b_Jet_btagSF_deepjet_shape_up_hfstats2_) { b_Jet_btagSF_deepjet_shape_up_hfstats2_->SetAddress(&Jet_btagSF_deepjet_shape_up_hfstats2_); }
+    b_Jet_btagSF_deepjet_shape_down_hfstats2_ = tree->GetBranch("Jet_btagSF_deepjet_shape_down_hfstats2");
+    if (b_Jet_btagSF_deepjet_shape_down_hfstats2_) { b_Jet_btagSF_deepjet_shape_down_hfstats2_->SetAddress(&Jet_btagSF_deepjet_shape_down_hfstats2_); }
+    b_Jet_btagSF_deepjet_shape_up_lf_ = tree->GetBranch("Jet_btagSF_deepjet_shape_up_lf");
+    if (b_Jet_btagSF_deepjet_shape_up_lf_) { b_Jet_btagSF_deepjet_shape_up_lf_->SetAddress(&Jet_btagSF_deepjet_shape_up_lf_); }
+    b_Jet_btagSF_deepjet_shape_down_lf_ = tree->GetBranch("Jet_btagSF_deepjet_shape_down_lf");
+    if (b_Jet_btagSF_deepjet_shape_down_lf_) { b_Jet_btagSF_deepjet_shape_down_lf_->SetAddress(&Jet_btagSF_deepjet_shape_down_lf_); }
+    b_Jet_btagSF_deepjet_shape_up_lfstats1_ = tree->GetBranch("Jet_btagSF_deepjet_shape_up_lfstats1");
+    if (b_Jet_btagSF_deepjet_shape_up_lfstats1_) { b_Jet_btagSF_deepjet_shape_up_lfstats1_->SetAddress(&Jet_btagSF_deepjet_shape_up_lfstats1_); }
+    b_Jet_btagSF_deepjet_shape_down_lfstats1_ = tree->GetBranch("Jet_btagSF_deepjet_shape_down_lfstats1");
+    if (b_Jet_btagSF_deepjet_shape_down_lfstats1_) { b_Jet_btagSF_deepjet_shape_down_lfstats1_->SetAddress(&Jet_btagSF_deepjet_shape_down_lfstats1_); }
+    b_Jet_btagSF_deepjet_shape_up_lfstats2_ = tree->GetBranch("Jet_btagSF_deepjet_shape_up_lfstats2");
+    if (b_Jet_btagSF_deepjet_shape_up_lfstats2_) { b_Jet_btagSF_deepjet_shape_up_lfstats2_->SetAddress(&Jet_btagSF_deepjet_shape_up_lfstats2_); }
+    b_Jet_btagSF_deepjet_shape_down_lfstats2_ = tree->GetBranch("Jet_btagSF_deepjet_shape_down_lfstats2");
+    if (b_Jet_btagSF_deepjet_shape_down_lfstats2_) { b_Jet_btagSF_deepjet_shape_down_lfstats2_->SetAddress(&Jet_btagSF_deepjet_shape_down_lfstats2_); }
+    b_Jet_btagSF_deepjet_shape_up_jes_ = tree->GetBranch("Jet_btagSF_deepjet_shape_up_jes");
+    if (b_Jet_btagSF_deepjet_shape_up_jes_) { b_Jet_btagSF_deepjet_shape_up_jes_->SetAddress(&Jet_btagSF_deepjet_shape_up_jes_); }
+    b_Jet_btagSF_deepjet_shape_down_jes_ = tree->GetBranch("Jet_btagSF_deepjet_shape_down_jes");
+    if (b_Jet_btagSF_deepjet_shape_down_jes_) { b_Jet_btagSF_deepjet_shape_down_jes_->SetAddress(&Jet_btagSF_deepjet_shape_down_jes_); }
+    b_Jet_btagSF_deepjet_shape_up_cferr1_ = tree->GetBranch("Jet_btagSF_deepjet_shape_up_cferr1");
+    if (b_Jet_btagSF_deepjet_shape_up_cferr1_) { b_Jet_btagSF_deepjet_shape_up_cferr1_->SetAddress(&Jet_btagSF_deepjet_shape_up_cferr1_); }
+    b_Jet_btagSF_deepjet_shape_down_cferr1_ = tree->GetBranch("Jet_btagSF_deepjet_shape_down_cferr1");
+    if (b_Jet_btagSF_deepjet_shape_down_cferr1_) { b_Jet_btagSF_deepjet_shape_down_cferr1_->SetAddress(&Jet_btagSF_deepjet_shape_down_cferr1_); }
+    b_Jet_btagSF_deepjet_shape_up_cferr2_ = tree->GetBranch("Jet_btagSF_deepjet_shape_up_cferr2");
+    if (b_Jet_btagSF_deepjet_shape_up_cferr2_) { b_Jet_btagSF_deepjet_shape_up_cferr2_->SetAddress(&Jet_btagSF_deepjet_shape_up_cferr2_); }
+    b_Jet_btagSF_deepjet_shape_down_cferr2_ = tree->GetBranch("Jet_btagSF_deepjet_shape_down_cferr2");
+    if (b_Jet_btagSF_deepjet_shape_down_cferr2_) { b_Jet_btagSF_deepjet_shape_down_cferr2_->SetAddress(&Jet_btagSF_deepjet_shape_down_cferr2_); }
     b_Jet_cRegCorr_ = tree->GetBranch("Jet_cRegCorr");
     if (b_Jet_cRegCorr_) { b_Jet_cRegCorr_->SetAddress(&Jet_cRegCorr_); }
     b_Jet_cRegRes_ = tree->GetBranch("Jet_cRegRes");
@@ -5278,6 +5316,10 @@ void Nano::Init(TTree *tree) {
     if (b_Photon_pixelSeed_) { b_Photon_pixelSeed_->SetAddress(&Photon_pixelSeed_); }
     b_Photon_pt_ = tree->GetBranch("Photon_pt");
     if (b_Photon_pt_) { b_Photon_pt_->SetAddress(&Photon_pt_); }
+    b_Photon_pt_ScaleUp_ = tree->GetBranch("Photon_pt_ScaleUp");
+    if (b_Photon_pt_ScaleUp_) { b_Photon_pt_ScaleUp_->SetAddress(&Photon_pt_ScaleUp_); }
+    b_Photon_pt_ScaleDown_ = tree->GetBranch("Photon_pt_ScaleDown");
+    if (b_Photon_pt_ScaleDown_) { b_Photon_pt_ScaleDown_->SetAddress(&Photon_pt_ScaleDown_); }
     b_Photon_r9_ = tree->GetBranch("Photon_r9");
     if (b_Photon_r9_) { b_Photon_r9_->SetAddress(&Photon_r9_); }
     b_Photon_seedGain_ = tree->GetBranch("Photon_seedGain");
@@ -7333,6 +7375,25 @@ void Nano::PrintUsage() {
     std::cout << "Jet_btagDeepFlavCvB (uncached/cached calls): " << counter_uncached_Jet_btagDeepFlavCvB_ << " / " << counter_cached_Jet_btagDeepFlavCvB_ << std::endl;;
     std::cout << "Jet_btagDeepFlavCvL (uncached/cached calls): " << counter_uncached_Jet_btagDeepFlavCvL_ << " / " << counter_cached_Jet_btagDeepFlavCvL_ << std::endl;;
     std::cout << "Jet_btagDeepFlavQG (uncached/cached calls): " << counter_uncached_Jet_btagDeepFlavQG_ << " / " << counter_cached_Jet_btagDeepFlavQG_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_up_hf (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_up_hf_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_up_hf_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_down_hf (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_down_hf_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_down_hf_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_up_hfstats1 (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_up_hfstats1_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_up_hfstats1_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_down_hfstats1 (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_down_hfstats1_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_down_hfstats1_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_up_hfstats2 (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_up_hfstats2_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_up_hfstats2_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_down_hfstats2 (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_down_hfstats2_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_down_hfstats2_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_up_lf (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_up_lf_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_up_lf_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_down_lf (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_down_lf_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_down_lf_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_up_lfstats1 (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_up_lfstats1_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_up_lfstats1_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_down_lfstats1 (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_down_lfstats1_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_down_lfstats1_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_up_lfstats2 (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_up_lfstats2_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_up_lfstats2_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_down_lfstats2 (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_down_lfstats2_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_down_lfstats2_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_up_jes (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_up_jes_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_up_jes_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_down_jes (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_down_jes_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_down_jes_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_up_cferr1 (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_up_cferr1_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_up_cferr1_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_down_cferr1 (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_down_cferr1_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_down_cferr1_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_up_cferr2 (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_up_cferr2_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_up_cferr2_ << std::endl;;
+    std::cout << "Jet_btagSF_deepjet_shape_down_cferr2 (uncached/cached calls): " << counter_uncached_Jet_btagSF_deepjet_shape_down_cferr2_ << " / " << counter_cached_Jet_btagSF_deepjet_shape_down_cferr2_ << std::endl;;
     std::cout << "Jet_cRegCorr (uncached/cached calls): " << counter_uncached_Jet_cRegCorr_ << " / " << counter_cached_Jet_cRegCorr_ << std::endl;;
     std::cout << "Jet_cRegRes (uncached/cached calls): " << counter_uncached_Jet_cRegRes_ << " / " << counter_cached_Jet_cRegRes_ << std::endl;;
     std::cout << "Jet_chEmEF (uncached/cached calls): " << counter_uncached_Jet_chEmEF_ << " / " << counter_cached_Jet_chEmEF_ << std::endl;;
@@ -8419,6 +8480,8 @@ void Nano::PrintUsage() {
     std::cout << "Photon_pfPhoIso03 (uncached/cached calls): " << counter_uncached_Photon_pfPhoIso03_ << " / " << counter_cached_Photon_pfPhoIso03_ << std::endl;;
     std::cout << "Photon_pixelSeed (uncached/cached calls): " << counter_uncached_Photon_pixelSeed_ << " / " << counter_cached_Photon_pixelSeed_ << std::endl;;
     std::cout << "Photon_pt (uncached/cached calls): " << counter_uncached_Photon_pt_ << " / " << counter_cached_Photon_pt_ << std::endl;;
+    std::cout << "Photon_pt_ScaleUp (uncached/cached calls): " << counter_uncached_Photon_pt_ScaleUp_ << " / " << counter_cached_Photon_pt_ScaleUp_ << std::endl;;
+    std::cout << "Photon_pt_ScaleDown (uncached/cached calls): " << counter_uncached_Photon_pt_ScaleDown_ << " / " << counter_cached_Photon_pt_ScaleDown_ << std::endl;;
     std::cout << "Photon_r9 (uncached/cached calls): " << counter_uncached_Photon_r9_ << " / " << counter_cached_Photon_r9_ << std::endl;;
     std::cout << "Photon_seedGain (uncached/cached calls): " << counter_uncached_Photon_seedGain_ << " / " << counter_cached_Photon_seedGain_ << std::endl;;
     std::cout << "Photon_sieie (uncached/cached calls): " << counter_uncached_Photon_sieie_ << " / " << counter_cached_Photon_sieie_ << std::endl;;
@@ -10215,6 +10278,25 @@ void Nano::GetEntry(unsigned int idx) {
     loaded_Jet_btagDeepFlavCvB_ = false;
     loaded_Jet_btagDeepFlavCvL_ = false;
     loaded_Jet_btagDeepFlavQG_ = false;
+    loaded_Jet_btagSF_deepjet_shape_ = false;
+    loaded_Jet_btagSF_deepjet_shape_up_hf_ = false;
+    loaded_Jet_btagSF_deepjet_shape_down_hf_ = false;
+    loaded_Jet_btagSF_deepjet_shape_up_hfstats1_ = false;
+    loaded_Jet_btagSF_deepjet_shape_down_hfstats1_ = false;
+    loaded_Jet_btagSF_deepjet_shape_up_hfstats2_ = false;
+    loaded_Jet_btagSF_deepjet_shape_down_hfstats2_ = false;
+    loaded_Jet_btagSF_deepjet_shape_up_lf_ = false;
+    loaded_Jet_btagSF_deepjet_shape_down_lf_ = false;
+    loaded_Jet_btagSF_deepjet_shape_up_lfstats1_ = false;
+    loaded_Jet_btagSF_deepjet_shape_down_lfstats1_ = false;
+    loaded_Jet_btagSF_deepjet_shape_up_lfstats2_ = false;
+    loaded_Jet_btagSF_deepjet_shape_down_lfstats2_ = false;
+    loaded_Jet_btagSF_deepjet_shape_up_jes_ = false;
+    loaded_Jet_btagSF_deepjet_shape_down_jes_ = false;
+    loaded_Jet_btagSF_deepjet_shape_up_cferr1_ = false;
+    loaded_Jet_btagSF_deepjet_shape_down_cferr1_ = false;
+    loaded_Jet_btagSF_deepjet_shape_up_cferr2_ = false;
+    loaded_Jet_btagSF_deepjet_shape_down_cferr2_ = false;
     loaded_Jet_cRegCorr_ = false;
     loaded_Jet_cRegRes_ = false;
     loaded_Jet_chEmEF_ = false;
@@ -11301,6 +11383,8 @@ void Nano::GetEntry(unsigned int idx) {
     loaded_Photon_pfPhoIso03_ = false;
     loaded_Photon_pixelSeed_ = false;
     loaded_Photon_pt_ = false;
+    loaded_Photon_pt_ScaleUp_ = false;
+    loaded_Photon_pt_ScaleDown_ = false;
     loaded_Photon_r9_ = false;
     loaded_Photon_seedGain_ = false;
     loaded_Photon_sieie_ = false;
@@ -27505,6 +27589,215 @@ const vector<float> &Nano::Jet_btagDeepFlavQG() {
     }
     return v_Jet_btagDeepFlavQG_;
 }
+const vector<float> &Nano::Jet_btagSF_deepjet_shape() {
+    if (!loaded_Jet_btagSF_deepjet_shape_) counter_uncached_Jet_btagSF_deepjet_shape_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_) {
+        if (!b_Jet_btagSF_deepjet_shape_) throw std::runtime_error("Jet_btagSF_deepjet_shape branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_ = vector<float>(Jet_btagSF_deepjet_shape_,Jet_btagSF_deepjet_shape_+bytes/sizeof(Jet_btagSF_deepjet_shape_[0]));
+        loaded_Jet_btagSF_deepjet_shape_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_up_hf() {
+    if (!loaded_Jet_btagSF_deepjet_shape_up_hf_) counter_uncached_Jet_btagSF_deepjet_shape_up_hf_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_up_hf_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_up_hf_) {
+        if (!b_Jet_btagSF_deepjet_shape_up_hf_) throw std::runtime_error("Jet_btagSF_deepjet_shape_up_hf branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_up_hf_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_up_hf_ = vector<float>(Jet_btagSF_deepjet_shape_up_hf_,Jet_btagSF_deepjet_shape_up_hf_+bytes/sizeof(Jet_btagSF_deepjet_shape_up_hf_[0]));
+        loaded_Jet_btagSF_deepjet_shape_up_hf_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_up_hf_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_down_hf() {
+    if (!loaded_Jet_btagSF_deepjet_shape_down_hf_) counter_uncached_Jet_btagSF_deepjet_shape_down_hf_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_down_hf_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_down_hf_) {
+        if (!b_Jet_btagSF_deepjet_shape_down_hf_) throw std::runtime_error("Jet_btagSF_deepjet_shape_down_hf branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_down_hf_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_down_hf_ = vector<float>(Jet_btagSF_deepjet_shape_down_hf_,Jet_btagSF_deepjet_shape_down_hf_+bytes/sizeof(Jet_btagSF_deepjet_shape_down_hf_[0]));
+        loaded_Jet_btagSF_deepjet_shape_down_hf_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_down_hf_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_up_hfstats1() {
+    if (!loaded_Jet_btagSF_deepjet_shape_up_hfstats1_) counter_uncached_Jet_btagSF_deepjet_shape_up_hfstats1_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_up_hfstats1_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_up_hfstats1_) {
+        if (!b_Jet_btagSF_deepjet_shape_up_hfstats1_) throw std::runtime_error("Jet_btagSF_deepjet_shape_up_hfstats1 branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_up_hfstats1_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_up_hfstats1_ = vector<float>(Jet_btagSF_deepjet_shape_up_hfstats1_,Jet_btagSF_deepjet_shape_up_hfstats1_+bytes/sizeof(Jet_btagSF_deepjet_shape_up_hfstats1_[0]));
+        loaded_Jet_btagSF_deepjet_shape_up_hfstats1_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_up_hfstats1_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_down_hfstats1() {
+    if (!loaded_Jet_btagSF_deepjet_shape_down_hfstats1_) counter_uncached_Jet_btagSF_deepjet_shape_down_hfstats1_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_down_hfstats1_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_down_hfstats1_) {
+        if (!b_Jet_btagSF_deepjet_shape_down_hfstats1_) throw std::runtime_error("Jet_btagSF_deepjet_shape_down_hfstats1 branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_down_hfstats1_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_down_hfstats1_ = vector<float>(Jet_btagSF_deepjet_shape_down_hfstats1_,Jet_btagSF_deepjet_shape_down_hfstats1_+bytes/sizeof(Jet_btagSF_deepjet_shape_down_hfstats1_[0]));
+        loaded_Jet_btagSF_deepjet_shape_down_hfstats1_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_down_hfstats1_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_up_hfstats2() {
+    if (!loaded_Jet_btagSF_deepjet_shape_up_hfstats2_) counter_uncached_Jet_btagSF_deepjet_shape_up_hfstats2_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_up_hfstats2_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_up_hfstats2_) {
+        if (!b_Jet_btagSF_deepjet_shape_up_hfstats2_) throw std::runtime_error("Jet_btagSF_deepjet_shape_up_hfstats2 branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_up_hfstats2_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_up_hfstats2_ = vector<float>(Jet_btagSF_deepjet_shape_up_hfstats2_,Jet_btagSF_deepjet_shape_up_hfstats2_+bytes/sizeof(Jet_btagSF_deepjet_shape_up_hfstats2_[0]));
+        loaded_Jet_btagSF_deepjet_shape_up_hfstats2_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_up_hfstats2_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_down_hfstats2() {
+    if (!loaded_Jet_btagSF_deepjet_shape_down_hfstats2_) counter_uncached_Jet_btagSF_deepjet_shape_down_hfstats2_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_down_hfstats2_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_down_hfstats2_) {
+        if (!b_Jet_btagSF_deepjet_shape_down_hfstats2_) throw std::runtime_error("Jet_btagSF_deepjet_shape_down_hfstats2 branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_down_hfstats2_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_down_hfstats2_ = vector<float>(Jet_btagSF_deepjet_shape_down_hfstats2_,Jet_btagSF_deepjet_shape_down_hfstats2_+bytes/sizeof(Jet_btagSF_deepjet_shape_down_hfstats2_[0]));
+        loaded_Jet_btagSF_deepjet_shape_down_hfstats2_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_down_hfstats2_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_up_lf() {
+    if (!loaded_Jet_btagSF_deepjet_shape_up_lf_) counter_uncached_Jet_btagSF_deepjet_shape_up_lf_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_up_lf_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_up_lf_) {
+        if (!b_Jet_btagSF_deepjet_shape_up_lf_) throw std::runtime_error("Jet_btagSF_deepjet_shape_up_lf branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_up_lf_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_up_lf_ = vector<float>(Jet_btagSF_deepjet_shape_up_lf_,Jet_btagSF_deepjet_shape_up_lf_+bytes/sizeof(Jet_btagSF_deepjet_shape_up_lf_[0]));
+        loaded_Jet_btagSF_deepjet_shape_up_lf_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_up_lf_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_down_lf() {
+    if (!loaded_Jet_btagSF_deepjet_shape_down_lf_) counter_uncached_Jet_btagSF_deepjet_shape_down_lf_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_down_lf_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_down_lf_) {
+        if (!b_Jet_btagSF_deepjet_shape_down_lf_) throw std::runtime_error("Jet_btagSF_deepjet_shape_down_lf branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_down_lf_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_down_lf_ = vector<float>(Jet_btagSF_deepjet_shape_down_lf_,Jet_btagSF_deepjet_shape_down_lf_+bytes/sizeof(Jet_btagSF_deepjet_shape_down_lf_[0]));
+        loaded_Jet_btagSF_deepjet_shape_down_lf_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_down_lf_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_up_lfstats1() {
+    if (!loaded_Jet_btagSF_deepjet_shape_up_lfstats1_) counter_uncached_Jet_btagSF_deepjet_shape_up_lfstats1_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_up_lfstats1_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_up_lfstats1_) {
+        if (!b_Jet_btagSF_deepjet_shape_up_lfstats1_) throw std::runtime_error("Jet_btagSF_deepjet_shape_up_lfstats1 branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_up_lfstats1_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_up_lfstats1_ = vector<float>(Jet_btagSF_deepjet_shape_up_lfstats1_,Jet_btagSF_deepjet_shape_up_lfstats1_+bytes/sizeof(Jet_btagSF_deepjet_shape_up_lfstats1_[0]));
+        loaded_Jet_btagSF_deepjet_shape_up_lfstats1_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_up_lfstats1_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_down_lfstats1() {
+    if (!loaded_Jet_btagSF_deepjet_shape_down_lfstats1_) counter_uncached_Jet_btagSF_deepjet_shape_down_lfstats1_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_down_lfstats1_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_down_lfstats1_) {
+        if (!b_Jet_btagSF_deepjet_shape_down_lfstats1_) throw std::runtime_error("Jet_btagSF_deepjet_shape_down_lfstats1 branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_down_lfstats1_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_down_lfstats1_ = vector<float>(Jet_btagSF_deepjet_shape_down_lfstats1_,Jet_btagSF_deepjet_shape_down_lfstats1_+bytes/sizeof(Jet_btagSF_deepjet_shape_down_lfstats1_[0]));
+        loaded_Jet_btagSF_deepjet_shape_down_lfstats1_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_down_lfstats1_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_up_lfstats2() {
+    if (!loaded_Jet_btagSF_deepjet_shape_up_lfstats2_) counter_uncached_Jet_btagSF_deepjet_shape_up_lfstats2_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_up_lfstats2_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_up_lfstats2_) {
+        if (!b_Jet_btagSF_deepjet_shape_up_lfstats2_) throw std::runtime_error("Jet_btagSF_deepjet_shape_up_lfstats2 branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_up_lfstats2_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_up_lfstats2_ = vector<float>(Jet_btagSF_deepjet_shape_up_lfstats2_,Jet_btagSF_deepjet_shape_up_lfstats2_+bytes/sizeof(Jet_btagSF_deepjet_shape_up_lfstats2_[0]));
+        loaded_Jet_btagSF_deepjet_shape_up_lfstats2_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_up_lfstats2_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_down_lfstats2() {
+    if (!loaded_Jet_btagSF_deepjet_shape_down_lfstats2_) counter_uncached_Jet_btagSF_deepjet_shape_down_lfstats2_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_down_lfstats2_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_down_lfstats2_) {
+        if (!b_Jet_btagSF_deepjet_shape_down_lfstats2_) throw std::runtime_error("Jet_btagSF_deepjet_shape_down_lfstats2 branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_down_lfstats2_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_down_lfstats2_ = vector<float>(Jet_btagSF_deepjet_shape_down_lfstats2_,Jet_btagSF_deepjet_shape_down_lfstats2_+bytes/sizeof(Jet_btagSF_deepjet_shape_down_lfstats2_[0]));
+        loaded_Jet_btagSF_deepjet_shape_down_lfstats2_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_down_lfstats2_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_up_jes() {
+    if (!loaded_Jet_btagSF_deepjet_shape_up_jes_) counter_uncached_Jet_btagSF_deepjet_shape_up_jes_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_up_jes_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_up_jes_) {
+        if (!b_Jet_btagSF_deepjet_shape_up_jes_) throw std::runtime_error("Jet_btagSF_deepjet_shape_up_jes branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_up_jes_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_up_jes_ = vector<float>(Jet_btagSF_deepjet_shape_up_jes_,Jet_btagSF_deepjet_shape_up_jes_+bytes/sizeof(Jet_btagSF_deepjet_shape_up_jes_[0]));
+        loaded_Jet_btagSF_deepjet_shape_up_jes_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_up_jes_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_down_jes() {
+    if (!loaded_Jet_btagSF_deepjet_shape_down_jes_) counter_uncached_Jet_btagSF_deepjet_shape_down_jes_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_down_jes_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_down_jes_) {
+        if (!b_Jet_btagSF_deepjet_shape_down_jes_) throw std::runtime_error("Jet_btagSF_deepjet_shape_down_jes branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_down_jes_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_down_jes_ = vector<float>(Jet_btagSF_deepjet_shape_down_jes_,Jet_btagSF_deepjet_shape_down_jes_+bytes/sizeof(Jet_btagSF_deepjet_shape_down_jes_[0]));
+        loaded_Jet_btagSF_deepjet_shape_down_jes_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_down_jes_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_up_cferr1() {
+    if (!loaded_Jet_btagSF_deepjet_shape_up_cferr1_) counter_uncached_Jet_btagSF_deepjet_shape_up_cferr1_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_up_cferr1_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_up_cferr1_) {
+        if (!b_Jet_btagSF_deepjet_shape_up_cferr1_) throw std::runtime_error("Jet_btagSF_deepjet_shape_up_cferr1 branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_up_cferr1_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_up_cferr1_ = vector<float>(Jet_btagSF_deepjet_shape_up_cferr1_,Jet_btagSF_deepjet_shape_up_cferr1_+bytes/sizeof(Jet_btagSF_deepjet_shape_up_cferr1_[0]));
+        loaded_Jet_btagSF_deepjet_shape_up_cferr1_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_up_cferr1_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_down_cferr1() {
+    if (!loaded_Jet_btagSF_deepjet_shape_down_cferr1_) counter_uncached_Jet_btagSF_deepjet_shape_down_cferr1_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_down_cferr1_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_down_cferr1_) {
+        if (!b_Jet_btagSF_deepjet_shape_down_cferr1_) throw std::runtime_error("Jet_btagSF_deepjet_shape_down_cferr1 branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_down_cferr1_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_down_cferr1_ = vector<float>(Jet_btagSF_deepjet_shape_down_cferr1_,Jet_btagSF_deepjet_shape_down_cferr1_+bytes/sizeof(Jet_btagSF_deepjet_shape_down_cferr1_[0]));
+        loaded_Jet_btagSF_deepjet_shape_down_cferr1_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_down_cferr1_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_up_cferr2() {
+    if (!loaded_Jet_btagSF_deepjet_shape_up_cferr2_) counter_uncached_Jet_btagSF_deepjet_shape_up_cferr2_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_up_cferr2_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_up_cferr2_) {
+        if (!b_Jet_btagSF_deepjet_shape_up_cferr2_) throw std::runtime_error("Jet_btagSF_deepjet_shape_up_cferr2 branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_up_cferr2_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_up_cferr2_ = vector<float>(Jet_btagSF_deepjet_shape_up_cferr2_,Jet_btagSF_deepjet_shape_up_cferr2_+bytes/sizeof(Jet_btagSF_deepjet_shape_up_cferr2_[0]));
+        loaded_Jet_btagSF_deepjet_shape_up_cferr2_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_up_cferr2_;
+}
+const vector<float> &Nano::Jet_btagSF_deepjet_shape_down_cferr2() {
+    if (!loaded_Jet_btagSF_deepjet_shape_down_cferr2_) counter_uncached_Jet_btagSF_deepjet_shape_down_cferr2_++;
+    else counter_cached_Jet_btagSF_deepjet_shape_down_cferr2_++;
+    if (!loaded_Jet_btagSF_deepjet_shape_down_cferr2_) {
+        if (!b_Jet_btagSF_deepjet_shape_down_cferr2_) throw std::runtime_error("Jet_btagSF_deepjet_shape_down_cferr2 branch doesn't exist");
+        int bytes = b_Jet_btagSF_deepjet_shape_down_cferr2_->GetEntry(index);
+        v_Jet_btagSF_deepjet_shape_down_cferr2_ = vector<float>(Jet_btagSF_deepjet_shape_down_cferr2_,Jet_btagSF_deepjet_shape_down_cferr2_+bytes/sizeof(Jet_btagSF_deepjet_shape_down_cferr2_[0]));
+        loaded_Jet_btagSF_deepjet_shape_down_cferr2_ = true;
+    }
+    return v_Jet_btagSF_deepjet_shape_down_cferr2_;
+}
 const vector<float> &Nano::Jet_cRegCorr() {
     if (!loaded_Jet_cRegCorr_) counter_uncached_Jet_cRegCorr_++;
     else counter_cached_Jet_cRegCorr_++;
@@ -38626,6 +38919,28 @@ const vector<float> &Nano::Photon_pt() {
     }
     return v_Photon_pt_;
 }
+const vector<float> &Nano::Photon_pt_ScaleUp() {
+    if (!loaded_Photon_pt_ScaleUp_) counter_uncached_Photon_pt_ScaleUp_++;
+    else counter_cached_Photon_pt_ScaleUp_++;
+    if (!loaded_Photon_pt_ScaleUp_) {
+        if (!b_Photon_pt_ScaleUp_) throw std::runtime_error("Photon_pt_ScaleUp branch doesn't exist");
+        int bytes = b_Photon_pt_ScaleUp_->GetEntry(index);
+        v_Photon_pt_ScaleUp_ = vector<float>(Photon_pt_ScaleUp_,Photon_pt_ScaleUp_+bytes/sizeof(Photon_pt_ScaleUp_[0]));
+        loaded_Photon_pt_ScaleUp_ = true;
+    }
+    return v_Photon_pt_ScaleUp_;
+}
+const vector<float> &Nano::Photon_pt_ScaleDown() {
+    if (!loaded_Photon_pt_ScaleDown_) counter_uncached_Photon_pt_ScaleDown_++;
+    else counter_cached_Photon_pt_ScaleDown_++;
+    if (!loaded_Photon_pt_ScaleDown_) {
+        if (!b_Photon_pt_ScaleDown_) throw std::runtime_error("Photon_pt_ScaleDown branch doesn't exist");
+        int bytes = b_Photon_pt_ScaleDown_->GetEntry(index);
+        v_Photon_pt_ScaleDown_ = vector<float>(Photon_pt_ScaleDown_,Photon_pt_ScaleDown_+bytes/sizeof(Photon_pt_ScaleDown_[0]));
+        loaded_Photon_pt_ScaleDown_ = true;
+    }
+    return v_Photon_pt_ScaleDown_;
+}
 const vector<float> &Nano::Photon_r9() {
     if (!loaded_Photon_r9_) counter_uncached_Photon_r9_++;
     else counter_cached_Photon_r9_++;
@@ -42625,6 +42940,25 @@ namespace tas {
     const vector<float> &Jet_btagDeepFlavCvB() { return nt.Jet_btagDeepFlavCvB(); }
     const vector<float> &Jet_btagDeepFlavCvL() { return nt.Jet_btagDeepFlavCvL(); }
     const vector<float> &Jet_btagDeepFlavQG() { return nt.Jet_btagDeepFlavQG(); }
+    const vector<float> &Jet_btagSF_deepjet_shape() { return nt.Jet_btagSF_deepjet_shape(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_up_hf() { return nt.Jet_btagSF_deepjet_shape_up_hf(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_down_hf() { return nt.Jet_btagSF_deepjet_shape_down_hf(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_up_hfstats1() { return nt.Jet_btagSF_deepjet_shape_up_hfstats1(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_down_hfstats1() { return nt.Jet_btagSF_deepjet_shape_down_hfstats1(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_up_hfstats2() { return nt.Jet_btagSF_deepjet_shape_up_hfstats2(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_down_hfstats2() { return nt.Jet_btagSF_deepjet_shape_down_hfstats2(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_up_lf() { return nt.Jet_btagSF_deepjet_shape_up_lf(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_down_lf() { return nt.Jet_btagSF_deepjet_shape_down_lf(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_up_lfstats1() { return nt.Jet_btagSF_deepjet_shape_up_lfstats1(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_down_lfstats1() { return nt.Jet_btagSF_deepjet_shape_down_lfstats1(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_up_lfstats2() { return nt.Jet_btagSF_deepjet_shape_up_lfstats2(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_down_lfstats2() { return nt.Jet_btagSF_deepjet_shape_down_lfstats2(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_up_jes() { return nt.Jet_btagSF_deepjet_shape_up_jes(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_down_jes() { return nt.Jet_btagSF_deepjet_shape_down_jes(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_up_cferr1() { return nt.Jet_btagSF_deepjet_shape_up_cferr1(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_down_cferr1() { return nt.Jet_btagSF_deepjet_shape_down_cferr1(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_up_cferr2() { return nt.Jet_btagSF_deepjet_shape_up_cferr2(); }
+    const vector<float> &Jet_btagSF_deepjet_shape_down_cferr2() { return nt.Jet_btagSF_deepjet_shape_down_cferr2(); }
     const vector<float> &Jet_cRegCorr() { return nt.Jet_cRegCorr(); }
     const vector<float> &Jet_cRegRes() { return nt.Jet_cRegRes(); }
     const vector<float> &Jet_chEmEF() { return nt.Jet_chEmEF(); }
@@ -43711,6 +44045,8 @@ namespace tas {
     const vector<float> &Photon_pfPhoIso03() { return nt.Photon_pfPhoIso03(); }
     const vector<bool> &Photon_pixelSeed() { return nt.Photon_pixelSeed(); }
     const vector<float> &Photon_pt() { return nt.Photon_pt(); }
+    const vector<float> &Photon_pt_ScaleUp() { return nt.Photon_pt_ScaleUp(); }
+    const vector<float> &Photon_pt_ScaleDown() { return nt.Photon_pt_ScaleDown(); }
     const vector<float> &Photon_r9() { return nt.Photon_r9(); }
     const vector<UChar_t> &Photon_seedGain() { return nt.Photon_seedGain(); }
     const vector<float> &Photon_sieie() { return nt.Photon_sieie(); }
@@ -44150,6 +44486,25 @@ namespace tas {
         else if (name == "Jet_btagDeepFlavCvB") return nt.Jet_btagDeepFlavCvB();
         else if (name == "Jet_btagDeepFlavCvL") return nt.Jet_btagDeepFlavCvL();
         else if (name == "Jet_btagDeepFlavQG") return nt.Jet_btagDeepFlavQG();
+        else if (name == "Jet_btagSF_deepjet_shape") return nt.Jet_btagSF_deepjet_shape();
+        else if (name == "Jet_btagSF_deepjet_shape_up_hf") return nt.Jet_btagSF_deepjet_shape_up_hf();
+        else if (name == "Jet_btagSF_deepjet_shape_down_hf") return nt.Jet_btagSF_deepjet_shape_down_hf();
+        else if (name == "Jet_btagSF_deepjet_shape_up_hfstats1") return nt.Jet_btagSF_deepjet_shape_up_hfstats1();
+        else if (name == "Jet_btagSF_deepjet_shape_down_hfstats1") return nt.Jet_btagSF_deepjet_shape_down_hfstats1();
+        else if (name == "Jet_btagSF_deepjet_shape_up_hfstats2") return nt.Jet_btagSF_deepjet_shape_up_hfstats2();
+        else if (name == "Jet_btagSF_deepjet_shape_down_hfstats2") return nt.Jet_btagSF_deepjet_shape_down_hfstats2();
+        else if (name == "Jet_btagSF_deepjet_shape_up_lf") return nt.Jet_btagSF_deepjet_shape_up_lf();
+        else if (name == "Jet_btagSF_deepjet_shape_down_lf") return nt.Jet_btagSF_deepjet_shape_down_lf();
+        else if (name == "Jet_btagSF_deepjet_shape_up_lfstats1") return nt.Jet_btagSF_deepjet_shape_up_lfstats1();
+        else if (name == "Jet_btagSF_deepjet_shape_down_lfstats1") return nt.Jet_btagSF_deepjet_shape_down_lfstats1();
+        else if (name == "Jet_btagSF_deepjet_shape_up_lfstats2") return nt.Jet_btagSF_deepjet_shape_up_lfstats2();
+        else if (name == "Jet_btagSF_deepjet_shape_down_lfstats2") return nt.Jet_btagSF_deepjet_shape_down_lfstats2();
+        else if (name == "Jet_btagSF_deepjet_shape_up_jes") return nt.Jet_btagSF_deepjet_shape_up_jes();
+        else if (name == "Jet_btagSF_deepjet_shape_down_jes") return nt.Jet_btagSF_deepjet_shape_down_jes();
+        else if (name == "Jet_btagSF_deepjet_shape_up_cferr1") return nt.Jet_btagSF_deepjet_shape_up_cferr1();
+        else if (name == "Jet_btagSF_deepjet_shape_down_cferr1") return nt.Jet_btagSF_deepjet_shape_down_cferr1();
+        else if (name == "Jet_btagSF_deepjet_shape_up_cferr2") return nt.Jet_btagSF_deepjet_shape_up_cferr2();
+        else if (name == "Jet_btagSF_deepjet_shape_down_cferr2") return nt.Jet_btagSF_deepjet_shape_down_cferr2();
         else if (name == "Jet_cRegCorr") return nt.Jet_cRegCorr();
         else if (name == "Jet_cRegRes") return nt.Jet_cRegRes();
         else if (name == "Jet_chEmEF") return nt.Jet_chEmEF();
@@ -44308,6 +44663,8 @@ namespace tas {
         else if (name == "Photon_phi") return nt.Photon_phi();
         else if (name == "Photon_pfPhoIso03") return nt.Photon_pfPhoIso03();
         else if (name == "Photon_pt") return nt.Photon_pt();
+        else if (name == "Photon_pt_ScaleUp") return nt.Photon_pt_ScaleUp();
+        else if (name == "Photon_pt_ScaleDown") return nt.Photon_pt_ScaleDown();
         else if (name == "Photon_r9") return nt.Photon_r9();
         else if (name == "Photon_sieie") return nt.Photon_sieie();
         else if (name == "Photon_trkSumPtHollowConeDR03") return nt.Photon_trkSumPtHollowConeDR03();

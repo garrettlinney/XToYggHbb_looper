@@ -1,9 +1,4 @@
 #include "LeptonSelections.h"
-#include "Config.h"
-#include "DiPhotonSelections.h"
-// too complicated, haven't used that two lepton selections yet
-//#include "ElectronSelections.h"
-//#include "MuonSelections.h"
 
 using namespace tas;
 
