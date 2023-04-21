@@ -1,4 +1,5 @@
 import ROOT
+from array import array
 import argparse
 from collections import OrderedDict
 import copy
@@ -99,11 +100,24 @@ def BTagSF(tree):
   SF = wBefore / wAfter
   return SF
 
-def get_plots(samples, year, plotname, cut, plotBins, plotXTitles):
+def get_plots(samples, year, plotname, cut, plotBins, plotXTitles, plotYTitles):
 
   htempDict=OrderedDict()
-  nBins = plotBins[plotname][0]; lowBin = plotBins[plotname][1]; highBin = plotBins[plotname][2]
-  htemp = ROOT.TH1F(plotname,"",nBins,lowBin,highBin);
+  htemp = None
+  nBinsX = 0; lowBinX = 0.0; highBinX = 0.0; binsX = None; arrayX = None
+  nBinsY = 0; lowBinY = 0.0; highBinY = 0.0; binsY = None; arrayY = None
+
+  plotBin = plotBins[plotname]
+  if isinstance(plotBin, list): # Fixed binning
+    nBinsX = plotBin[0]; lowBinX = plotBin[1]; highBinX = plotBin[2]
+    if ":" in plotname: # 2D histo
+      nBinsY = plotBin[3]; lowBinY = plotBin[4]; highBinY = plotBin[5]
+  else: # Variable binning
+    binsX = plotBin.lstrip("{").rstrip("}").split(";")[0]; nBinsX = binsX.count(",")
+    arrayX = array("f",[ float(x) for x in binsX.split(",")])
+    if ":" in plotname: # 2D histo
+      binsY = plotBin.lstrip("{").rstrip("}").split(";")[1]; nBinsY = binsY.count(",")
+      arrayY = array("f",[ float(x) for x in binsY.split(",")])
 
   if year!="all" and year!="2016":
     years=[year]
@@ -120,35 +134,59 @@ def get_plots(samples, year, plotname, cut, plotBins, plotXTitles):
           if tree.GetEntries() == 0:
             print("0 entries for sample %s%s, skipping..."%(sample,mass))
             continue
-          tree.Draw(plotname+">>htemp("+str(nBins)+","+str(lowBin)+","+str(highBin)+")",cut,"goff")
+          if arrayX: # Variable binning
+            if arrayY: # 2D histo
+              htemp = ROOT.TH2F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,arrayX,nBinsY,arrayY);
+            else: # 1D histo
+              htemp = ROOT.TH1F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,arrayX);
+          else: # Fixed binning
+            if nBinsY > 0: # 2D histo
+              htemp = ROOT.TH2F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,lowBinX,highBinX,nBinsY,lowBinY,highBinY);
+            else: # 1D histo
+              htemp = ROOT.TH1F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,lowBinX,highBinX);
+          tree.Draw(plotname+">>htemp",cut,"goff")
           if (sample+"_"+mass) not in htempDict.keys():
             htempDict[sample+"_"+mass]=[]
           htemp = ROOT.gDirectory.Get("htemp")
-          htemp.GetYaxis().SetTitle("Events")
-          htemp.GetXaxis().SetTitle(plotXTitles[plotname])
           htempDict[sample+"_"+mass].append(copy.deepcopy(htemp))
           htempDict[sample+"_"+mass][-1].Scale(BTagSF(tree))
       elif sample=="GJets":
         for m1,m2 in zip(["40","100","200","400","600"],["100","200","400","600","Inf"]): 
           infile = ROOT.TFile(args.inDir+"output_GJets_HT-"+m1+"To"+m2+"_"+tyear+".root")
           tree = infile.Get("tout")
-          tree.Draw(plotname+">>htemp("+str(nBins)+","+str(lowBin)+","+str(highBin)+")",cut,"goff")
+          if arrayX: # Variable binning
+            if arrayY: # 2D histo
+              htemp = ROOT.TH2F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,arrayX,nBinsY,arrayY);
+            else: # 1D histo
+              htemp = ROOT.TH1F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,arrayX);
+          else: # Fixed binning
+            if nBinsY > 0: # 2D histo
+              htemp = ROOT.TH2F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,lowBinX,highBinX,nBinsY,lowBinY,highBinY);
+            else: # 1D histo
+              htemp = ROOT.TH1F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,lowBinX,highBinX);
+          tree.Draw(plotname+">>htemp",cut,"goff")
           if sample not in htempDict.keys():
             htempDict[sample]=[]
           htemp = ROOT.gDirectory.Get("htemp")
-          htemp.GetYaxis().SetTitle("Events")
-          htemp.GetXaxis().SetTitle(plotXTitles[plotname])
           htempDict[sample].append(copy.deepcopy(htemp))
           htempDict[sample][-1].Scale(BTagSF(tree))
       else:
         infile = ROOT.TFile(args.inDir+"output_"+sample+"_"+tyear+".root")
         tree = infile.Get("tout")
-        tree.Draw(plotname+">>htemp("+str(nBins)+","+str(lowBin)+","+str(highBin)+")",cut,"goff")
+        if arrayX: # Variable binning
+          if arrayY: # 2D histo
+            htemp = ROOT.TH2F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,arrayX,nBinsY,arrayY);
+          else: # 1D histo
+            htemp = ROOT.TH1F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,arrayX);
+        else: # Fixed binning
+          if nBinsY > 0: # 2D histo
+            htemp = ROOT.TH2F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,lowBinX,highBinX,nBinsY,lowBinY,highBinY);
+          else: # 1D histo
+            htemp = ROOT.TH1F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,lowBinX,highBinX);
+        tree.Draw(plotname+">>htemp",cut,"goff")
         if sample not in htempDict.keys():
           htempDict[sample]=[]
         htemp = ROOT.gDirectory.Get("htemp")
-        htemp.GetYaxis().SetTitle("Events")
-        htemp.GetXaxis().SetTitle(plotXTitles[plotname])
         htempDict[sample].append(copy.deepcopy(htemp))
         htempDict[sample][-1].Scale(BTagSF(tree))
 
@@ -207,17 +245,18 @@ def get_plots(samples, year, plotname, cut, plotBins, plotXTitles):
 
 def customize_plot(sample, plot, fillColor, lineColor, lineWidth, markerStyle, markerSize):
 
-  error = ROOT.TMath.Sqrt(plot.GetBinError(0)*plot.GetBinError(0)+plot.GetBinError(1)*plot.GetBinError(1))
-  plot.SetBinContent(1, plot.GetBinContent(1) + plot.GetBinContent(0))
-  plot.SetBinError(1, error)
-  plot.SetBinContent(0, 0.0)
-  plot.SetBinError(0, 0.0)
+  if plot.ClassName() == "TH1F": # Remove overflow/underflow for 2D histos
+    error = ROOT.TMath.Sqrt(plot.GetBinError(0)*plot.GetBinError(0)+plot.GetBinError(1)*plot.GetBinError(1))
+    plot.SetBinContent(1, plot.GetBinContent(1) + plot.GetBinContent(0))
+    plot.SetBinError(1, error)
+    plot.SetBinContent(0, 0.0)
+    plot.SetBinError(0, 0.0)
 
-  error = ROOT.TMath.Sqrt(plot.GetBinError(plot.GetNbinsX()+1)*plot.GetBinError(plot.GetNbinsX()+1)+plot.GetBinError(plot.GetNbinsX())*plot.GetBinError(plot.GetNbinsX()))
-  plot.SetBinContent(plot.GetNbinsX(), plot.GetBinContent(plot.GetNbinsX()+1) + plot.GetBinContent(plot.GetNbinsX()))
-  plot.SetBinError(plot.GetNbinsX(), error)
-  plot.SetBinContent(plot.GetNbinsX()+1, 0.0)
-  plot.SetBinError(plot.GetNbinsX()+1, 0.0)
+    error = ROOT.TMath.Sqrt(plot.GetBinError(plot.GetNbinsX()+1)*plot.GetBinError(plot.GetNbinsX()+1)+plot.GetBinError(plot.GetNbinsX())*plot.GetBinError(plot.GetNbinsX()))
+    plot.SetBinContent(plot.GetNbinsX(), plot.GetBinContent(plot.GetNbinsX()+1) + plot.GetBinContent(plot.GetNbinsX()))
+    plot.SetBinError(plot.GetNbinsX(), error)
+    plot.SetBinContent(plot.GetNbinsX()+1, 0.0)
+    plot.SetBinError(plot.GetNbinsX()+1, 0.0)
 
   if fillColor: 
     plot.SetFillColor(fillColor)
@@ -346,7 +385,8 @@ def draw_plot(plotDict, plotname, lumi, year, logY=True, logX=False, plotData=Fa
 
   if args.dataOnly:
     totalSM = curPlots["Data"].Clone("totalSM")
-  totalScale = totalSM.Integral(0,-1)
+  is1Dplot = totalSM.ClassName() == "TH1F"
+  totalScale = totalSM.Integral(0,-1) if is1Dplot else totalSM.Integral(0,-1,0,-1)
   if args.cumulative:
     totalSM = plotUtils.GetCumulative(totalSM,lowToHighBinsCumulative)
   if args.shape and totalScale>0.0:
@@ -375,6 +415,8 @@ def draw_plot(plotDict, plotname, lumi, year, logY=True, logX=False, plotData=Fa
       legend = ROOT.TLegend(0.5,0.8,0.89,0.89)
   else:
     legend = ROOT.TLegend(0.5,0.7,0.89,0.89)
+  if not is1Dplot:
+    legend = ROOT.TLegend(0.5,0.7,0.88,0.88)
   legend.SetLineColor(0)
   legend.SetLineWidth(0)
   legend.SetFillColor(0)
@@ -383,7 +425,7 @@ def draw_plot(plotDict, plotname, lumi, year, logY=True, logX=False, plotData=Fa
   
   for sample in curPlots.keys():
     # Signal
-    if "NMSSM_XToYHTo2G2B" in sample:
+    if "NMSSM_XToYHTo2G2B" in sample and not args.dataOnly:
       model = sample.split("_M")[0]
       mass = sample.split("B_")[1]
       massX = mass.split("_")[1]
@@ -395,7 +437,8 @@ def draw_plot(plotDict, plotname, lumi, year, logY=True, logX=False, plotData=Fa
         legend.AddEntry(curPlots[sample],sampleLegend[sample],"EPL")
     # Bkg
     else:
-      legend.AddEntry(curPlots[sample], sampleLegend[sample],"F")
+      if not args.dataOnly and not args.signalOnly:
+        legend.AddEntry(curPlots[sample], sampleLegend[sample],"F")
     
 
   # Define canvas
@@ -409,75 +452,79 @@ def draw_plot(plotDict, plotname, lumi, year, logY=True, logX=False, plotData=Fa
   g_ratio_unc = ROOT.TGraphAsymmErrors()
   g_ratio_signal = ROOT.TMultiGraph()
 
-  h_axis = ROOT.TH1F()
+  h_axis = ROOT.TH1F() if is1Dplot else \
+           ROOT.TH2F()
   h_axis_ratio = ROOT.TH1F()
-  h_axis = ROOT.TH1F("h_axis","", MCplot.GetNbinsX(), MCplot.GetXaxis().GetBinLowEdge(1), MCplot.GetXaxis().GetBinUpEdge(MCplot.GetNbinsX()))
+  h_axis = ROOT.TH1F("h_axis","", MCplot.GetNbinsX(), MCplot.GetXaxis().GetBinLowEdge(1), MCplot.GetXaxis().GetBinUpEdge(MCplot.GetNbinsX())) if is1Dplot else \
+           ROOT.TH2F("h_axis","", MCplot.GetNbinsX(), MCplot.GetXaxis().GetBinLowEdge(1), MCplot.GetXaxis().GetBinUpEdge(MCplot.GetNbinsX()),
+                                  MCplot.GetNbinsY(), MCplot.GetYaxis().GetBinLowEdge(1), MCplot.GetYaxis().GetBinUpEdge(MCplot.GetNbinsY()))
   h_axis_ratio = ROOT.TH1F("h_axis_ratio","", MCplot.GetNbinsX(), MCplot.GetXaxis().GetBinLowEdge(1), MCplot.GetXaxis().GetBinUpEdge(MCplot.GetNbinsX()))
   if logX and MCplot.GetXaxis().GetBinLowEdge(1) < epsilon:
     h_axis.GetXaxis().SetRangeUser(MCplot.GetXaxis().GetBinCenter(1)-0.25*MCplot.GetXaxis().GetBinWidth(1), MCplot.GetXaxis().GetBinUpEdge(MCplot.GetNbinsX()))
     h_axis_ratio.GetXaxis().SetRangeUser(MCplot.GetXaxis().GetBinCenter(1)-0.25*MCplot.GetXaxis().GetBinWidth(1), MCplot.GetXaxis().GetBinUpEdge(MCplot.GetNbinsX()))
 
   doRatio=False
-  if plotData:
-    if not args.dataOnly:
+  if is1Dplot:
+    if plotData:
+      if not args.dataOnly:
+        doRatio=True
+
+      #plotUtils.ConvertToPoissonGraph(curPlots["Data"], g_data, drawZeros=True, drawXerr=False)
+      plotUtils.ConvertToPoissonGraph(curPlots["Data"], g_data, drawZeros=False, drawXerr=False)
+      g_data.SetMarkerStyle(20)
+      g_data.SetMarkerSize(1.2)
+      g_data.SetLineWidth(1)
+      # draw with zero marker size so error bars drawn all the way to x axis in the case of 0 content
+      g_data_clone = g_data.Clone()
+      g_data_clone.SetMarkerSize(0.0)
+
+      #plotUtils.GetPoissonRatioGraph(MCplot, curPlots["Data"], g_ratio, drawZeros=True, drawXerr=False, useMCErr=False)
+      plotUtils.GetPoissonRatioGraph(MCplot, curPlots["Data"], g_ratio, drawZeros=False, drawXerr=False, useMCErr=False)
+      g_ratio.SetMarkerStyle(20)
+      g_ratio.SetMarkerSize(1.2)
+      g_ratio.SetLineWidth(1)
+
+    if not plotData and args.shape and doSignalMCRatio:
       doRatio=True
 
-    #plotUtils.ConvertToPoissonGraph(curPlots["Data"], g_data, drawZeros=True, drawXerr=False)
-    plotUtils.ConvertToPoissonGraph(curPlots["Data"], g_data, drawZeros=False, drawXerr=False)
-    g_data.SetMarkerStyle(20)
-    g_data.SetMarkerSize(1.2)
-    g_data.SetLineWidth(1)
-    # draw with zero marker size so error bars drawn all the way to x axis in the case of 0 content
-    g_data_clone = g_data.Clone()
-    g_data_clone.SetMarkerSize(0.0)
+      for i,sample in enumerate(plotDict.keys()):
+        # Signal
+        if "NMSSM_XToYHTo2G2B" in sample:
+          model = sample.split("_M")[0] 
+          mass = sample.split("B_")[1]
+          g_signal_temp = ROOT.TGraphAsymmErrors()
+          plotUtils.ConvertToPoissonGraph(curPlots[sample], g_signal_temp, drawZeros=False, drawXerr=False, drawYerr=False)
+          g_signal_temp.SetMarkerStyle(20)
+          g_signal_temp.SetMarkerSize(1.2)
+          g_signal_temp.SetLineWidth(1)
 
-    #plotUtils.GetPoissonRatioGraph(MCplot, curPlots["Data"], g_ratio, drawZeros=True, drawXerr=False, useMCErr=False)
-    plotUtils.GetPoissonRatioGraph(MCplot, curPlots["Data"], g_ratio, drawZeros=False, drawXerr=False, useMCErr=False)
-    g_ratio.SetMarkerStyle(20)
-    g_ratio.SetMarkerSize(1.2)
-    g_ratio.SetLineWidth(1)
+          # draw with zero marker size so error bars drawn all the way to x axis in the case of 0 content
+          g_signal_temp_clone = g_signal_temp.Clone()
+          g_signal_temp_clone.SetMarkerSize(0.0)
 
-  if not plotData and args.shape and doSignalMCRatio:
-    doRatio=True
+          g_ratio_signal_temp = ROOT.TGraphAsymmErrors()
+          plotUtils.GetPoissonRatioGraph(MCplot, curPlots[sample], g_ratio_signal_temp, drawZeros=False, drawXerr=False, drawYerr=False, useMCErr=False)
+          g_ratio_signal_temp.SetMarkerStyle(20)
+          g_ratio_signal_temp.SetMarkerSize(1.2)
+          g_ratio_signal_temp.SetMarkerColor(sampleLineColor[model]+i%len(args.signalMass))
+          g_ratio_signal_temp.SetLineWidth(1)
+          g_ratio_signal.Add(copy.deepcopy(g_ratio_signal_temp))
 
-    for i,sample in enumerate(plotDict.keys()):
-      # Signal
-      if "NMSSM_XToYHTo2G2B" in sample:
-        model = sample.split("_M")[0] 
-        mass = sample.split("B_")[1]
-        g_signal_temp = ROOT.TGraphAsymmErrors()
-        plotUtils.ConvertToPoissonGraph(curPlots[sample], g_signal_temp, drawZeros=False, drawXerr=False, drawYerr=False)
-        g_signal_temp.SetMarkerStyle(20)
-        g_signal_temp.SetMarkerSize(1.2)
-        g_signal_temp.SetLineWidth(1)
-
-        # draw with zero marker size so error bars drawn all the way to x axis in the case of 0 content
-        g_signal_temp_clone = g_signal_temp.Clone()
-        g_signal_temp_clone.SetMarkerSize(0.0)
-
-        g_ratio_signal_temp = ROOT.TGraphAsymmErrors()
-        plotUtils.GetPoissonRatioGraph(MCplot, curPlots[sample], g_ratio_signal_temp, drawZeros=False, drawXerr=False, drawYerr=False, useMCErr=False)
-        g_ratio_signal_temp.SetMarkerStyle(20)
-        g_ratio_signal_temp.SetMarkerSize(1.2)
-        g_ratio_signal_temp.SetMarkerColor(sampleLineColor[model]+i%len(args.signalMass))
-        g_ratio_signal_temp.SetLineWidth(1)
-        g_ratio_signal.Add(copy.deepcopy(g_ratio_signal_temp))
-
-  for b in range(1,MCplot.GetNbinsX()+1):
-    thisPoint = g_ratio_unc.GetN()
-    yerror = MCplot.GetBinError(b)
-    g_unc.SetPoint(thisPoint, MCplot.GetBinCenter(b), MCplot.GetBinContent(b))
-    g_unc.SetPointError(thisPoint, 0.5*MCplot.GetBinWidth(b), 0.5*MCplot.GetBinWidth(b), yerror, yerror)
-    if MCplot.GetBinContent(b)>0.0:
-      yerror = yerror/MCplot.GetBinContent(b)
-    else:
-      yerror = 0.0
-    g_ratio_unc.SetPoint(thisPoint, MCplot.GetBinCenter(b), 1.0)
-    g_ratio_unc.SetPointError(thisPoint, 0.5*MCplot.GetBinWidth(b), 0.5*MCplot.GetBinWidth(b), yerror, yerror)
-  g_unc.SetFillStyle(3244)
-  g_unc.SetFillColor(ROOT.kGray+3)
-  g_ratio_unc.SetFillStyle(1001)
-  g_ratio_unc.SetFillColor(ROOT.kGray)
+    for b in range(1,MCplot.GetNbinsX()+1):
+      thisPoint = g_ratio_unc.GetN()
+      yerror = MCplot.GetBinError(b)
+      g_unc.SetPoint(thisPoint, MCplot.GetBinCenter(b), MCplot.GetBinContent(b))
+      g_unc.SetPointError(thisPoint, 0.5*MCplot.GetBinWidth(b), 0.5*MCplot.GetBinWidth(b), yerror, yerror)
+      if MCplot.GetBinContent(b)>0.0:
+        yerror = yerror/MCplot.GetBinContent(b)
+      else:
+        yerror = 0.0
+      g_ratio_unc.SetPoint(thisPoint, MCplot.GetBinCenter(b), 1.0)
+      g_ratio_unc.SetPointError(thisPoint, 0.5*MCplot.GetBinWidth(b), 0.5*MCplot.GetBinWidth(b), yerror, yerror)
+    g_unc.SetFillStyle(3244)
+    g_unc.SetFillColor(ROOT.kGray+3)
+    g_ratio_unc.SetFillStyle(1001)
+    g_ratio_unc.SetFillColor(ROOT.kGray)
 
   pads = []
   if doRatio==True:
@@ -567,6 +614,8 @@ def draw_plot(plotDict, plotname, lumi, year, logY=True, logX=False, plotData=Fa
 
   else:
     pads.append(ROOT.TPad("1","1",0,0,1,1))
+    if not is1Dplot:
+      pads[0].SetRightMargin(0.15)
     pads[0].Draw()
 
   pads[0].cd()
@@ -579,33 +628,49 @@ def draw_plot(plotDict, plotname, lumi, year, logY=True, logX=False, plotData=Fa
 
   #plot data, stack, signal, data  
   h_axis.GetYaxis().SetTitleSize(0.04)
-  if args.dataOnly:
-    h_axis.GetYaxis().SetTitleOffset(1.35)
   h_axis.GetXaxis().SetTitleSize(0.04)
   h_axis.GetXaxis().SetTitleOffset(1.25)
   h_axis.GetXaxis().SetTitle(MCplot.GetXaxis().GetTitle())
+  #
+  h_axis.GetYaxis().SetLabelSize(0.03 if is1Dplot else 0.0)
+  if args.dataOnly:
+    h_axis.GetYaxis().SetTitleOffset(1.35)
   if args.shape:
     h_axis.GetYaxis().SetTitle("A.U.")
   else:
     h_axis.GetYaxis().SetTitle(MCplot.GetYaxis().GetTitle())
-  h_axis.GetYaxis().SetLabelSize(0.03)
   if not args.shape:
     h_axis.GetYaxis().SetMaxDigits(3)
-  h_axis.Draw("")
-  if not args.dataOnly:
-    stack.Draw("HIST,SAME")
-    g_unc.Draw("SAME,2")
+  #
+  h_axis.Draw("" if is1Dplot else "COLZ")
+  #
+  if not args.dataOnly and not args.signalOnly:
+    if is1Dplot:
+      stack.Draw("HIST,SAME")
+      g_unc.Draw("SAME,2")
+    else:
+      MCplot.Draw("COLZ")
+      MCplot.GetYaxis().SetTitleOffset(1.45)
+      MCplot.GetZaxis().SetLabelSize(0.03)
   histMax = 0.0
-  if plotData:
+  if plotData and not args.signalOnly:
     if histMax < curPlots["Data"].GetMaximum():
       histMax = curPlots["Data"].GetMaximum()
-    g_data.Draw("P,SAME")
-    g_data_clone.Draw("P,SAME")
+    if is1Dplot:
+      g_data.Draw("P,SAME")
+      g_data_clone.Draw("P,SAME")
+    else:
+      curPlots["Data"].Draw("COLZ")
+      curPlots["Data"].GetYaxis().SetTitleOffset(1.45)
+      curPlots["Data"].GetZaxis().SetLabelSize(0.03)
   for sample in curPlots.keys():
-    if "NMSSM_XToYHTo2G2B" in sample:
+    if "NMSSM_XToYHTo2G2B" in sample and not args.dataOnly:
       if histMax < curPlots[sample].GetMaximum(): 
         histMax = curPlots[sample].GetMaximum()
-      curPlots[sample].Draw("HIST,SAME")
+      curPlots[sample].Draw("HIST,SAME" if is1Dplot else "COLZ")
+      if not is1Dplot:
+        curPlots[sample].GetYaxis().SetTitleOffset(1.45)
+        curPlots[sample].GetZaxis().SetLabelSize(0.03)
 
   if histMax < MCplot.GetMaximum(): 
     histMax = MCplot.GetMaximum()
@@ -640,6 +705,8 @@ def draw_plot(plotDict, plotname, lumi, year, logY=True, logX=False, plotData=Fa
       extension = extension+"_data"
     else:
       extension = extension+"_mcdata"
+  elif args.signalOnly:
+    extension = extension+"_signal"
   else:
     extension = extension+"_mc"
   if logX:
@@ -665,11 +732,15 @@ if __name__=="__main__":
   parser.add_argument("--outDir", default="/home/users/"+user+"/public_html/XToYHToggbb/plots_"+today, help="Choose output directory. Default: '/home/users/"+user+"/public_html/XToYHToggbb/plots_"+today+"'")
   parser.add_argument("--data", default=False, action="store_true", help="Plot data")
   parser.add_argument("--dataOnly", default=False, action="store_true", help="Plot only data, no MC bkg")
+  parser.add_argument("--signalOnly", default=False, action="store_true", help="Plot only signal, no MC bkg")
   parser.add_argument("--noSignal", default=False, action="store_true", help="Do not plot signals")
   parser.add_argument("--signalMass", default=[], nargs="+", help="Signal mass points to plot. 'all' plots/prints all of the mass points. Default: 'MX_700_MY_100'")
+  parser.add_argument("--samples", default=[], nargs="+", help="Samples to plot. Default: 'all'")
   parser.add_argument("--shape", default=False, action="store_true", help="Shape normalization")
   parser.add_argument("--cumulative", default=False, action="store_true", help="Cumulative distributions")
   parser.add_argument("--years", default=[], nargs="+", help="List of years to be plotted. Default: all years")
+  parser.add_argument("--noLogY", default=False, action="store_true", help="Don't use logY.")
+  parser.add_argument("--logX", default=False, action="store_true", help="Use logX.")
   parser.add_argument("--pdf", default=False, action="store_true", help="Output format: .pdf. Default: .png")
   parser.add_argument("--yields", default=False, action="store_true", help="Print yields instead of plotting")
   args = parser.parse_args()
@@ -680,6 +751,9 @@ if __name__=="__main__":
   if not os.path.exists(args.outDir):
     os.makedirs(args.outDir)
   os.system('cp '+os.environ.get("PWD")+'/utils/index.php '+args.outDir)
+
+  if args.dataOnly:
+    args.data = True
 
   if len(args.signalMass)==0: 
     args.signalMass = ["MX_700_MY_100"]
@@ -720,6 +794,8 @@ if __name__=="__main__":
   # Signal MC
   if not args.noSignal:
     samples.append("NMSSM_XToYHTo2G2B")
+  if len(args.samples) > 0:
+    samples = args.samples
 
 
   for year in args.years:
@@ -747,27 +823,21 @@ if __name__=="__main__":
     #cut = "( fabs(LeadPhoton_eta) < 1.442 && fabs(SubleadPhoton_eta) > 1.566 ) || ( fabs(LeadPhoton_eta) > 1.566 && fabs(SubleadPhoton_eta) < 1.442 )"
     #cut = "fabs(LeadPhoton_eta) > 1.566 && fabs(SubleadPhoton_eta) > 1.566"
 
-    # Proper mvaPhoID-RunIIFall17-v2-wp90 cut
-    #cut = "(fabs(LeadPhoton_eta)<1.442 ? LeadPhoton_mvaID>-0.02 : LeadPhoton_mvaID>-0.26) && (fabs(SubleadPhoton_eta)<1.442 ? SubleadPhoton_mvaID>-0.02 : SubleadPhoton_mvaID>-0.26)"
-    # Proper mvaPhoID-RunIIFall17-v2-wp80 cut
-    #cut = "(fabs(LeadPhoton_eta)<1.442 ? LeadPhoton_mvaID>0.42 : LeadPhoton_mvaID>0.14) && (fabs(SubleadPhoton_eta)<1.442 ? SubleadPhoton_mvaID>0.42 : SubleadPhoton_mvaID>0.14)"
-
-    # Proper DeepFlavor Loose WP cut
+    # Proper 2018 DeepFlavor Loose WP cut
     #cut = "dijet_lead_btagDeepFlavB>0.0490 && dijet_sublead_btagDeepFlavB>0.0490"
-    # Proper DeepFlavor Medium WP cut
+    # Proper 2018 DeepFlavor Medium WP cut
     #cut = "dijet_lead_btagDeepFlavB>0.2783 && dijet_sublead_btagDeepFlavB>0.2783"
 
     # Diphoton mass cut
     #cut = "Diphoton_mass > 95"
 
-    # pT/ Mgg cut
-    #cut = "LeadPhoton_pt / Diphoton_mass > 0.33 && SubleadPhoton_pt / Diphoton_mass > 0.25"
-
     cut = weight + "*(" + cut + ")"
 
 
     # List of plots
-    plotNames = []; plotBins = dict(); plotXTitles = dict()
+    plotNames = []; plotBins = dict(); plotXTitles = dict(); plotYTitles = dict()
+
+    # 1D histos
     plotNames.append("xcand_pt"); plotBins["xcand_pt"] = [50,0,500]; plotXTitles["xcand_pt"] = "p_{T}(X)"
     plotNames.append("xcand_eta"); plotBins["xcand_eta"] = [50,-3,3]; plotXTitles["xcand_eta"] = "#eta(X)"
     plotNames.append("xcand_phi"); plotBins["xcand_phi"] = [50,3.2,3.2]; plotXTitles["xcand_phi"] = "#phi(X)"
@@ -824,7 +894,13 @@ if __name__=="__main__":
 
     plotNames.append("pfmet_pt"); plotBins["pfmet_pt"] = [50,0,200]; plotXTitles["pfmet_pt"] = "PF MET P_{T}"
     plotNames.append("puppimet_pt"); plotBins["puppimet_pt"] = [50,0,200]; plotXTitles["puppimet_pt"] = "PUPPI MET P_{T}"
+
+    # 2D histos (y:x)
+    #plotNames.append("Diphoton_pt:Diphoton_eta"); plotBins["Diphoton_pt:Diphoton_eta"] = [50,-3,3,50,0,200]; plotXTitles["Diphoton_pt:Diphoton_eta"] = "#eta(#gamma#gamma)"; plotYTitles["Diphoton_pt:Diphoton_eta"] = "p_{T}(#gamma#gamma)"
+    #plotNames.append("Diphoton_pt:Diphoton_eta"); plotBins["Diphoton_pt:Diphoton_eta"] = "{-3.,-1.5,0.,1.5,3.;0.,10.,20.,50.,100.,200.}"; plotXTitles["Diphoton_pt:Diphoton_eta"] = "#eta(#gamma#gamma)"; plotYTitles["Diphoton_pt:Diphoton_eta"] = "p_{T}(#gamma#gamma)"
+
     toexclude = []
+
 
     if args.yields:
       plotname = "LeadPhoton_pixelSeed"
@@ -835,5 +911,5 @@ if __name__=="__main__":
         if plotname in toexclude:
             continue
         # Open files and get trees and return plots
-        plotDict = get_plots(samples, year, plotname, cut, plotBins, plotXTitles)
-        draw_plot(plotDict, plotname, lumi, year, True, False, args.data)
+        plotDict = get_plots(samples, year, plotname, cut, plotBins, plotXTitles, plotYTitles)
+        draw_plot(plotDict, plotname, lumi, year, not args.noLogY, args.logX, args.data)
