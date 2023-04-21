@@ -92,10 +92,10 @@ int main(int argc, char **argv) {
                                                           "Run2018C-UL2018_MiniAODv2_GT36-v1",
                                                           "Run2018D-UL2018_MiniAODv2-v2" } },
                                         { "2017",       { "Run2017B-UL2017_MiniAODv2-v1",
-                                                          "Run2017C-UL2017_MiniAODv2-v1",
+                                                          "Run2017C-UL2017_MiniAODv2-v2",
                                                           "Run2017D-UL2017_MiniAODv2-v1",
                                                           "Run2017E-UL2017_MiniAODv2-v1",
-                                                          "Run2017F-UL2017_MiniAODv2-v1" } },
+                                                          "Run2017F-UL2017_MiniAODv2-v2" } },
                                         { "2016APV",    { "" } },
                                         { "2016nonAPV", { "" } } } });
     }
