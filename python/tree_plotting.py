@@ -34,7 +34,7 @@ sampleLineColor["Diboson"]           = None
 sampleLineColor["Single H"]          = None
 sampleLineColor["ttH_M125"]          = None
 sampleLineColor["HHbbgg"]            = None
-sampleLineColor["NMSSM_XToYHTo2G2B"] = ROOT.kYellow
+sampleLineColor["NMSSM_XToYHTo2G2B"] = ROOT.kRed
 
 sampleLineWidth=dict()
 sampleLineWidth["Data"]              = 1
@@ -100,14 +100,13 @@ def BTagSF(tree):
   SF = wBefore / wAfter
   return SF
 
-def get_plots(samples, year, plotname, cut, plotBins, plotXTitles, plotYTitles):
+def get_plots(samples, year, plotname, cut, plotBin, plotXTitle, plotYTitle):
 
   htempDict=OrderedDict()
   htemp = None
   nBinsX = 0; lowBinX = 0.0; highBinX = 0.0; binsX = None; arrayX = None
   nBinsY = 0; lowBinY = 0.0; highBinY = 0.0; binsY = None; arrayY = None
 
-  plotBin = plotBins[plotname]
   if isinstance(plotBin, list): # Fixed binning
     nBinsX = plotBin[0]; lowBinX = plotBin[1]; highBinX = plotBin[2]
     if ":" in plotname: # 2D histo
@@ -136,14 +135,14 @@ def get_plots(samples, year, plotname, cut, plotBins, plotXTitles, plotYTitles):
             continue
           if arrayX: # Variable binning
             if arrayY: # 2D histo
-              htemp = ROOT.TH2F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,arrayX,nBinsY,arrayY);
+              htemp = ROOT.TH2F("htemp",";"+plotXTitle+";"+plotYTitle,nBinsX,arrayX,nBinsY,arrayY);
             else: # 1D histo
-              htemp = ROOT.TH1F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,arrayX);
+              htemp = ROOT.TH1F("htemp",";"+plotXTitle+";"+plotYTitle,nBinsX,arrayX);
           else: # Fixed binning
             if nBinsY > 0: # 2D histo
-              htemp = ROOT.TH2F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,lowBinX,highBinX,nBinsY,lowBinY,highBinY);
+              htemp = ROOT.TH2F("htemp",";"+plotXTitle+";"+plotYTitle,nBinsX,lowBinX,highBinX,nBinsY,lowBinY,highBinY);
             else: # 1D histo
-              htemp = ROOT.TH1F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,lowBinX,highBinX);
+              htemp = ROOT.TH1F("htemp",";"+plotXTitle+";"+plotYTitle,nBinsX,lowBinX,highBinX);
           tree.Draw(plotname+">>htemp",cut,"goff")
           if (sample+"_"+mass) not in htempDict.keys():
             htempDict[sample+"_"+mass]=[]
@@ -156,14 +155,14 @@ def get_plots(samples, year, plotname, cut, plotBins, plotXTitles, plotYTitles):
           tree = infile.Get("tout")
           if arrayX: # Variable binning
             if arrayY: # 2D histo
-              htemp = ROOT.TH2F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,arrayX,nBinsY,arrayY);
+              htemp = ROOT.TH2F("htemp",";"+plotXTitle+";"+plotYTitle,nBinsX,arrayX,nBinsY,arrayY);
             else: # 1D histo
-              htemp = ROOT.TH1F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,arrayX);
+              htemp = ROOT.TH1F("htemp",";"+plotXTitle+";"+plotYTitle,nBinsX,arrayX);
           else: # Fixed binning
             if nBinsY > 0: # 2D histo
-              htemp = ROOT.TH2F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,lowBinX,highBinX,nBinsY,lowBinY,highBinY);
+              htemp = ROOT.TH2F("htemp",";"+plotXTitle+";"+plotYTitle,nBinsX,lowBinX,highBinX,nBinsY,lowBinY,highBinY);
             else: # 1D histo
-              htemp = ROOT.TH1F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,lowBinX,highBinX);
+              htemp = ROOT.TH1F("htemp",";"+plotXTitle+";"+plotYTitle,nBinsX,lowBinX,highBinX);
           tree.Draw(plotname+">>htemp",cut,"goff")
           if sample not in htempDict.keys():
             htempDict[sample]=[]
@@ -175,14 +174,14 @@ def get_plots(samples, year, plotname, cut, plotBins, plotXTitles, plotYTitles):
         tree = infile.Get("tout")
         if arrayX: # Variable binning
           if arrayY: # 2D histo
-            htemp = ROOT.TH2F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,arrayX,nBinsY,arrayY);
+            htemp = ROOT.TH2F("htemp",";"+plotXTitle+";"+plotYTitle,nBinsX,arrayX,nBinsY,arrayY);
           else: # 1D histo
-            htemp = ROOT.TH1F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,arrayX);
+            htemp = ROOT.TH1F("htemp",";"+plotXTitle+";"+plotYTitle,nBinsX,arrayX);
         else: # Fixed binning
           if nBinsY > 0: # 2D histo
-            htemp = ROOT.TH2F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,lowBinX,highBinX,nBinsY,lowBinY,highBinY);
+            htemp = ROOT.TH2F("htemp",";"+plotXTitle+";"+plotYTitle,nBinsX,lowBinX,highBinX,nBinsY,lowBinY,highBinY);
           else: # 1D histo
-            htemp = ROOT.TH1F("htemp",";"+plotXTitles[plotname]+";"+(plotYTitles[plotname] if plotname in plotYTitles.keys() else "Events"),nBinsX,lowBinX,highBinX);
+            htemp = ROOT.TH1F("htemp",";"+plotXTitle+";"+plotYTitle,nBinsX,lowBinX,highBinX);
         tree.Draw(plotname+">>htemp",cut,"goff")
         if sample not in htempDict.keys():
           htempDict[sample]=[]
@@ -831,85 +830,92 @@ if __name__=="__main__":
     # Diphoton mass cut
     #cut = "Diphoton_mass > 95"
 
+    # Photon pT / Mgg cuts
+    #cut = "LeadPhoton_pt/Diphoton_mass > 0.33"
+    #cut = "SubleadPhoton_pt/Diphoton_mass > 0.25"
+    #cut = "LeadPhoton_pt/Diphoton_mass > 0.33 && SubleadPhoton_pt/Diphoton_mass > 0.25"
+
     cut = weight + "*(" + cut + ")"
 
 
     # List of plots
-    plotNames = []; plotBins = dict(); plotXTitles = dict(); plotYTitles = dict()
+    plotNames = dict(); plotBins = dict(); plotXTitles = dict(); plotYTitles = dict()
 
     # 1D histos
-    plotNames.append("xcand_pt"); plotBins["xcand_pt"] = [50,0,500]; plotXTitles["xcand_pt"] = "p_{T}(X)"
-    plotNames.append("xcand_eta"); plotBins["xcand_eta"] = [50,-3,3]; plotXTitles["xcand_eta"] = "#eta(X)"
-    plotNames.append("xcand_phi"); plotBins["xcand_phi"] = [50,3.2,3.2]; plotXTitles["xcand_phi"] = "#phi(X)"
-    plotNames.append("xcand_mass"); plotBins["xcand_mass"] = [50,200,1000]; plotXTitles["xcand_mass"] = "M(X)"
+    plotNames["xcand_pt"] = ""; plotBins["xcand_pt"] = [50,0,500]; plotXTitles["xcand_pt"] = "p_{T}(X)"
+    plotNames["xcand_eta"] = ""; plotBins["xcand_eta"] = [50,-3,3]; plotXTitles["xcand_eta"] = "#eta(X)"
+    plotNames["xcand_phi"] = ""; plotBins["xcand_phi"] = [50,3.2,3.2]; plotXTitles["xcand_phi"] = "#phi(X)"
+    plotNames["xcand_mass"] = ""; plotBins["xcand_mass"] = [50,200,1000]; plotXTitles["xcand_mass"] = "M(X)"
 
-    plotNames.append("LeadPhoton_pt"); plotBins["LeadPhoton_pt"] = [50,0,500]; plotXTitles["LeadPhoton_pt"] = "p_{T}(#gamma_{1})"
-    plotNames.append("LeadPhoton_eta"); plotBins["LeadPhoton_eta"] = [50,-3,3]; plotXTitles["LeadPhoton_eta"] = "#eta(#gamma_{1})"
-    plotNames.append("LeadPhoton_phi"); plotBins["LeadPhoton_phi"] = [50,-3.2,3.2]; plotXTitles["LeadPhoton_phi"] = "#phi(#gamma_{1})"
-    plotNames.append("LeadPhoton_pixelSeed"); plotBins["LeadPhoton_pixelSeed"] = [2,0,2]; plotXTitles["LeadPhoton_pixelSeed"] = "hasPixelSeed(#gamma_{1})"
-    plotNames.append("LeadPhoton_r9"); plotBins["LeadPhoton_r9"] = [50,0,2]; plotXTitles["LeadPhoton_r9"] = "R_{9}(#gamma_{1})"
-    plotNames.append("LeadPhoton_sieie"); plotBins["LeadPhoton_sieie"] = [50,0,0.05]; plotXTitles["LeadPhoton_sieie"] = "#sigma_{ieie}(#gamma_{1})"
-    plotNames.append("LeadPhoton_pfPhoIso03"); plotBins["LeadPhoton_pfPhoIso03"] = [50,0,20]; plotXTitles["LeadPhoton_pfPhoIso03"] = "PF Iso_{abs}^{#gamma}(#gamma_{1})"
-    plotNames.append("LeadPhoton_chargedHadronIso"); plotBins["LeadPhoton_chargedHadronIso"] = [50,0,20]; plotXTitles["LeadPhoton_chargedHadronIso"] = "PF Iso_{abs}^{ch}(#gamma_{1})"
-    plotNames.append("LeadPhoton_mvaID"); plotBins["LeadPhoton_mvaID"] = [20,-1,1]; plotXTitles["LeadPhoton_mvaID"] = "MVA ID(#gamma_{1})"
-    plotNames.append("LeadPhoton_pt/Diphoton_mass"); plotBins["LeadPhoton_pt/Diphoton_mass"] = [50,0,2]; plotXTitles["LeadPhoton_pt/Diphoton_mass"] = "p_{T}(#gamma_{1}) / M(#gamma#gamma)"
+    plotNames["LeadPhoton_pt"] = ""; plotBins["LeadPhoton_pt"] = [50,0,500]; plotXTitles["LeadPhoton_pt"] = "p_{T}(#gamma_{1})"
+    plotNames["LeadPhoton_eta"] = ""; plotBins["LeadPhoton_eta"] = [50,-3,3]; plotXTitles["LeadPhoton_eta"] = "#eta(#gamma_{1})"
+    plotNames["LeadPhoton_phi"] = ""; plotBins["LeadPhoton_phi"] = [50,-3.2,3.2]; plotXTitles["LeadPhoton_phi"] = "#phi(#gamma_{1})"
+    plotNames["LeadPhoton_pixelSeed"] = ""; plotBins["LeadPhoton_pixelSeed"] = [2,0,2]; plotXTitles["LeadPhoton_pixelSeed"] = "hasPixelSeed(#gamma_{1})"
+    plotNames["LeadPhoton_r9"] = ""; plotBins["LeadPhoton_r9"] = [50,0,2]; plotXTitles["LeadPhoton_r9"] = "R_{9}(#gamma_{1})"
+    plotNames["LeadPhoton_sieie"] = ""; plotBins["LeadPhoton_sieie"] = [50,0,0.05]; plotXTitles["LeadPhoton_sieie"] = "#sigma_{ieie}(#gamma_{1})"
+    plotNames["LeadPhoton_pfPhoIso03"] = ""; plotBins["LeadPhoton_pfPhoIso03"] = [50,0,20]; plotXTitles["LeadPhoton_pfPhoIso03"] = "PF Iso_{abs}^{#gamma}(#gamma_{1})"
+    plotNames["LeadPhoton_chargedHadronIso"] = ""; plotBins["LeadPhoton_chargedHadronIso"] = [50,0,20]; plotXTitles["LeadPhoton_chargedHadronIso"] = "PF Iso_{abs}^{ch}(#gamma_{1})"
+    plotNames["LeadPhoton_mvaID"] = ""; plotBins["LeadPhoton_mvaID"] = [20,-1,1]; plotXTitles["LeadPhoton_mvaID"] = "MVA ID(#gamma_{1})"
+    plotNames["LeadPhoton_pt/Diphoton_mass"] = ""; plotBins["LeadPhoton_pt/Diphoton_mass"] = [50,0,2]; plotXTitles["LeadPhoton_pt/Diphoton_mass"] = "p_{T}(#gamma_{1}) / M(#gamma#gamma)"
 
-    plotNames.append("SubleadPhoton_pt"); plotBins["SubleadPhoton_pt"] = [50,0,500]; plotXTitles["SubleadPhoton_pt"] = "p_{T}(#gamma_{2})"
-    plotNames.append("SubleadPhoton_eta"); plotBins["SubleadPhoton_eta"] = [50,-3,3]; plotXTitles["SubleadPhoton_eta"] = "#eta(#gamma_{2})"
-    plotNames.append("SubleadPhoton_phi"); plotBins["SubleadPhoton_phi"] = [50,-3.2,3.2]; plotXTitles["SubleadPhoton_phi"] = "#phi(#gamma_{2})"
-    plotNames.append("SubleadPhoton_pixelSeed"); plotBins["SubleadPhoton_pixelSeed"] = [2,0,2]; plotXTitles["SubleadPhoton_pixelSeed"] = "hasPixelSeed(#gamma_{2})"
-    plotNames.append("SubleadPhoton_r9"); plotBins["SubleadPhoton_r9"] = [50,0,2]; plotXTitles["SubleadPhoton_r9"] = "R_{9}(#gamma_{2})"
-    plotNames.append("SubleadPhoton_sieie"); plotBins["SubleadPhoton_sieie"] = [50,0,0.05]; plotXTitles["SubleadPhoton_sieie"] = "#sigma_{ieie}(#gamma_{2})"
-    plotNames.append("SubleadPhoton_pfPhoIso03"); plotBins["SubleadPhoton_pfPhoIso03"] = [50,0,20]; plotXTitles["SubleadPhoton_pfPhoIso03"] = "PF Iso_{abs}^{#gamma}(#gamma_{2})"
-    plotNames.append("SubleadPhoton_chargedHadronIso"); plotBins["SubleadPhoton_chargedHadronIso"] = [50,0,20]; plotXTitles["SubleadPhoton_chargedHadronIso"] = "PF Iso_{abs}^{ch}(#gamma_{2})"
-    plotNames.append("SubleadPhoton_mvaID"); plotBins["SubleadPhoton_mvaID"] = [20,-1,1]; plotXTitles["SubleadPhoton_mvaID"] = "MVA ID(#gamma_{2})"
-    plotNames.append("SubleadPhoton_pt/Diphoton_mass"); plotBins["SubleadPhoton_pt/Diphoton_mass"] = [50,0,2]; plotXTitles["SubleadPhoton_pt/Diphoton_mass"] = "p_{T}(#gamma_{2}) / M(#gamma#gamma)"
+    plotNames["SubleadPhoton_pt"] = ""; plotBins["SubleadPhoton_pt"] = [50,0,500]; plotXTitles["SubleadPhoton_pt"] = "p_{T}(#gamma_{2})"
+    plotNames["SubleadPhoton_eta"] = ""; plotBins["SubleadPhoton_eta"] = [50,-3,3]; plotXTitles["SubleadPhoton_eta"] = "#eta(#gamma_{2})"
+    plotNames["SubleadPhoton_phi"] = ""; plotBins["SubleadPhoton_phi"] = [50,-3.2,3.2]; plotXTitles["SubleadPhoton_phi"] = "#phi(#gamma_{2})"
+    plotNames["SubleadPhoton_pixelSeed"] = ""; plotBins["SubleadPhoton_pixelSeed"] = [2,0,2]; plotXTitles["SubleadPhoton_pixelSeed"] = "hasPixelSeed(#gamma_{2})"
+    plotNames["SubleadPhoton_r9"] = ""; plotBins["SubleadPhoton_r9"] = [50,0,2]; plotXTitles["SubleadPhoton_r9"] = "R_{9}(#gamma_{2})"
+    plotNames["SubleadPhoton_sieie"] = ""; plotBins["SubleadPhoton_sieie"] = [50,0,0.05]; plotXTitles["SubleadPhoton_sieie"] = "#sigma_{ieie}(#gamma_{2})"
+    plotNames["SubleadPhoton_pfPhoIso03"] = ""; plotBins["SubleadPhoton_pfPhoIso03"] = [50,0,20]; plotXTitles["SubleadPhoton_pfPhoIso03"] = "PF Iso_{abs}^{#gamma}(#gamma_{2})"
+    plotNames["SubleadPhoton_chargedHadronIso"] = ""; plotBins["SubleadPhoton_chargedHadronIso"] = [50,0,20]; plotXTitles["SubleadPhoton_chargedHadronIso"] = "PF Iso_{abs}^{ch}(#gamma_{2})"
+    plotNames["SubleadPhoton_mvaID"] = ""; plotBins["SubleadPhoton_mvaID"] = [20,-1,1]; plotXTitles["SubleadPhoton_mvaID"] = "MVA ID(#gamma_{2})"
+    plotNames["SubleadPhoton_pt/Diphoton_mass"] = ""; plotBins["SubleadPhoton_pt/Diphoton_mass"] = [50,0,2]; plotXTitles["SubleadPhoton_pt/Diphoton_mass"] = "p_{T}(#gamma_{2}) / M(#gamma#gamma)"
 
-    plotNames.append("Diphoton_pt"); plotBins["Diphoton_pt"] = [50,0,500]; plotXTitles["Diphoton_pt"] = "p_{T}(#gamma#gamma)"
-    plotNames.append("Diphoton_eta"); plotBins["Diphoton_eta"] = [50,-3,3]; plotXTitles["Diphoton_eta"] = "#eta(#gamma#gamma)"
-    plotNames.append("Diphoton_phi"); plotBins["Diphoton_phi"] = [50,-3.2,3.2]; plotXTitles["Diphoton_phi"] = "#phi(#gamma#gamma)"
-    plotNames.append("Diphoton_mass"); plotBins["Diphoton_mass"] = [50,60,1000]; plotXTitles["Diphoton_mass"] = "M(#gamma#gamma)"
-    plotNames.append("Diphoton_pt_mgg"); plotBins["Diphoton_pt_mgg"] = [20,0,3]; plotXTitles["Diphoton_pt_mgg"] = "p_{T}(#gamma#gamma)/M(#gamma#gamma)"
-    plotNames.append("Diphoton_dR"); plotBins["Diphoton_dR"] = [50,0,6]; plotXTitles["Diphoton_dR"] = "#DeltaR(#gamma#gamma)"
+    plotNames["Diphoton_pt"] = ""; plotBins["Diphoton_pt"] = [50,0,500]; plotXTitles["Diphoton_pt"] = "p_{T}(#gamma#gamma)"
+    plotNames["Diphoton_eta"] = ""; plotBins["Diphoton_eta"] = [50,-3,3]; plotXTitles["Diphoton_eta"] = "#eta(#gamma#gamma)"
+    plotNames["Diphoton_phi"] = ""; plotBins["Diphoton_phi"] = [50,-3.2,3.2]; plotXTitles["Diphoton_phi"] = "#phi(#gamma#gamma)"
+    plotNames["Diphoton_mass"] = ""; plotBins["Diphoton_mass"] = [50,60,1000]; plotXTitles["Diphoton_mass"] = "M(#gamma#gamma)"
+    plotNames["Diphoton_mass_lowRange"] = "Diphoton_mass"; plotBins["Diphoton_mass_lowRange"] = [50,0,200]; plotXTitles["Diphoton_mass_lowRange"] = "M(#gamma#gamma)"
+    plotNames["Diphoton_pt_mgg"] = ""; plotBins["Diphoton_pt_mgg"] = [20,0,3]; plotXTitles["Diphoton_pt_mgg"] = "p_{T}(#gamma#gamma)/M(#gamma#gamma)"
+    plotNames["Diphoton_dR"] = ""; plotBins["Diphoton_dR"] = [50,0,6]; plotXTitles["Diphoton_dR"] = "#DeltaR(#gamma#gamma)"
 
-    plotNames.append("n_jets"); plotBins["n_jets"] = [5,0,5]; plotXTitles["n_jets"] = "N_{jets}"
+    plotNames["n_jets"] = ""; plotBins["n_jets"] = [5,0,5]; plotXTitles["n_jets"] = "N_{jets}"
 
-    plotNames.append("dijet_lead_pt"); plotBins["dijet_lead_pt"] = [50,0,500]; plotXTitles["dijet_lead_pt"] = "p_{T}(j_{1})"
-    plotNames.append("dijet_lead_eta"); plotBins["dijet_lead_eta"] = [50,-3,3]; plotXTitles["dijet_lead_eta"] = "#eta(j_{1})"
-    plotNames.append("dijet_lead_phi"); plotBins["dijet_lead_phi"] = [50,-3.2,3.2]; plotXTitles["dijet_lead_phi"] = "#phi(j_{1})"
-    plotNames.append("dijet_lead_mass"); plotBins["dijet_lead_mass"] = [50,0,100]; plotXTitles["dijet_lead_mass"] = "M(j_{1})"
-    plotNames.append("dijet_lead_btagDeepFlavB"); plotBins["dijet_lead_btagDeepFlavB"] = [50,0,1]; plotXTitles["dijet_lead_btagDeepFlavB"] = "btagDeepFlavB(j_{1})"
+    plotNames["dijet_lead_pt"] = ""; plotBins["dijet_lead_pt"] = [50,0,500]; plotXTitles["dijet_lead_pt"] = "p_{T}(j_{1})"
+    plotNames["dijet_lead_eta"] = ""; plotBins["dijet_lead_eta"] = [50,-3,3]; plotXTitles["dijet_lead_eta"] = "#eta(j_{1})"
+    plotNames["dijet_lead_phi"] = ""; plotBins["dijet_lead_phi"] = [50,-3.2,3.2]; plotXTitles["dijet_lead_phi"] = "#phi(j_{1})"
+    plotNames["dijet_lead_mass"] = ""; plotBins["dijet_lead_mass"] = [50,0,100]; plotXTitles["dijet_lead_mass"] = "M(j_{1})"
+    plotNames["dijet_lead_btagDeepFlavB"] = ""; plotBins["dijet_lead_btagDeepFlavB"] = [50,0,1]; plotXTitles["dijet_lead_btagDeepFlavB"] = "btagDeepFlavB(j_{1})"
 
-    plotNames.append("dijet_sublead_pt"); plotBins["dijet_sublead_pt"] = [50,0,500]; plotXTitles["dijet_sublead_pt"] = "p_{T}(j_{2})"
-    plotNames.append("dijet_sublead_eta"); plotBins["dijet_sublead_eta"] = [50,-3,3]; plotXTitles["dijet_sublead_eta"] = "#eta(j_{2})"
-    plotNames.append("dijet_sublead_phi"); plotBins["dijet_sublead_phi"] = [50,-3.2,3.2]; plotXTitles["dijet_sublead_phi"] = "#phi(j_{2})"
-    plotNames.append("dijet_sublead_mass"); plotBins["dijet_sublead_mass"] = [50,0,100]; plotXTitles["dijet_sublead_mass"] = "M(j_{2})"
-    plotNames.append("dijet_sublead_btagDeepFlavB"); plotBins["dijet_sublead_btagDeepFlavB"] = [50,0,1]; plotXTitles["dijet_sublead_btagDeepFlavB"] = "btagDeepFlavB(j_{2})"
+    plotNames["dijet_sublead_pt"] = ""; plotBins["dijet_sublead_pt"] = [50,0,500]; plotXTitles["dijet_sublead_pt"] = "p_{T}(j_{2})"
+    plotNames["dijet_sublead_eta"] = ""; plotBins["dijet_sublead_eta"] = [50,-3,3]; plotXTitles["dijet_sublead_eta"] = "#eta(j_{2})"
+    plotNames["dijet_sublead_phi"] = ""; plotBins["dijet_sublead_phi"] = [50,-3.2,3.2]; plotXTitles["dijet_sublead_phi"] = "#phi(j_{2})"
+    plotNames["dijet_sublead_mass"] = ""; plotBins["dijet_sublead_mass"] = [50,0,100]; plotXTitles["dijet_sublead_mass"] = "M(j_{2})"
+    plotNames["dijet_sublead_btagDeepFlavB"] = ""; plotBins["dijet_sublead_btagDeepFlavB"] = [50,0,1]; plotXTitles["dijet_sublead_btagDeepFlavB"] = "btagDeepFlavB(j_{2})"
 
-    plotNames.append("dijet_pt"); plotBins["dijet_pt"] = [50,0,500]; plotXTitles["dijet_pt"] = "p_{T}(jj)"
-    plotNames.append("dijet_eta"); plotBins["dijet_eta"] = [50,-3,3]; plotXTitles["dijet_eta"] = "#eta(jj)"
-    plotNames.append("dijet_phi"); plotBins["dijet_phi"] = [50,-3.2,3.2]; plotXTitles["dijet_phi"] = "#phi(jj)"
-    plotNames.append("dijet_mass"); plotBins["dijet_mass"] = [50,60,1000]; plotXTitles["dijet_mass"] = "M(jj)"
-    plotNames.append("dijet_dR"); plotBins["dijet_dR"] = [50,0,6]; plotXTitles["dijet_dR"] = "#DeltaR(jj)"
+    plotNames["dijet_pt"] = ""; plotBins["dijet_pt"] = [50,0,500]; plotXTitles["dijet_pt"] = "p_{T}(jj)"
+    plotNames["dijet_eta"] = ""; plotBins["dijet_eta"] = [50,-3,3]; plotXTitles["dijet_eta"] = "#eta(jj)"
+    plotNames["dijet_phi"] = ""; plotBins["dijet_phi"] = [50,-3.2,3.2]; plotXTitles["dijet_phi"] = "#phi(jj)"
+    plotNames["dijet_mass"] = ""; plotBins["dijet_mass"] = [50,60,1000]; plotXTitles["dijet_mass"] = "M(jj)"
+    plotNames["dijet_dR"] = ""; plotBins["dijet_dR"] = [50,0,6]; plotXTitles["dijet_dR"] = "#DeltaR(jj)"
 
-    plotNames.append("pfmet_pt"); plotBins["pfmet_pt"] = [50,0,200]; plotXTitles["pfmet_pt"] = "PF MET P_{T}"
-    plotNames.append("puppimet_pt"); plotBins["puppimet_pt"] = [50,0,200]; plotXTitles["puppimet_pt"] = "PUPPI MET P_{T}"
+    plotNames["pfmet_pt"] = ""; plotBins["pfmet_pt"] = [50,0,200]; plotXTitles["pfmet_pt"] = "PF MET P_{T}"
+    plotNames["puppimet_pt"] = ""; plotBins["puppimet_pt"] = [50,0,200]; plotXTitles["puppimet_pt"] = "PUPPI MET P_{T}"
 
     # 2D histos (y:x)
-    #plotNames.append("Diphoton_pt:Diphoton_eta"); plotBins["Diphoton_pt:Diphoton_eta"] = [50,-3,3,50,0,200]; plotXTitles["Diphoton_pt:Diphoton_eta"] = "#eta(#gamma#gamma)"; plotYTitles["Diphoton_pt:Diphoton_eta"] = "p_{T}(#gamma#gamma)"
-    #plotNames.append("Diphoton_pt:Diphoton_eta"); plotBins["Diphoton_pt:Diphoton_eta"] = "{-3.,-1.5,0.,1.5,3.;0.,10.,20.,50.,100.,200.}"; plotXTitles["Diphoton_pt:Diphoton_eta"] = "#eta(#gamma#gamma)"; plotYTitles["Diphoton_pt:Diphoton_eta"] = "p_{T}(#gamma#gamma)"
+    #plotNames["Diphoton_pt:Diphoton_eta"] = ""; plotBins["Diphoton_pt:Diphoton_eta"] = [50,-3,3,50,0,200]; plotXTitles["Diphoton_pt:Diphoton_eta"] = "#eta(#gamma#gamma)"; plotYTitles["Diphoton_pt:Diphoton_eta"] = "p_{T}(#gamma#gamma)"
+    #plotNames["Diphoton_pt:Diphoton_eta"] = ""; plotBins["Diphoton_pt:Diphoton_eta"] = "{-3.,-1.5,0.,1.5,3.;0.,10.,20.,50.,100.,200.}"; plotXTitles["Diphoton_pt:Diphoton_eta"] = "#eta(#gamma#gamma)"; plotYTitles["Diphoton_pt:Diphoton_eta"] = "p_{T}(#gamma#gamma)"
 
+    toinclude = []
     toexclude = []
 
 
     if args.yields:
       plotname = "LeadPhoton_pixelSeed"
-      plotDict = get_plots(samples, year, plotname, cut, plotBins, plotXTitles)
+      plotDict = get_plots(samples, year, plotname, cut, plotBins[plotname], plotXTitles[plotname], plotYTitles[plotname] if plotname in plotYTitles.keys() else "Event")
       get_yields(plotDict, plotname, lumi, year, args.data)
     else:
-      for plotname in plotNames:
+      for plotname in (plotNames.keys() if len(toinclude)==0 else toinclude):
         if plotname in toexclude:
             continue
         # Open files and get trees and return plots
-        plotDict = get_plots(samples, year, plotname, cut, plotBins, plotXTitles, plotYTitles)
+        plotDict = get_plots(samples, year, plotname if plotNames[plotname]=="" else plotNames[plotname], cut, plotBins[plotname], plotXTitles[plotname], plotYTitles[plotname] if plotname in plotYTitles.keys() else "Event")
         draw_plot(plotDict, plotname, lumi, year, not args.noLogY, args.logX, args.data)
