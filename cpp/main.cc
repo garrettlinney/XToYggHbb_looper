@@ -96,8 +96,15 @@ int main(int argc, char **argv) {
                                                           "Run2017D-UL2017_MiniAODv2-v1",
                                                           "Run2017E-UL2017_MiniAODv2-v1",
                                                           "Run2017F-UL2017_MiniAODv2-v2" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2016APV",    { "Run2016B-ver1_HIPM_UL2016_MiniAODv2-v1",
+                                                          "Run2016B-ver2_HIPM_UL2016_MiniAODv2-v3",
+                                                          "Run2016C-HIPM_UL2016_MiniAODv2-v1",
+                                                          "Run2016D-HIPM_UL2016_MiniAODv2-v1",
+                                                          "Run2016E-HIPM_UL2016_MiniAODv2-v1",
+                                                          "Run2016F-HIPM_UL2016_MiniAODv2-v1" } },
+                                        { "2016nonAPV", { "Run2016F-UL2016_MiniAODv2-v1",
+                                                          "Run2016G-UL2016_MiniAODv2-v1",
+                                                          "Run2016H-UL2016_MiniAODv2-v1" } } } });
     }
   }
 
@@ -111,8 +118,8 @@ int main(int argc, char **argv) {
       sample_names.insert({sampleName, "DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
                                         { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2" } } } });
     }
 
     if ( sampleArg=="TT" || sampleArg=="all" ) {
@@ -122,8 +129,8 @@ int main(int argc, char **argv) {
       sample_names.insert({sampleName, "TTGG_0Jets_TuneCP5_13TeV-amcatnlo-madspin-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
                                         { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1" } } } });
 
       sampleName = "TTGJets";
       samples.push_back(sampleName);
@@ -131,8 +138,8 @@ int main(int argc, char **argv) {
       sample_names.insert({sampleName, "TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
                                         { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1" } } } });
 
       sampleName = "TTJets";
       samples.push_back(sampleName);
@@ -140,8 +147,8 @@ int main(int argc, char **argv) {
       sample_names.insert({sampleName, "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
                                         { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1" } } } });
     }
 
     if ( sampleArg=="H" || sampleArg=="all" ) {
@@ -151,8 +158,8 @@ int main(int argc, char **argv) {
       sample_names.insert({sampleName, "VHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
                                         { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });  
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2" } } } });  
 
       sampleName = "VBFH_M125";
       samples.push_back(sampleName);
@@ -160,8 +167,8 @@ int main(int argc, char **argv) {
       sample_names.insert({sampleName,"VBFHToGG_M125_TuneCP5_13TeV-amcatnlo-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
                                         { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2" } } } });
 
       sampleName = "ttH_M125";
       samples.push_back(sampleName);
@@ -169,8 +176,8 @@ int main(int argc, char **argv) {
       sample_names.insert({sampleName, "ttHJetToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
                                         { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v3" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2" } } } });
 
       sampleName = "ggHToDiPhoM125";
       samples.push_back(sampleName);
@@ -178,8 +185,8 @@ int main(int argc, char **argv) {
       sample_names.insert({sampleName, "GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
                                         { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2" } } } });
     }
 
     if ( sampleArg=="GJets" || sampleArg=="all" ) {
@@ -196,8 +203,12 @@ int main(int argc, char **argv) {
                                           { "2017",       { ( M[imass] =="100" ?
                                                               "RunIISummer20UL17MiniAODv2-4cores5k_106X_mc2017_realistic_v9-v2" :
                                                               "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" ) } },
-                                          { "2016APV",    { "" } },
-                                          { "2016nonAPV", { "" } } } });
+                                          { "2016APV",    { ( M[imass] =="100" ?
+                                                              "RunIISummer20UL16MiniAODAPVv2-4cores5k_106X_mcRun2_asymptotic_preVFP_v11-v1" :
+                                                              "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1" ) } },
+                                          { "2016nonAPV", { ( M[imass] =="100" ?
+                                                              "RunIISummer20UL16MiniAODv2-4cores5k_106X_mcRun2_asymptotic_v17-v1" :
+                                                              "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1" ) } } } });
       }
     }
 
@@ -208,8 +219,8 @@ int main(int argc, char **argv) {
       sample_names.insert({sampleName, "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
                                         { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1" } } } });
     }
 
     if ( sampleArg=="VG" || sampleArg=="all" ) {
@@ -224,8 +235,8 @@ int main(int argc, char **argv) {
                                            sampleName+"ToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8" ) });
         sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
                                           { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1" } },
-                                          { "2016APV",    { "" } },
-                                          { "2016nonAPV", { "" } } } });
+                                          { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1" } },
+                                          { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1" } } } });
       }
     }
 
@@ -236,8 +247,8 @@ int main(int argc, char **argv) {
       sample_names.insert({sampleName, "GluGluToHHTo2B2G_node_cHHH1_TuneCP5_13TeV-powheg-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "privateUL18" } },
                                         { "2017",       { "privateUL17" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2016APV",    { "privateUL16APV" } },
+                                        { "2016nonAPV", { "privateUL16" } } } });
     }
 
     if ( sampleArg=="DiPhotonLow" || sampleArg=="all" ) {
@@ -264,7 +275,7 @@ int main(int argc, char **argv) {
                                                               "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" ) } },
                                           { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1" } },
                                           { "2016APV",    { "" } },
-                                          { "2016nonAPV", { "" } } } });
+                                          { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1" } } } });
       }
     }
   }
@@ -281,64 +292,33 @@ int main(int argc, char **argv) {
                                             {"350","21"}, {"400","22"}, {"450","23"}, {"500","24"}, {"550","25"},
                                             {"600","26"}, {"650","27"}, {"700","28"}, {"800","29"} };
 
-      // Temporary MComb maps separate for each year - will be combined when all year become available
-      // 2017
       map<TString,vector<TString>> MComb = { { "240",  { "70","80","90","100" } },
                                              { "280",  { "70","80","90","100","125","150" } },
                                              { "300",  { "70","80","90","100","125","150","170" } },
                                              { "320",  { "70","80","90","100","125","150","170","190" } },
-                                             { "360",  { "70","80","90",/*"100",*/"125","150","170","190" } },
+                                             { "360",  { "70","80","90","100","125","150","170","190" } },
                                              { "400",  { "70","80","90","100","125","150","170","190","250" } },
-                                             { "450",  { "70","80",/*"90",*/"100","125","150","170","190","250","300" } },
-                                             { "500",  { /*"70",*/"80","90","100","125","150","170","190","250","300","350" } },
+                                             { "450",  { "70","80","90","100","125","150","170","190","250","300" } },
+                                             { "500",  { "70","80","90","100","125","150","170","190","250","300","350" } },
                                              { "550",  { "70","80","90","100","125","150","170","190","250","300","350","400" } },
                                              { "600",  { "70","80","90","100","125","150","170","190","250","300","350","400",
                                                          "450" } },
                                              { "650",  { "70","80","90","100","125","150","170","190","250","300","350","400",
                                                          "450","500" } },
                                              { "700",  { "70","80","90","100","125","150","170","190","250","300","350","400",
-                                                         "450",/*"500",*/"550" } },
+                                                         "450","500","550" } },
                                              { "750",  { "70","80","90","100","125","150","170","190","250","300","350","400",
                                                          "450","500","550","600" } },
-                                             { "800",  { "70",/*"80",*/"90","100","125","150","170","190","250","300","350","400",
+                                             { "800",  { "70","80","90","100","125","150","170","190","250","300","350","400",
                                                          "450","500","550","600","650" } },
                                              { "850",  { "70","80","90","100","125","150","170","190","250","300","350","400",
                                                          "450","500","550","600","650","700" } },
-                                             { "900",  { "70","80","90",/*"100",*/"125","150","170","190","250","300","350","400",
+                                             { "900",  { "70","80","90","100","125","150","170","190","250","300","350","400",
                                                          "450","500","550","600","650","700" } },
                                              { "950",  { "70","80","90","100","125","150","170","190","250","300","350","400",
                                                          "450","500","550","600","650","700","800" } },
-                                             { "1000",  { "70","80","90",/*"100",*/"125","150","170","190","250","300","350","400",
+                                             { "1000",  { "70","80","90","100","125","150","170","190","250","300","350","400",
                                                          "450","500","550","600","650","700","800" } } };
-
-      //// 2018
-      //map<TString,vector<TString>> MComb = { { "240",  { "70","80","90","100" } },
-      //                                       { "280",  { "70",/*"80",*/"90","100","125","150" } },
-      //                                       { "300",  { "70",/*"80","90","100",*/"125","150","170" } },
-      //                                       { "320",  { "70","80","90","100","125","150","170","190" } },
-      //                                       { "360",  { "70",/*"80",*/"90","100","125","150","170","190" } },
-      //                                       { "400",  { /*"70","80","90","100","125",*/"150","170","190","250" } },
-      //                                       { "450",  { "70","80","90",/*"100",*/"125","150","170",/*"190",*/"250","300" } },
-      //                                       { "500",  { "70","80","90",/*"100",*/"125",/*"150","170",*/"190","250","300","350" } },
-      //                                       { "550",  { "70","80","90","100","125","150","170","190","250","300",/*"350",*/"400" } },
-      //                                       { "600",  { /*"70",*/"80","90",/*"100",*/"125","150","170","190","250",/*"300","350",*/"400",
-      //                                                   "450" } },
-      //                                       { "650",  { "70","80","90","100","125","150","170","190","250","300","350","400",
-      //                                                   "450","500" } },
-      //                                       { "700",  { "70","80","90","100","125","150","170","190","250","300","350","400",
-      //                                                   "450","500"/*,"550"*/ } },
-      //                                       { "750",  { "70","80","90","100","125",/*"150",*/"170","190","250","300","350","400",
-      //                                                   "450",/*"500",*/"550","600" } },
-      //                                       { "800",  { "70",/*"80","90","100",*/"125","150",/*"170",*/"190","250","300","350","400",
-      //                                                   "450","500",/*"550",*/"600","650" } },
-      //                                       { "850",  { /*"70",*/"80","90",/*"100",*/"125","150","170","190","250","300","350","400",
-      //                                                   "450","500",/*"550",*/"600"/*,"650","700"*/ } },
-      //                                       { "900",  { /*"70",*/"80","90","100","125","150","170","190","250","300",/*"350",*/"400",
-      //                                                   "450",/*"500",*/"550","600","650"/*,"700"*/ } },
-      //                                       { "950",  { /*"70",*/"80","90","100","125","150",/*"170","190","250",*/"300","350","400",
-      //                                                   "450","500","550","600",/*"650",*/"700","800" } },
-      //                                       { "1000",  { "70","80","90","100","125","150","170","190","250","300","350","400",
-      //                                                   "450","500","550","600","650","700","800" } } };
 
       map<TString,vector<TString>> M;
       if ( sampleArg.Contains("_low" ) ) // Includes MX of 1000, 240 - 400 GeV
@@ -363,8 +343,8 @@ int main(int argc, char **argv) {
           sample_names.insert({sampleName, sampleName+"_TuneCP5_13TeV-madgraph-pythia8"});
           sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-"+v } },
                                             { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
-                                            { "2016APV",    { "" } },
-                                            { "2016nonAPV", { "" } } } });
+                                            { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2" } },
+                                            { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2" } } } });
         }
         ++it;
       }
@@ -420,6 +400,25 @@ int main(int argc, char **argv) {
         }
         TString sample_name = sample_names[sample];
         int sample_procid = sample_procids[sample];
+        
+        // Skip signal samples still in production
+        if ( year == "2017" ) {
+          if ( sample == "NMSSM_XToYHTo2G2B_MX-360_MY-100" ||
+               sample == "NMSSM_XToYHTo2G2B_MX-450_MY-90"  ||
+               sample == "NMSSM_XToYHTo2G2B_MX-500_MY-70"  ||
+               sample == "NMSSM_XToYHTo2G2B_MX-700_MY-500" ||
+               sample == "NMSSM_XToYHTo2G2B_MX-800_MY-80"  ||
+               sample == "NMSSM_XToYHTo2G2B_MX-900_MY-100" ||
+               sample == "NMSSM_XToYHTo2G2B_MX-1000_MY-100" )
+            continue;
+        }
+        else if ( year == "2018" ) {
+          if ( sample == "NMSSM_XToYHTo2G2B_MX-300_MY-100" ||
+               sample == "NMSSM_XToYHTo2G2B_MX-400_MY-70"  ||
+               sample == "NMSSM_XToYHTo2G2B_MX-850_MY-550" ||
+               sample == "NMSSM_XToYHTo2G2B_MX-900_MY-70"   )
+            continue;
+        }
 
         TChain *ch_temp = new TChain("Events");
         TChain *chaux_temp = new TChain("Runs");
@@ -431,6 +430,8 @@ int main(int argc, char **argv) {
         }
 
         std::cout<<"Sample: "<<sample<<" --> Process ID: "<<sample_procid<<"\n\n";
+        if ( ch_temp->GetEntries()==0 )
+          std::cout << "##### Zero entries for the sample above => Need to check! #####\n";
         ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp, isMC),year,sample,sample_procid,outdir,prefireWeight,PUWeight,electronVetoSF,lowMassHggTriggerSF,lowMassHggPreselSF,phoMVAIDWP90SF,bTagSF,fnufUnc,materialUnc,PhoScaleUnc,PhoSmearUnc,JESUnc,JERUnc);
       }
     }
