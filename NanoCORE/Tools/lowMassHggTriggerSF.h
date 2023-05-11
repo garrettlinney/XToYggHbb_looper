@@ -1388,7 +1388,6 @@ namespace lowMassHggTriggerSF {
     TString actualYear;
     if (year=="2016nonAPV" || year=="2016APV") actualYear = "2016";
     else actualYear = year;
-    if ( actualYear == "2016" && EBHiR9 ) actualYear = "2016EBHiR9";
 
     if ( photon!="Lead" && photon!="Sublead" ) {
       std::cout << "WARNING: unknown photon, returning unity low mass trigger SF!" << std::endl;
@@ -1397,12 +1396,13 @@ namespace lowMassHggTriggerSF {
 
     float abseta = fabs(eta);
     set_etabins();
-    set_r9bins(abseta, photon, EBHiR9, year);
-    set_ptbins(abseta, r9, photon, EBHiR9, year);
+    set_r9bins(abseta, photon, EBHiR9, actualYear);
+    set_ptbins(abseta, r9, photon, EBHiR9, actualYear);
     TString etabin = get_etaBin(abseta);
     TString r9bin = get_r9Bin(r9);
     TString ptbin = get_ptBin(pt);
 
+    if ( actualYear == "2016" && EBHiR9 ) actualYear = "2016EBHiR9";
     if ( variation == "central" ) return (photon=="Lead" ? idsf_lead[actualYear][etabin][r9bin][ptbin] : idsf_sublead[actualYear][etabin][r9bin][ptbin]);
     else if ( variation == "up" ) return (photon=="Lead" ? idsf_lead[actualYear][etabin][r9bin][ptbin]+idsfunc_lead[actualYear][etabin][r9bin][ptbin] : idsf_sublead[actualYear][etabin][r9bin][ptbin]+idsfunc_sublead[actualYear][etabin][r9bin][ptbin]);
     else if ( variation == "down" ) return (photon=="Lead" ? idsf_lead[actualYear][etabin][r9bin][ptbin]-idsfunc_lead[actualYear][etabin][r9bin][ptbin] : idsf_sublead[actualYear][etabin][r9bin][ptbin]-idsfunc_sublead[actualYear][etabin][r9bin][ptbin]);
