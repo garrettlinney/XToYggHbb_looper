@@ -2,6 +2,19 @@
 #include "ScanChain_Hgg.C"
 #include <fstream>
 
+unsigned char2unsigned(const char *c) {
+  char p = *c;
+  unsigned res = 0;
+  while (p) {
+      res = res*10 + (p - '0');
+      c++;
+      p = *c;
+  }
+  return res;
+}
+int char2int(const char *c) {
+  return (*c == '-') ? -char2unsigned(c+1) : char2unsigned(c);
+}
 
 double getSumOfGenEventSumw(TChain *chaux, bool isMC)
 {
@@ -22,17 +35,28 @@ double getSumOfGenEventSumw(TChain *chaux, bool isMC)
 
 int main(int argc, char **argv) {
   //Arguments
-  const char* outdir = ( argc > 1 ? argv[1]               : "temp_data" );
-  TString yearArg    = ( argc > 2 ? argv[2]               : "all" );
-  int run_data       = ( argc > 3 ? ((int)*argv[3] - 48 ) : 1 );  // '0' has the ASCII code of 48
-  int run_MCbkg      = ( argc > 4 ? ((int)*argv[4] - 48 ) : 1 );  // '0' has the ASCII code of 48
-  int run_signal     = ( argc > 5 ? ((int)*argv[5] - 48 ) : 1 );  // '0' has the ASCII code of 48
-  TString sampleArg  = ( argc > 6 ? argv[6]               : "all" );
-  int onlyCreateJSON = ( argc > 7 ? ((int)*argv[7] - 48 ) : 0 );  // '0' has the ASCII code of 48
-  
-  int PUWeight=1;
-  int bTagSF=1;
-  int JECUnc=0; // No central value, set to +/-2 to get
+  const char* outdir      = ( argc > 1  ? argv[1]            : "temp_data" );
+  TString yearArg         = ( argc > 2  ? argv[2]            : "all" );
+  int run_data            = ( argc > 3  ? char2int(argv[3])  : 1 );
+  int run_MCbkg           = ( argc > 4  ? char2int(argv[4])  : 1 );
+  int run_signal          = ( argc > 5  ? char2int(argv[5])  : 1 );
+  TString sampleArg       = ( argc > 6  ? argv[6]            : "all" );
+  // Set to 0 to disable, set to 1 for central value, set to +/-2 to get uncertainty
+  int prefireWeight       = ( argc > 7  ? char2int(argv[7])  : 1 );
+  int PUWeight            = ( argc > 8  ? char2int(argv[8])  : 1 );
+  int electronVetoSF      = ( argc > 9  ? char2int(argv[9])  : 1 );
+  int lowMassHggTriggerSF = ( argc > 10 ? char2int(argv[10]) : 1 );
+  int lowMassHggPreselSF  = ( argc > 11 ? char2int(argv[11]) : 0 );
+  int phoMVAIDWP90SF      = ( argc > 12 ? char2int(argv[12]) : 1 );
+  int bTagSF              = ( argc > 13 ? char2int(argv[13]) : 1 ); // Set to +/-X to get uncertainty, X in [2,10]
+  int fnufUnc             = ( argc > 14 ? char2int(argv[14]) : 0 ); // No central value
+  int materialUnc         = ( argc > 15 ? char2int(argv[15]) : 0 ); // No central value
+  int PhoScaleUnc         = ( argc > 16 ? char2int(argv[16]) : 0 ); // No central value
+  int PhoSmearUnc         = ( argc > 17 ? char2int(argv[17]) : 0 ); // No central value
+  int JESUnc              = ( argc > 18 ? char2int(argv[18]) : 0 ); // No central value
+  int JERUnc              = ( argc > 19 ? char2int(argv[19]) : 0 ); // No central value
+  // Option to reproduce the summary.json
+  int onlyCreateJSON      = ( argc > 20 ? char2int(argv[20]) : 0 );
   
 
   // Map definitions
@@ -67,9 +91,20 @@ int main(int argc, char **argv) {
                                                           "Run2018B-UL2018_MiniAODv2_GT36-v1",
                                                           "Run2018C-UL2018_MiniAODv2_GT36-v1",
                                                           "Run2018D-UL2018_MiniAODv2-v2" } },
-                                        { "2017",       { "" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2017",       { "Run2017B-UL2017_MiniAODv2-v1",
+                                                          "Run2017C-UL2017_MiniAODv2-v2",
+                                                          "Run2017D-UL2017_MiniAODv2-v1",
+                                                          "Run2017E-UL2017_MiniAODv2-v1",
+                                                          "Run2017F-UL2017_MiniAODv2-v2" } },
+                                        { "2016APV",    { "Run2016B-ver1_HIPM_UL2016_MiniAODv2-v1",
+                                                          "Run2016B-ver2_HIPM_UL2016_MiniAODv2-v3",
+                                                          "Run2016C-HIPM_UL2016_MiniAODv2-v1",
+                                                          "Run2016D-HIPM_UL2016_MiniAODv2-v1",
+                                                          "Run2016E-HIPM_UL2016_MiniAODv2-v1",
+                                                          "Run2016F-HIPM_UL2016_MiniAODv2-v1" } },
+                                        { "2016nonAPV", { "Run2016F-UL2016_MiniAODv2-v1",
+                                                          "Run2016G-UL2016_MiniAODv2-v1",
+                                                          "Run2016H-UL2016_MiniAODv2-v1" } } } });
     }
   }
 
@@ -82,9 +117,9 @@ int main(int argc, char **argv) {
       sample_procids.insert({sampleName, 1});
       sample_names.insert({sampleName, "DiPhotonJetsBox_MGG-80toInf_13TeV-sherpa"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
-                                        { "2017",       { "" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2" } } } });
     }
 
     if ( sampleArg=="TT" || sampleArg=="all" ) {
@@ -93,27 +128,27 @@ int main(int argc, char **argv) {
       sample_procids.insert({sampleName, 2});
       sample_names.insert({sampleName, "TTGG_0Jets_TuneCP5_13TeV-amcatnlo-madspin-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
-                                        { "2017",       { "" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1" } },
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1" } } } });
 
       sampleName = "TTGJets";
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 3});
       sample_names.insert({sampleName, "TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
-                                        { "2017",       { "" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1" } },
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1" } } } });
 
       sampleName = "TTJets";
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 4});
       sample_names.insert({sampleName, "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
-                                        { "2017",       { "" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1" } } } });
     }
 
     if ( sampleArg=="H" || sampleArg=="all" ) {
@@ -122,36 +157,36 @@ int main(int argc, char **argv) {
       sample_procids.insert({sampleName, 5});
       sample_names.insert({sampleName, "VHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
-                                        { "2017",       { "" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });  
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2" } } } });  
 
       sampleName = "VBFH_M125";
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 6});
       sample_names.insert({sampleName,"VBFHToGG_M125_TuneCP5_13TeV-amcatnlo-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
-                                        { "2017",       { "" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2" } } } });
 
       sampleName = "ttH_M125";
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 7});
       sample_names.insert({sampleName, "ttHJetToGG_M125_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
-                                        { "2017",       { "" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v3" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2" } } } });
 
       sampleName = "ggHToDiPhoM125";
       samples.push_back(sampleName);
       sample_procids.insert({sampleName, 8});
       sample_names.insert({sampleName, "GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
-                                        { "2017",       { "" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1" } },
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2" } } } });
     }
 
     if ( sampleArg=="GJets" || sampleArg=="all" ) {
@@ -162,10 +197,18 @@ int main(int argc, char **argv) {
         samples.push_back(sampleName);
         sample_procids.insert({sampleName, 9+processId_M[M[imass]]});
         sample_names.insert({sampleName, sampleName+"_TuneCP5_13TeV-madgraphMLM-pythia8"});
-        sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
-                                          { "2017",       { "" } },
-                                          { "2016APV",    { "" } },
-                                          { "2016nonAPV", { "" } } } });
+        sample_prod.insert({sampleName, { { "2018",       { ( M[imass] =="100" ?
+                                                              "RunIISummer20UL18MiniAODv2-4cores5k_106X_upgrade2018_realistic_v16_L1v1-v2" :
+                                                              "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" ) } },
+                                          { "2017",       { ( M[imass] =="100" ?
+                                                              "RunIISummer20UL17MiniAODv2-4cores5k_106X_mc2017_realistic_v9-v2" :
+                                                              "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" ) } },
+                                          { "2016APV",    { ( M[imass] =="100" ?
+                                                              "RunIISummer20UL16MiniAODAPVv2-4cores5k_106X_mcRun2_asymptotic_preVFP_v11-v1" :
+                                                              "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1" ) } },
+                                          { "2016nonAPV", { ( M[imass] =="100" ?
+                                                              "RunIISummer20UL16MiniAODv2-4cores5k_106X_mcRun2_asymptotic_v17-v1" :
+                                                              "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1" ) } } } });
       }
     }
 
@@ -175,9 +218,9 @@ int main(int argc, char **argv) {
       sample_procids.insert({sampleName, 14});
       sample_names.insert({sampleName, "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" } },
-                                        { "2017",       { "" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
+                                        { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1" } },
+                                        { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1" } } } });
     }
 
     if ( sampleArg=="VG" || sampleArg=="all" ) {
@@ -187,11 +230,13 @@ int main(int argc, char **argv) {
         TString sampleName = V[iV]+"G";
         samples.push_back(sampleName);
         sample_procids.insert({sampleName, 15+processId_V[V[iV]]});
-        sample_names.insert({sampleName, sampleName+"ToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8"});
+        sample_names.insert({sampleName, ( V[iV]=="W" ?
+                                           sampleName+"ToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8" :
+                                           sampleName+"ToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8" ) });
         sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" } },
-                                          { "2017",       { "" } },
-                                          { "2016APV",    { "" } },
-                                          { "2016nonAPV", { "" } } } });
+                                          { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1" } },
+                                          { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1" } },
+                                          { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1" } } } });
       }
     }
 
@@ -201,9 +246,9 @@ int main(int argc, char **argv) {
       sample_procids.insert({sampleName, 17});
       sample_names.insert({sampleName, "GluGluToHHTo2B2G_node_cHHH1_TuneCP5_13TeV-powheg-pythia8"});
       sample_prod.insert({sampleName, { { "2018",       { "privateUL18" } },
-                                        { "2017",       { "" } },
-                                        { "2016APV",    { "" } },
-                                        { "2016nonAPV", { "" } } } });
+                                        { "2017",       { "privateUL17" } },
+                                        { "2016APV",    { "privateUL16APV" } },
+                                        { "2016nonAPV", { "privateUL16" } } } });
     }
 
     if ( sampleArg=="DiPhotonLow" || sampleArg=="all" ) {
@@ -228,9 +273,9 @@ int main(int argc, char **argv) {
         sample_prod.insert({sampleName, { { "2018",       { ( V[iV] == "ZZ" ?
                                                               "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2" :
                                                               "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v1" ) } },
-                                          { "2017",       { "" } },
-                                          { "2016APV",    { "" } },
-                                          { "2016nonAPV", { "" } } } });
+                                          { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1" } },
+                                          { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1" } },
+                                          { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1" } } } });
       }
     }
   }
@@ -248,30 +293,30 @@ int main(int argc, char **argv) {
                                             {"600","26"}, {"650","27"}, {"700","28"}, {"800","29"} };
 
       map<TString,vector<TString>> MComb = { { "240",  { "70","80","90","100" } },
-                                             { "280",  { "70",/*"80",*/"90","100","125","150" } },
-                                             { "300",  { "70",/*"80","90","100",*/"125","150","170" } },
+                                             { "280",  { "70","80","90","100","125","150" } },
+                                             { "300",  { "70","80","90","100","125","150","170" } },
                                              { "320",  { "70","80","90","100","125","150","170","190" } },
-                                             { "360",  { "70",/*"80",*/"90","100","125","150","170","190" } },
-                                             { "400",  { /*"70","80","90","100","125",*/"150","170","190","250" } },
-                                             { "450",  { "70","80","90",/*"100",*/"125","150","170",/*"190",*/"250","300" } },
-                                             { "500",  { "70","80","90",/*"100",*/"125",/*"150","170",*/"190","250","300","350" } },
-                                             { "550",  { "70","80","90","100","125","150","170","190","250","300",/*"350",*/"400" } },
-                                             { "600",  { /*"70",*/"80","90",/*"100",*/"125","150","170","190","250",/*"300","350",*/"400",
+                                             { "360",  { "70","80","90","100","125","150","170","190" } },
+                                             { "400",  { "70","80","90","100","125","150","170","190","250" } },
+                                             { "450",  { "70","80","90","100","125","150","170","190","250","300" } },
+                                             { "500",  { "70","80","90","100","125","150","170","190","250","300","350" } },
+                                             { "550",  { "70","80","90","100","125","150","170","190","250","300","350","400" } },
+                                             { "600",  { "70","80","90","100","125","150","170","190","250","300","350","400",
                                                          "450" } },
                                              { "650",  { "70","80","90","100","125","150","170","190","250","300","350","400",
                                                          "450","500" } },
                                              { "700",  { "70","80","90","100","125","150","170","190","250","300","350","400",
-                                                         "450","500"/*,"550"*/ } },
-                                             { "750",  { "70","80","90","100","125",/*"150",*/"170","190","250","300","350","400",
-                                                         "450",/*"500",*/"550","600" } },
-                                             { "800",  { "70",/*"80","90","100",*/"125","150",/*"170",*/"190","250","300","350","400",
-                                                         "450","500",/*"550",*/"600","650" } },
-                                             { "850",  { /*"70",*/"80","90",/*"100",*/"125","150","170","190","250","300","350","400",
-                                                         "450","500",/*"550",*/"600"/*,"650","700"*/ } },
-                                             { "900",  { /*"70",*/"80","90","100","125","150","170","190","250","300",/*"350",*/"400",
-                                                         "450",/*"500",*/"550","600","650"/*,"700"*/ } },
-                                             { "950",  { /*"70",*/"80","90","100","125","150",/*"170","190","250",*/"300","350","400",
-                                                         "450","500","550","600",/*"650",*/"700","800" } },
+                                                         "450","500","550" } },
+                                             { "750",  { "70","80","90","100","125","150","170","190","250","300","350","400",
+                                                         "450","500","550","600" } },
+                                             { "800",  { "70","80","90","100","125","150","170","190","250","300","350","400",
+                                                         "450","500","550","600","650" } },
+                                             { "850",  { "70","80","90","100","125","150","170","190","250","300","350","400",
+                                                         "450","500","550","600","650","700" } },
+                                             { "900",  { "70","80","90","100","125","150","170","190","250","300","350","400",
+                                                         "450","500","550","600","650","700" } },
+                                             { "950",  { "70","80","90","100","125","150","170","190","250","300","350","400",
+                                                         "450","500","550","600","650","700","800" } },
                                              { "1000",  { "70","80","90","100","125","150","170","190","250","300","350","400",
                                                          "450","500","550","600","650","700","800" } } };
 
@@ -297,9 +342,9 @@ int main(int argc, char **argv) {
           sample_procids.insert({sampleName, (processId_MX[MX]+processId_MY[MY]).Atoi()});
           sample_names.insert({sampleName, sampleName+"_TuneCP5_13TeV-madgraph-pythia8"});
           sample_prod.insert({sampleName, { { "2018",       { "RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-"+v } },
-                                            { "2017",       { "" } },
-                                            { "2016APV",    { "" } },
-                                            { "2016nonAPV", { "" } } } });
+                                            { "2017",       { "RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2" } },
+                                            { "2016APV",    { "RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v2" } },
+                                            { "2016nonAPV", { "RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v2" } } } });
         }
         ++it;
       }
@@ -355,6 +400,25 @@ int main(int argc, char **argv) {
         }
         TString sample_name = sample_names[sample];
         int sample_procid = sample_procids[sample];
+        
+        // Skip signal samples still in production
+        if ( year == "2017" ) {
+          if ( sample == "NMSSM_XToYHTo2G2B_MX-360_MY-100" ||
+               sample == "NMSSM_XToYHTo2G2B_MX-450_MY-90"  ||
+               sample == "NMSSM_XToYHTo2G2B_MX-500_MY-70"  ||
+               sample == "NMSSM_XToYHTo2G2B_MX-700_MY-500" ||
+               sample == "NMSSM_XToYHTo2G2B_MX-800_MY-80"  ||
+               sample == "NMSSM_XToYHTo2G2B_MX-900_MY-100" ||
+               sample == "NMSSM_XToYHTo2G2B_MX-1000_MY-100" )
+            continue;
+        }
+        else if ( year == "2018" ) {
+          if ( sample == "NMSSM_XToYHTo2G2B_MX-300_MY-100" ||
+               sample == "NMSSM_XToYHTo2G2B_MX-400_MY-70"  ||
+               sample == "NMSSM_XToYHTo2G2B_MX-850_MY-550" ||
+               sample == "NMSSM_XToYHTo2G2B_MX-900_MY-70"   )
+            continue;
+        }
 
         TChain *ch_temp = new TChain("Events");
         TChain *chaux_temp = new TChain("Runs");
@@ -366,7 +430,9 @@ int main(int argc, char **argv) {
         }
 
         std::cout<<"Sample: "<<sample<<" --> Process ID: "<<sample_procid<<"\n\n";
-        ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp, isMC),year,sample,sample_procid,outdir,PUWeight,bTagSF,JECUnc);
+        if ( ch_temp->GetEntries()==0 )
+          std::cout << "##### Zero entries for the sample above => Need to check! #####\n";
+        ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp, isMC),year,sample,sample_procid,outdir,prefireWeight,PUWeight,electronVetoSF,lowMassHggTriggerSF,lowMassHggPreselSF,phoMVAIDWP90SF,bTagSF,fnufUnc,materialUnc,PhoScaleUnc,PhoSmearUnc,JESUnc,JERUnc);
       }
     }
   }

@@ -12,21 +12,18 @@
 #include "TVector3.h"
 #include "TRandom3.h"
 
-#include "RooRealVar.h"
-#include "RooDataSet.h"
-#include "RooDataHist.h"
-#include "RooCategory.h"
-
 #include "../NanoCORE/Nano.h"
 #include "../NanoCORE/Base.h"
+#include "../NanoCORE/Config.h"
 #include "../NanoCORE/tqdm.h"
-#include "../NanoCORE/ZPrimeTools.cc"
 #include "../NanoCORE/XYMETCorrection_withUL17andUL18andUL16.h"
 #include "../NanoCORE/Tools/goodrun.h"
 #include "../NanoCORE/Tools/dorky.h"
-#include "../NanoCORE/Tools/puWeight.h"
 #include "../NanoCORE/Tools/bTagEff.h"
-#include "../NanoCORE/Tools/btagsf/BTagCalibrationStandalone_v2.h"
+#include "../NanoCORE/Tools/electronVetoSF.h"
+#include "../NanoCORE/Tools/lowMassHggTriggerSF.h"
+#include "../NanoCORE/Tools/lowMassHggPreselSF.h"
+#include "../NanoCORE/Tools/phoMVAIDWP90SF.h"
 #include "../NanoCORE/DiPhotonSelections.h"
 #include "../NanoCORE/LeptonSelections.h"
 #include "../NanoCORE/DiJetSelections.h"
@@ -56,12 +53,12 @@ int count_test=0;
 
 ofstream txtout("evtnb.txt", ofstream::app);
 
-int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process, int process_id, const char* outdir="temp_data", int PUWeight=1, int bTagSF=1, int JECUnc=0) {
+int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process, int process_id, const char* outdir="temp_data", int prefireWeight=1, int PUWeight=1, int electronVetoSF=1, int lowMassHggTriggerSF=1, int lowMassHggPreselSF=1, int phoMVAIDWP90SF=1, int bTagSF=1, int fnufUnc=0, int materialUnc=0, int PhoScaleUnc=0, int PhoSmearUnc=0, int JESUnc=0, int JERUnc=0) {
 // Event weights / scale factors:
 //  0: Do not apply
 //  1: Apply central value
-// +2: Apply positive variation
-// -2: Apply negative variation
+// +X: Apply positive variation X, X>1 
+// -X: Apply negative variation X, X>1 
 
   float factor = 1.0;
   float lumi = 1.0;
@@ -116,7 +113,11 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   gconf.nanoAOD_ver = 9;
   gconf.GetConfigs(year.Atoi());
   lumi = gconf.lumi;
-  if (year == "2018") lumi = 59.8; //synchronizing with HiggsDNA
+  if (year == "2018") lumi = 54.5;
+  if (year == "2017") lumi = 41.5;
+  if (year == "2016APV") lumi = 19.5;
+  if (year == "2016nonAPV") lumi = 16.8;
+  // FIXME: Use high mass triggers for high mass points? => Full luminosity
 
   // Golden JSON files
   if ( !isMC ) {
@@ -145,22 +146,22 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   H1(LeadPhoton_sieie, 20, 0, 0.05, "");
   H1(LeadPhoton_pfPhoIso03, 20, 0, 10, "");
   H1(LeadPhoton_chargedHadronIso, 20, 0, 10, "");
-  //H1(LeadPhoton_trkSumPtHollowConeDR03, 20, 0, 10, ""); // To be readded
+  H1(LeadPhoton_trkSumPtHollowConeDR03, 20, 0, 10, "");
   H1(SubleadPhoton_sieie, 20, 0, 0.05, "");
   H1(SubleadPhoton_pfPhoIso03, 20, 0, 10, "");
   H1(SubleadPhoton_chargedHadronIso, 20, 0, 10, "");
-  //H1(SubleadPhoton_trkSumPtHollowConeDR03, 20, 0, 10, ""); // To be readded
+  H1(SubleadPhoton_trkSumPtHollowConeDR03, 20, 0, 10, "");
 
 
   // Variables for output branches
   float xcand_pt, xcand_eta, xcand_phi, xcand_mass;
 
-  float LeadPhoton_pt, LeadPhoton_eta, LeadPhoton_phi, LeadPhoton_mvaID; // LeadPhoton_mass 
-  bool LeadPhoton_pixelSeed, SubleadPhoton_pixelSeed;
-  float SubleadPhoton_pt, SubleadPhoton_eta, SubleadPhoton_phi, SubleadPhoton_mvaID; // SubleadPhoton_mass
+  float LeadPhoton_pt, LeadPhoton_eta, LeadPhoton_phi, LeadPhoton_mvaID;
+  float SubleadPhoton_pt, SubleadPhoton_eta, SubleadPhoton_phi, SubleadPhoton_mvaID;
   float Diphoton_pt, Diphoton_eta, Diphoton_phi, Diphoton_mass, Diphoton_pt_mgg, Diphoton_dR;
-  float LeadPhoton_sieie, LeadPhoton_pfPhoIso03, LeadPhoton_chargedHadronIso, LeadPhoton_r9; // LeadPhoton_trkSumPtHollowConeDR03 
-  float SubleadPhoton_sieie, SubleadPhoton_pfPhoIso03, SubleadPhoton_chargedHadronIso, SubleadPhoton_r9; // SubleadPhoton_trkSumPtHollowConeDR03
+  float LeadPhoton_sieie, LeadPhoton_pfPhoIso03, LeadPhoton_chargedHadronIso, LeadPhoton_r9, LeadPhoton_trkSumPtHollowConeDR03;
+  float SubleadPhoton_sieie, SubleadPhoton_pfPhoIso03, SubleadPhoton_chargedHadronIso, SubleadPhoton_r9, SubleadPhoton_trkSumPtHollowConeDR03;
+  bool LeadPhoton_pixelSeed, SubleadPhoton_pixelSeed;
 
   int n_jets;
   float dijet_lead_pt, dijet_lead_eta, dijet_lead_phi, dijet_lead_mass, dijet_lead_btagDeepFlavB;
@@ -168,16 +169,16 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   float dijet_pt, dijet_eta, dijet_phi, dijet_mass, dijet_dR;
   float pfmet_pt, puppimet_pt;
   int year_out, eventNum;
-  float weight_central, weight_central_initial, weight_central_no_lumi;
+  float weight_central, weight_central_initial, weight_central_no_lumi, weight_beforeBTagSF, weight_afterBTagSF;
 
-  unsigned int LeadPhoton_genPartFlav = 0, SubleadPhoton_genPartFlav = 0;
-  int n_gen_matched_jets = 0, n_gen_matched_in_dijet = 0;
-  bool dijet_lead_gen_match=false, dijet_sublead_gen_match=false;
-  float GenHiggs_pt=-999, GenHiggs_eta=-999, GenHiggs_phi=-999, GenHiggs_mass=-999, GenHiggs_dR=-999;
-  float GenY_pt=-999, GenY_eta=-999, GenY_phi=-999, GenY_mass=-999, GenY_dR=-999;
-  float GenX_pt=-999, GenX_eta=-999, GenX_phi=-999, GenX_mass=-999, GenX_dR=-999;
-  float GenBFromHiggs_1_pt=-999, GenBFromHiggs_1_eta=-999, GenBFromHiggs_1_phi=-999, GenBFromHiggs_1_mass=-999;
-  float GenBFromHiggs_2_pt=-999, GenBFromHiggs_2_eta=-999, GenBFromHiggs_2_phi=-999, GenBFromHiggs_2_mass=-999;
+  unsigned int LeadPhoton_genPartFlav, SubleadPhoton_genPartFlav;
+  int n_gen_matched_jets, n_gen_matched_in_dijet;
+  bool dijet_lead_gen_match, dijet_sublead_gen_match;
+  float GenHiggs_pt, GenHiggs_eta, GenHiggs_phi, GenHiggs_mass, GenHiggs_dR;
+  float GenY_pt, GenY_eta, GenY_phi, GenY_mass, GenY_dR;
+  float GenX_pt, GenX_eta, GenX_phi, GenX_mass, GenX_dR;
+  float GenBFromHiggs_1_pt, GenBFromHiggs_1_eta, GenBFromHiggs_1_phi, GenBFromHiggs_1_mass;
+  float GenBFromHiggs_2_pt, GenBFromHiggs_2_eta, GenBFromHiggs_2_phi, GenBFromHiggs_2_mass;
 
 
   // Branch booking
@@ -189,24 +190,22 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   tout->Branch("LeadPhoton_pt",&LeadPhoton_pt,"LeadPhoton_pt/F");
   tout->Branch("LeadPhoton_eta",&LeadPhoton_eta,"LeadPhoton_eta/F");
   tout->Branch("LeadPhoton_phi",&LeadPhoton_phi,"LeadPhoton_phi/F");
-  //tout->Branch("LeadPhoton_mass",&LeadPhoton_mass,"LeadPhoton_mass/F");
   tout->Branch("LeadPhoton_pixelSeed",&LeadPhoton_pixelSeed,"LeadPhoton_pixelSeed/B");
   tout->Branch("LeadPhoton_r9",&LeadPhoton_r9,"LeadPhoton_r9/F");
   tout->Branch("LeadPhoton_sieie",&LeadPhoton_sieie,"LeadPhoton_sieie/F");
   tout->Branch("LeadPhoton_pfPhoIso03",&LeadPhoton_pfPhoIso03,"LeadPhoton_pfPhoIso03/F");
-  //tout->Branch("LeadPhoton_trkSumPtHollowConeDR03",&LeadPhoton_trkSumPtHollowConeDR03,"LeadPhoton_trkSumPtHollowConeDR03/F"); // To be readded
+  tout->Branch("LeadPhoton_trkSumPtHollowConeDR03",&LeadPhoton_trkSumPtHollowConeDR03,"LeadPhoton_trkSumPtHollowConeDR03/F");
   tout->Branch("LeadPhoton_chargedHadronIso",&LeadPhoton_chargedHadronIso,"LeadPhoton_chargedHadronIso/F");
   tout->Branch("LeadPhoton_mvaID",&LeadPhoton_mvaID,"LeadPhoton_mvaID/F");
 
   tout->Branch("SubleadPhoton_pt",&SubleadPhoton_pt,"SubleadPhoton_pt/F");
   tout->Branch("SubleadPhoton_eta",&SubleadPhoton_eta,"SubleadPhoton_eta/F");
   tout->Branch("SubleadPhoton_phi",&SubleadPhoton_phi,"SubleadPhoton_phi/F");
-  //tout->Branch("SubleadPhoton_mass",&SubleadPhoton_mass,"SubleadPhoton_mass/F");
   tout->Branch("SubleadPhoton_pixelSeed",&SubleadPhoton_pixelSeed,"SubleadPhoton_pixelSeed/B");  
   tout->Branch("SubleadPhoton_r9",&SubleadPhoton_r9,"SubleadPhoton_r9/F");
   tout->Branch("SubleadPhoton_sieie",&SubleadPhoton_sieie,"SubleadPhoton_sieie/F");
   tout->Branch("SubleadPhoton_pfPhoIso03",&SubleadPhoton_pfPhoIso03,"SubleadPhoton_pfPhoIso03/F");
-  //tout->Branch("SubleadPhoton_trkSumPtHollowConeDR03",&SubleadPhoton_trkSumPtHollowConeDR03,"SubleadPhoton_trkSumPtHollowConeDR03/F"); // To be readded
+  tout->Branch("SubleadPhoton_trkSumPtHollowConeDR03",&SubleadPhoton_trkSumPtHollowConeDR03,"SubleadPhoton_trkSumPtHollowConeDR03/F");
   tout->Branch("SubleadPhoton_chargedHadronIso",&SubleadPhoton_chargedHadronIso,"SubleadPhoton_chargedHadronIso/F");
   tout->Branch("SubleadPhoton_mvaID",&SubleadPhoton_mvaID,"SubleadPhoton_mvaID/F");
 
@@ -243,6 +242,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   tout->Branch("weight_central",&weight_central,"weight_central/F");
   tout->Branch("weight_central_initial",&weight_central_initial,"weight_central_initial/F");
   tout->Branch("weight_central_no_lumi",&weight_central_no_lumi,"weight_central_no_lumi/F");
+  tout->Branch("weight_beforeBTagSF",&weight_beforeBTagSF,"weight_beforeBTagSF/F");
+  tout->Branch("weight_afterBTagSF",&weight_afterBTagSF,"weight_afterBTagSF/F");
   tout->Branch("event",&eventNum,"event/I");
   tout->Branch("process_id",&process_id,"process_id/I");
 
@@ -251,37 +252,35 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   else if (year=="2018") year_out = 2018;
   else year_out = 0;
   
-  if (isMC) {
-    tout->Branch("LeadPhoton_genPartFlav",&LeadPhoton_genPartFlav,"LeadPhoton_genPartFlav/C");
-    tout->Branch("SubleadPhoton_genPartFlav",&SubleadPhoton_genPartFlav,"SubleadPhoton_genPartFlav/C");
-    tout->Branch("n_gen_matched_jets",&n_gen_matched_jets,"n_gen_matched_jets/I");
-    tout->Branch("n_gen_matched_in_dijet",&n_gen_matched_in_dijet,"n_gen_matched_in_dijet/I");
-    tout->Branch("dijet_lead_gen_match",&dijet_lead_gen_match,"dijet_lead_gen_match/B");
-    tout->Branch("dijet_sublead_gen_match",&dijet_sublead_gen_match,"dijet_sublead_gen_match/B");
-    tout->Branch("GenHiggs_pt",&GenHiggs_pt,"GenHiggs_pt/F");
-    tout->Branch("GenHiggs_eta",&GenHiggs_eta,"GenHiggs_eta/F");
-    tout->Branch("GenHiggs_phi",&GenHiggs_phi,"GenHiggs_phi/F");
-    tout->Branch("GenHiggs_mass",&GenHiggs_mass,"GenHiggs_mass/F");
-    tout->Branch("GenHiggs_dR",&GenHiggs_dR,"GenHiggs_dR/F");
-    tout->Branch("GenY_pt",&GenY_pt,"GenY_pt/F");
-    tout->Branch("GenY_eta",&GenY_eta,"GenY_eta/F");
-    tout->Branch("GenY_phi",&GenY_phi,"GenY_phi/F");
-    tout->Branch("GenY_mass",&GenY_mass,"GenY_mass/F");
-    tout->Branch("GenY_dR",&GenY_dR,"GenY_dR/F");
-    tout->Branch("GenX_pt",&GenX_pt,"GenX_pt/F");
-    tout->Branch("GenX_eta",&GenX_eta,"GenX_eta/F");
-    tout->Branch("GenX_phi",&GenX_phi,"GenX_phi/F");
-    tout->Branch("GenX_mass",&GenX_mass,"GenX_mass/F");
-    tout->Branch("GenX_dR",&GenX_dR,"GenX_dR/F");
-    tout->Branch("GenBFromHiggs_1_pt",&GenBFromHiggs_1_pt,"GenBFromHiggs_1_pt/F");
-    tout->Branch("GenBFromHiggs_1_eta",&GenBFromHiggs_1_eta,"GenBFromHiggs_1_eta/F");
-    tout->Branch("GenBFromHiggs_1_phi",&GenBFromHiggs_1_phi,"GenBFromHiggs_1_phi/F");
-    tout->Branch("GenBFromHiggs_1_mass",&GenBFromHiggs_1_mass,"GenBFromHiggs_1_mass/F");
-    tout->Branch("GenBFromHiggs_2_pt",&GenBFromHiggs_2_pt,"GenBFromHiggs_2_pt/F");
-    tout->Branch("GenBFromHiggs_2_eta",&GenBFromHiggs_2_eta,"GenBFromHiggs_2_eta/F");
-    tout->Branch("GenBFromHiggs_2_phi",&GenBFromHiggs_2_phi,"GenBFromHiggs_2_phi/F");
-    tout->Branch("GenBFromHiggs_2_mass",&GenBFromHiggs_2_mass,"GenBFromHiggs_2_mass/F");
-  }
+  tout->Branch("LeadPhoton_genPartFlav",&LeadPhoton_genPartFlav,"LeadPhoton_genPartFlav/I");
+  tout->Branch("SubleadPhoton_genPartFlav",&SubleadPhoton_genPartFlav,"SubleadPhoton_genPartFlav/I");
+  tout->Branch("n_gen_matched_jets",&n_gen_matched_jets,"n_gen_matched_jets/I");
+  tout->Branch("n_gen_matched_in_dijet",&n_gen_matched_in_dijet,"n_gen_matched_in_dijet/I");
+  tout->Branch("dijet_lead_gen_match",&dijet_lead_gen_match,"dijet_lead_gen_match/B");
+  tout->Branch("dijet_sublead_gen_match",&dijet_sublead_gen_match,"dijet_sublead_gen_match/B");
+  tout->Branch("GenHiggs_pt",&GenHiggs_pt,"GenHiggs_pt/F");
+  tout->Branch("GenHiggs_eta",&GenHiggs_eta,"GenHiggs_eta/F");
+  tout->Branch("GenHiggs_phi",&GenHiggs_phi,"GenHiggs_phi/F");
+  tout->Branch("GenHiggs_mass",&GenHiggs_mass,"GenHiggs_mass/F");
+  tout->Branch("GenHiggs_dR",&GenHiggs_dR,"GenHiggs_dR/F");
+  tout->Branch("GenY_pt",&GenY_pt,"GenY_pt/F");
+  tout->Branch("GenY_eta",&GenY_eta,"GenY_eta/F");
+  tout->Branch("GenY_phi",&GenY_phi,"GenY_phi/F");
+  tout->Branch("GenY_mass",&GenY_mass,"GenY_mass/F");
+  tout->Branch("GenY_dR",&GenY_dR,"GenY_dR/F");
+  tout->Branch("GenX_pt",&GenX_pt,"GenX_pt/F");
+  tout->Branch("GenX_eta",&GenX_eta,"GenX_eta/F");
+  tout->Branch("GenX_phi",&GenX_phi,"GenX_phi/F");
+  tout->Branch("GenX_mass",&GenX_mass,"GenX_mass/F");
+  tout->Branch("GenX_dR",&GenX_dR,"GenX_dR/F");
+  tout->Branch("GenBFromHiggs_1_pt",&GenBFromHiggs_1_pt,"GenBFromHiggs_1_pt/F");
+  tout->Branch("GenBFromHiggs_1_eta",&GenBFromHiggs_1_eta,"GenBFromHiggs_1_eta/F");
+  tout->Branch("GenBFromHiggs_1_phi",&GenBFromHiggs_1_phi,"GenBFromHiggs_1_phi/F");
+  tout->Branch("GenBFromHiggs_1_mass",&GenBFromHiggs_1_mass,"GenBFromHiggs_1_mass/F");
+  tout->Branch("GenBFromHiggs_2_pt",&GenBFromHiggs_2_pt,"GenBFromHiggs_2_pt/F");
+  tout->Branch("GenBFromHiggs_2_eta",&GenBFromHiggs_2_eta,"GenBFromHiggs_2_eta/F");
+  tout->Branch("GenBFromHiggs_2_phi",&GenBFromHiggs_2_phi,"GenBFromHiggs_2_phi/F");
+  tout->Branch("GenBFromHiggs_2_mass",&GenBFromHiggs_2_mass,"GenBFromHiggs_2_mass/F");
 
 
   // Define histo info maps
@@ -295,9 +294,13 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   H1(cutflow,20,0,20,"");
   H1(weight,1,0,1,"");
   H1(weight_full,1,0,1,"");
+  H1(weight_beforeBTagSF,1,0,1,"");
+  H1(weight_afterBTagSF,1,0,1,"");
 
-
-  //if ( PUWeight!=0 ) set_puWeights(); // FIXME to be enabled later?
+  if ( electronVetoSF != 0) electronVetoSF::set_electronVetoSF();
+  if ( lowMassHggTriggerSF != 0) lowMassHggTriggerSF::set_lowMassHggTriggerSF();
+  if ( lowMassHggPreselSF != 0) lowMassHggPreselSF::set_lowMassHggPreselSF();
+  if ( phoMVAIDWP90SF != 0) phoMVAIDWP90SF::set_phoMVAIDWP90SF();
 
   int nEventsTotal = 0;
   int nDuplicates = 0;
@@ -324,24 +327,51 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       nEventsTotal++;
       bar.progress(nEventsTotal, nEventsChain);
 
+      //initialize variables in each event loop
+      xcand_pt=-999, xcand_eta=-999, xcand_phi=-999, xcand_mass=-999;
+
+      LeadPhoton_pt=-999, LeadPhoton_eta=-999, LeadPhoton_phi=-999, LeadPhoton_mvaID=-999;
+      SubleadPhoton_pt=-999, SubleadPhoton_eta=-999, SubleadPhoton_phi=-999, SubleadPhoton_mvaID=-999;
+      Diphoton_pt=-999, Diphoton_eta=-999, Diphoton_phi=-999, Diphoton_mass=-999, Diphoton_pt_mgg=-999, Diphoton_dR=-999;
+      LeadPhoton_sieie=-999, LeadPhoton_pfPhoIso03=-999, LeadPhoton_chargedHadronIso=-999, LeadPhoton_r9=-999, LeadPhoton_trkSumPtHollowConeDR03=-999;
+      SubleadPhoton_sieie=-999, SubleadPhoton_pfPhoIso03=-999, SubleadPhoton_chargedHadronIso=-999, SubleadPhoton_r9=-999, SubleadPhoton_trkSumPtHollowConeDR03=-999;
+      LeadPhoton_pixelSeed=true, SubleadPhoton_pixelSeed=true;
+
+      n_jets=-1;
+      dijet_lead_pt=-999, dijet_lead_eta=-999, dijet_lead_phi=-999, dijet_lead_mass=-999, dijet_lead_btagDeepFlavB=-999;
+      dijet_sublead_pt=-999, dijet_sublead_eta=-999, dijet_sublead_phi=-999, dijet_sublead_mass=-999, dijet_sublead_btagDeepFlavB=-999;
+      dijet_pt=-999, dijet_eta=-999, dijet_phi=-999, dijet_mass=-999, dijet_dR=-999;
+      pfmet_pt=-999, puppimet_pt=-999;
+      eventNum=0;
+      weight_central=1.0, weight_central_initial=1.0, weight_central_no_lumi=1.0, weight_beforeBTagSF=1.0, weight_afterBTagSF=1.0;
+
+      LeadPhoton_genPartFlav=0; SubleadPhoton_genPartFlav=0;
+      n_gen_matched_jets=0; n_gen_matched_in_dijet=0;
+      dijet_lead_gen_match=false; dijet_sublead_gen_match=false;
+      GenHiggs_pt=-999; GenHiggs_eta=-999; GenHiggs_phi=-999; GenHiggs_mass=-999; GenHiggs_dR=-999;
+      GenY_pt=-999; GenY_eta=-999; GenY_phi=-999; GenY_mass=-999; GenY_dR=-999;
+      GenX_pt=-999; GenX_eta=-999; GenX_phi=-999; GenX_mass=-999; GenX_dR=-999;
+      GenBFromHiggs_1_pt=-999; GenBFromHiggs_1_eta=-999; GenBFromHiggs_1_phi=-999; GenBFromHiggs_1_mass=-999;
+      GenBFromHiggs_2_pt=-999; GenBFromHiggs_2_eta=-999; GenBFromHiggs_2_phi=-999; GenBFromHiggs_2_mass=-999;
+
       float weight = 1.0;
       if ( isMC ) {
         weight = nt.genWeight();
+
+        // Apply PreFiring weight
+        if ( prefireWeight!=0 ) {
+          if ( prefireWeight==1  ) weight *= nt.L1PreFiringWeight_ECAL_Nom();
+          if ( prefireWeight==2  ) weight *= nt.L1PreFiringWeight_ECAL_Up();
+          if ( prefireWeight==-2 ) weight *= nt.L1PreFiringWeight_ECAL_Dn();
+        }
         //if(removeSpikes && weight*factor>1e2) continue; //comment out for synchronizing
 
-        // Apply PU reweight // FIXME to be enabled later?
-/*        
+        // Apply PU weight
         if ( PUWeight!=0 ) {
-          unsigned int nTrueInt = nt.Pileup_nTrueInt();
-          TString whichPUWeight = "central";
-          if ( PUWeight==2 ) whichPUWeight = "up";
-          else if ( PUWeight==-2 ) whichPUWeight = "down";
-          TString puyear = year;
-          if ( useOnlyRun2018B ) puyear = "2018B";
-          weight *= get_puWeight(nTrueInt, puyear, whichPUWeight);
-          if (event <  100) cout << "genWeight after PU reWeight is: " << weight << endl;
+          if ( PUWeight==1  ) weight *= nt.puWeight();
+          if ( PUWeight==2  ) weight *= nt.puWeightUp();
+          if ( PUWeight==-2 ) weight *= nt.puWeightDown();
         }
-*/        
       }
 
       h_weight_full->Fill(0.5, weight*factor);
@@ -367,23 +397,22 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
 
       // HLT selection
-      // HLT selection not applied in MC for synchronizing (same as HiggsDNA) - FIXME: To be applied later
-      if (!isMC){
-        if ( (year=="2016nonAPV" || year=="2016APV") &&
-            !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0)
-              || (tree->GetBranch("HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0) ) ) continue;
-        if ( (year=="2017") &&
-            !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55() : 0)  )  ) continue;
-        if ( (year=="2018") &&
-            !( (tree->GetBranch("HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto") ? nt.HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto() : 0) ) ) continue;
-      }
+      if ( (year=="2016nonAPV" || year=="2016APV") &&
+          !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0)
+            || (tree->GetBranch("HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55") ? nt.HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55() : 0) ) ) continue;
+      if ( (year=="2017") &&
+          !( (tree->GetBranch("HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55") ? nt.HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_PixelVeto_Mass55() : 0)  )  ) continue;
+      if ( (year=="2018") &&
+          !( (tree->GetBranch("HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto") ? nt.HLT_Diphoton30_18_R9IdL_AND_HE_AND_IsoCaloId_NoPixelVeto() : 0) ) ) continue;
 
 
       // Object selection
-      Photons photons = getPhotons();
+      Photons photons;
       if (isMC) {
-        for (auto pho : photons)
-          pho.setGenPartFlav(pho.idx());
+        photons = getPhotons(year, fnufUnc, materialUnc, PhoScaleUnc, PhoSmearUnc);
+      }
+      else {
+        photons = getPhotons(year, 0, 0, 0, 0);
       }
       DiPhotons diphotons = DiPhotonPreselection(photons);
 
@@ -392,16 +421,18 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       DiPhoton selectedDiPhoton = diphotons[0];
       Photons selectedPhotons={selectedDiPhoton.leadPho, selectedDiPhoton.subleadPho};
 
-      LeadPhoton_mvaID = selectedDiPhoton.leadPho.mvaID();
-      SubleadPhoton_mvaID = selectedDiPhoton.subleadPho.mvaID();
-      if ( !(SubleadPhoton_mvaID>-0.7 && LeadPhoton_mvaID>-0.7) ) continue;
+      // Select photons passing the photon MVA ID WP 90
+      if ( !( (fabs(selectedDiPhoton.leadPho.eta())<1.442 ? selectedDiPhoton.leadPho.mvaID()>-0.02 : selectedDiPhoton.leadPho.mvaID()>-0.26) && \
+              (fabs(selectedDiPhoton.subleadPho.eta())<1.442 ? selectedDiPhoton.subleadPho.mvaID()>-0.02 : selectedDiPhoton.subleadPho.mvaID()>-0.26) ) ) continue;
 
       Electrons electrons = getElectrons(selectedPhotons);
       Muons muons = getMuons(selectedPhotons);
       if (electrons.size() != 0 ) continue; 
       if (muons.size() != 0 ) continue; 
 
-      Jets jets = getJets(selectedPhotons);
+      Jets jets;
+      if (isMC) jets = getJets(selectedPhotons, JESUnc, JERUnc);
+      else jets = getJets(selectedPhotons, 0, 0);
       if (jets.size() < 2) continue; 
 
       DiJets dijets = DiJetPreselection(jets);
@@ -409,6 +440,126 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
       if (dijets[0].p4.M()<50) continue;
 
+      if (isMC) {
+        // Apply electron veto SF
+        if ( electronVetoSF!=0 ) {
+          if ( electronVetoSF==1  ) weight *= electronVetoSF::get_electronVetoSF(selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), year, "central")*electronVetoSF::get_electronVetoSF(selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), year, "central");
+          if ( electronVetoSF==2  ) weight *= electronVetoSF::get_electronVetoSF(selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), year, "up")*electronVetoSF::get_electronVetoSF(selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), year, "up");
+          if ( electronVetoSF==-2 ) weight *= electronVetoSF::get_electronVetoSF(selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), year, "down")*electronVetoSF::get_electronVetoSF(selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), year, "down");
+        }
+
+        // Apply low mass trigger SF
+        if ( lowMassHggTriggerSF!=0 ) {
+          bool leadEBHiR9=false, subleadEBHiR9=false;
+          if ( year=="2016nonAPV" || year=="2016APV" ) {
+            leadEBHiR9 = fabs(selectedDiPhoton.leadPho.eta()) < 1.5 && selectedDiPhoton.leadPho.r9() > 0.85 && fabs(selectedDiPhoton.subleadPho.eta()) < 1.5;
+            subleadEBHiR9 = fabs(selectedDiPhoton.subleadPho.eta()) < 1.5 && selectedDiPhoton.subleadPho.r9() > 0.85 && fabs(selectedDiPhoton.leadPho.eta()) < 1.5;
+          }
+          if ( lowMassHggTriggerSF==1  ) weight *= lowMassHggTriggerSF::get_lowMassHggTriggerSF(selectedDiPhoton.leadPho.pt(), selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), "Lead", leadEBHiR9, year, "central")*lowMassHggTriggerSF::get_lowMassHggTriggerSF(selectedDiPhoton.subleadPho.pt(), selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), "Sublead", subleadEBHiR9, year, "central");
+          if ( lowMassHggTriggerSF==2  ) weight *= lowMassHggTriggerSF::get_lowMassHggTriggerSF(selectedDiPhoton.leadPho.pt(), selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), "Lead", leadEBHiR9, year, "up")*lowMassHggTriggerSF::get_lowMassHggTriggerSF(selectedDiPhoton.subleadPho.pt(), selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), "Sublead", subleadEBHiR9, year, "up");
+          if ( lowMassHggTriggerSF==-2 ) weight *= lowMassHggTriggerSF::get_lowMassHggTriggerSF(selectedDiPhoton.leadPho.pt(), selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), "Lead", leadEBHiR9, year, "down")*lowMassHggTriggerSF::get_lowMassHggTriggerSF(selectedDiPhoton.subleadPho.pt(), selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), "Sublead", subleadEBHiR9, year, "down");
+        }
+
+        // Apply low mass preselection SF
+        if ( lowMassHggPreselSF!=0 ) {
+          if ( lowMassHggPreselSF==1  ) weight *= lowMassHggPreselSF::get_lowMassHggPreselSF(selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), year, "central")*lowMassHggPreselSF::get_lowMassHggPreselSF(selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), year, "central");
+          if ( lowMassHggPreselSF==2  ) weight *= lowMassHggPreselSF::get_lowMassHggPreselSF(selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), year, "up")*lowMassHggPreselSF::get_lowMassHggPreselSF(selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), year, "up");
+          if ( lowMassHggPreselSF==-2 ) weight *= lowMassHggPreselSF::get_lowMassHggPreselSF(selectedDiPhoton.leadPho.eta(), selectedDiPhoton.leadPho.r9(), year, "down")*lowMassHggPreselSF::get_lowMassHggPreselSF(selectedDiPhoton.subleadPho.eta(), selectedDiPhoton.subleadPho.r9(), year, "down");
+        }
+
+        // Apply photon MVA ID WP 90 SF
+        if ( phoMVAIDWP90SF!=0 ) {
+          if ( phoMVAIDWP90SF==1  ) weight *= phoMVAIDWP90SF::get_phoMVAIDWP90SF(selectedDiPhoton.leadPho.pt(), selectedDiPhoton.leadPho.eta(), year, "central")*phoMVAIDWP90SF::get_phoMVAIDWP90SF(selectedDiPhoton.subleadPho.pt(), selectedDiPhoton.subleadPho.eta(), year, "central");
+          if ( phoMVAIDWP90SF==2  ) weight *= phoMVAIDWP90SF::get_phoMVAIDWP90SF(selectedDiPhoton.leadPho.pt(), selectedDiPhoton.leadPho.eta(), year, "up")*phoMVAIDWP90SF::get_phoMVAIDWP90SF(selectedDiPhoton.subleadPho.pt(), selectedDiPhoton.subleadPho.eta(), year, "up");
+          if ( phoMVAIDWP90SF==-2 ) weight *= phoMVAIDWP90SF::get_phoMVAIDWP90SF(selectedDiPhoton.leadPho.pt(), selectedDiPhoton.leadPho.eta(), year, "down")*phoMVAIDWP90SF::get_phoMVAIDWP90SF(selectedDiPhoton.subleadPho.pt(), selectedDiPhoton.subleadPho.eta(), year, "down");
+        }
+
+        // Apply bTagSF and get the weights before and after the application to normalize post-preselection
+        if ( bTagSF!=0 ) {
+          float leadJetBTagSF, subleadJetBTagSF;
+          if ( bTagSF==1 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape();
+          }
+          if ( bTagSF==2 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_up_hf();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_up_hf();
+          }
+          if ( bTagSF==-2 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_down_hf();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_down_hf();
+          }
+          if ( bTagSF==3 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_up_hfstats1();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_up_hfstats1();
+          }
+          if ( bTagSF==-3 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_down_hfstats1();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_down_hfstats1();
+          }
+          if ( bTagSF==4 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_up_hfstats2();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_up_hfstats2();
+          }
+          if ( bTagSF==-4 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_down_hfstats2();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_down_hfstats2();
+          }
+          if ( bTagSF==5 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_up_lf();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_up_lf();
+          }
+          if ( bTagSF==-5 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_down_lf();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_down_lf();
+          }
+          if ( bTagSF==6 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_up_lfstats1();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_up_lfstats1();
+          }
+          if ( bTagSF==-6 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_down_lfstats1();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_down_lfstats1();
+          }
+          if ( bTagSF==7 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_up_lfstats2();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_up_lfstats2();
+          }
+          if ( bTagSF==-7 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_down_lfstats2();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_down_lfstats2();
+          }
+          if ( bTagSF==8 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_up_jes();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_up_jes();
+          }
+          if ( bTagSF==-8 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_down_jes();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_down_jes();
+          }
+          if ( bTagSF==9 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_up_cferr1();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_up_cferr1();
+          }
+          if ( bTagSF==-9 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_down_cferr1();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_down_cferr1();
+          }
+          if ( bTagSF==10 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_up_cferr2();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_up_cferr2();
+          }
+          if ( bTagSF==-10 ) {
+            leadJetBTagSF = selectedDiJet.leadJet.btagSF_deepjet_shape_down_cferr2();
+            subleadJetBTagSF = selectedDiJet.subleadJet.btagSF_deepjet_shape_down_cferr2();
+          }
+          weight_beforeBTagSF = weight;
+          h_weight_beforeBTagSF->Fill(0.5, weight);
+          weight *= leadJetBTagSF * subleadJetBTagSF;
+          weight_afterBTagSF = weight;
+          h_weight_afterBTagSF->Fill(0.5, weight);
+        }
+      }
 
       // Setting output variables
       TLorentzVector x_cand = selectedDiPhoton.p4 + selectedDiJet.p4;
@@ -420,24 +571,24 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       LeadPhoton_pt = selectedDiPhoton.leadPho.pt();
       LeadPhoton_eta = selectedDiPhoton.leadPho.eta();
       LeadPhoton_phi = selectedDiPhoton.leadPho.phi();
-      //LeadPhoton_mass = selectedDiPhoton.leadPho.mass();
       LeadPhoton_r9 = selectedDiPhoton.leadPho.r9();
       LeadPhoton_pixelSeed = selectedDiPhoton.leadPho.pixelSeed();
       LeadPhoton_sieie = selectedDiPhoton.leadPho.sieie();
       LeadPhoton_pfPhoIso03 = selectedDiPhoton.leadPho.phoIso();
-      //LeadPhoton_trkSumPtHollowConeDR03 = selectedDiPhoton.leadPho.trkIso(); // To be readded
+      LeadPhoton_trkSumPtHollowConeDR03 = selectedDiPhoton.leadPho.trkIso();
       LeadPhoton_chargedHadronIso = selectedDiPhoton.leadPho.chargedHadIso();
+      LeadPhoton_mvaID = selectedDiPhoton.leadPho.mvaID();
 
       SubleadPhoton_pt = selectedDiPhoton.subleadPho.pt();
       SubleadPhoton_eta = selectedDiPhoton.subleadPho.eta();
       SubleadPhoton_phi = selectedDiPhoton.subleadPho.phi();
-      //SubleadPhoton_mass = selectedDiPhoton.subleadPho.mass();
       SubleadPhoton_r9 = selectedDiPhoton.subleadPho.r9();
       SubleadPhoton_pixelSeed = selectedDiPhoton.subleadPho.pixelSeed();
       SubleadPhoton_sieie = selectedDiPhoton.subleadPho.sieie();
       SubleadPhoton_pfPhoIso03 = selectedDiPhoton.subleadPho.phoIso();
-      //SubleadPhoton_trkSumPtHollowConeDR03 = selectedDiPhoton.subleadPho.trkIso(); // To be readded
+      SubleadPhoton_trkSumPtHollowConeDR03 = selectedDiPhoton.subleadPho.trkIso();
       SubleadPhoton_chargedHadronIso = selectedDiPhoton.subleadPho.chargedHadIso();
+      SubleadPhoton_mvaID = selectedDiPhoton.subleadPho.mvaID();
 
       Diphoton_pt = selectedDiPhoton.p4.Pt();
       Diphoton_eta = selectedDiPhoton.p4.Eta();
@@ -472,43 +623,49 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
       count_test++;
 
-      // Gen info - FIXME: Doesn't work because all if-statements are trivially false
-      if (isMC) {
-        LeadPhoton_genPartFlav = selectedDiPhoton.leadPho.genPartFlav();
-        SubleadPhoton_genPartFlav = selectedDiPhoton.subleadPho.genPartFlav();
-
+      if (isMC){
+        LeadPhoton_genPartFlav = int(selectedDiPhoton.leadPho.genPartFlav());
+        SubleadPhoton_genPartFlav = int(selectedDiPhoton.subleadPho.genPartFlav());
         TLorentzVector GenHiggs, GenX, GenY;
         GenParts genparts = getGenParts();
         vector<TLorentzVector> gen_child_xyh, gen_child_ygg, gen_child_hbb;
-        for (int igenpart=0; igenpart<genparts.size(); igenpart++) {
-          if (genparts[igenpart].isxyh()) {GenX = genparts[igenpart].mother_p4(); gen_child_xyh.push_back(genparts[igenpart].p4());}
-          if (genparts[igenpart].isygg()) {GenY = genparts[igenpart].mother_p4(); gen_child_ygg.push_back(genparts[igenpart].p4());}
-          if (genparts[igenpart].ishbb()) {GenHiggs = genparts[igenpart].mother_p4(); gen_child_hbb.push_back(genparts[igenpart].p4());}
-        }
-        TLorentzVector sort_GenPart;
-        //if (gen_child_xyh[0].Pt()<gen_child_xyh[1].Pt()) {sort_GenPart = gen_child_xyh[0]; gen_child_xyh[0]= gen_child_xyh[1]; gen_child_xyh[1] = sort_GenPart;}
-        //if (gen_child_ygg[0].Pt()<gen_child_ygg[1].Pt()) {sort_GenPart = gen_child_ygg[0]; gen_child_ygg[0]= gen_child_ygg[1]; gen_child_ygg[1] = sort_GenPart;}
-        if (!abs(GenX_pt+999)<0.0001) {
-          GenX_pt = GenX.Pt();
-          GenX_eta = GenX.Eta();
-          GenX_phi = GenX.Phi();
-          GenX_mass = GenX.M();
+        for (int igenpart=0; igenpart<genparts.size(); igenpart++)
+          {
+            if (genparts[igenpart].isxyh()) {
+              GenX = genparts[igenpart].mother_p4(); 
+              gen_child_xyh.push_back(genparts[igenpart].p4());
+              GenX_pt = GenX.Pt();
+              GenX_eta = GenX.Eta();
+              GenX_phi = GenX.Phi();
+              GenX_mass = GenX.M();
+            }
+            if (genparts[igenpart].isygg()) {
+              GenY = genparts[igenpart].mother_p4(); 
+              gen_child_ygg.push_back(genparts[igenpart].p4());
+              GenY_pt = GenY.Pt();
+              GenY_eta = GenY.Eta();
+              GenY_phi = GenY.Phi();
+              GenY_mass = GenY.M();
+            }
+            if (genparts[igenpart].ishbb()) {
+              GenHiggs = genparts[igenpart].mother_p4();
+              gen_child_hbb.push_back(genparts[igenpart].p4());
+              GenHiggs_pt = GenHiggs.Pt();
+              GenHiggs_eta = GenHiggs.Eta();
+              GenHiggs_phi = GenHiggs.Phi();
+              GenHiggs_mass = GenHiggs.M();
+            }
+          }
+        if (!abs(GenX_pt+999)<0.0001){
           GenX_dR = gen_child_xyh[0].DeltaR(gen_child_xyh[1]);
         }
-        if (!abs(GenY_pt+999)<0.0001) {
-          GenY_pt = GenY.Pt();
-          GenY_eta = GenY.Eta();
-          GenY_phi = GenY.Phi();
-          GenY_mass = GenY.M();
+        if (!abs(GenY_pt+999)<0.0001){
           GenY_dR = gen_child_ygg[0].DeltaR(gen_child_ygg[1]);
         }
-        if (!abs(GenHiggs_pt+999)<0.0001) {
-          GenHiggs_pt = GenHiggs.Pt();
-          GenHiggs_eta = GenHiggs.Eta();
-          GenHiggs_phi = GenHiggs.Phi();
-          GenHiggs_mass = GenHiggs.M();
+        if (!abs(GenHiggs_pt+999)<0.0001){
           GenHiggs_dR = gen_child_hbb[0].DeltaR(gen_child_hbb[1]);
-          if (gen_child_hbb[0].Pt()<gen_child_hbb[1].Pt()) {sort_GenPart = gen_child_hbb[0]; gen_child_hbb[0]= gen_child_hbb[1]; gen_child_hbb[1] = sort_GenPart;}
+          TLorentzVector gen_child_hbb_temp;
+          if (gen_child_hbb[0].Pt()<gen_child_hbb[1].Pt()) {gen_child_hbb_temp = gen_child_hbb[0]; gen_child_hbb[0]= gen_child_hbb[1]; gen_child_hbb[1] = gen_child_hbb_temp;}
           GenBFromHiggs_1_pt = gen_child_hbb[0].Pt();
           GenBFromHiggs_1_eta = gen_child_hbb[0].Eta();
           GenBFromHiggs_1_phi = gen_child_hbb[0].Phi();
@@ -519,23 +676,21 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
           GenBFromHiggs_2_mass = gen_child_hbb[1].M();
           if (selectedDiJet.leadJet.p4().DeltaR(gen_child_hbb[0])<=0.4 || selectedDiJet.leadJet.p4().DeltaR(gen_child_hbb[1])<=0.4) {dijet_lead_gen_match=true; n_gen_matched_in_dijet++;}
           if (selectedDiJet.subleadJet.p4().DeltaR(gen_child_hbb[0])<=0.4 || selectedDiJet.subleadJet.p4().DeltaR(gen_child_hbb[1])<=0.4) {dijet_sublead_gen_match=true; n_gen_matched_in_dijet++;}
-          for (int ijet=0; ijet<jets.size(); ijet++) {
+          for (int ijet=0; ijet<jets.size(); ijet++)
             if (jets[ijet].p4().DeltaR(gen_child_hbb[0])<=0.4 || jets[ijet].p4().DeltaR(gen_child_hbb[1])<=0.4)
               n_gen_matched_jets++;
-          }
         }
       }
-
 
       // Histo filling
       h_LeadPhoton_sieie->Fill(LeadPhoton_sieie);
       h_LeadPhoton_pfPhoIso03->Fill(LeadPhoton_pfPhoIso03);
       h_LeadPhoton_chargedHadronIso->Fill(LeadPhoton_chargedHadronIso);
-      //h_LeadPhoton_trkSumPtHollowConeDR03->Fill(LeadPhoton_trkSumPtHollowConeDR03); // To be readded
+      h_LeadPhoton_trkSumPtHollowConeDR03->Fill(LeadPhoton_trkSumPtHollowConeDR03);
       h_SubleadPhoton_sieie->Fill(SubleadPhoton_sieie);
       h_SubleadPhoton_pfPhoIso03->Fill(SubleadPhoton_pfPhoIso03);
       h_SubleadPhoton_chargedHadronIso->Fill(SubleadPhoton_chargedHadronIso);
-      //h_SubleadPhoton_trkSumPtHollowConeDR03->Fill(SubleadPhoton_trkSumPtHollowConeDR03); // To be readded
+      h_SubleadPhoton_trkSumPtHollowConeDR03->Fill(SubleadPhoton_trkSumPtHollowConeDR03);
       h_weight->Fill(0.5, weight*factor);
 
       tout->Fill();
@@ -544,6 +699,10 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   } // File loop
     
   bar.finish();
+  if ( electronVetoSF != 0) electronVetoSF::reset_electronVetoSF();
+  if ( lowMassHggTriggerSF != 0) lowMassHggTriggerSF::reset_lowMassHggTriggerSF();
+  if ( lowMassHggPreselSF != 0) lowMassHggPreselSF::reset_lowMassHggPreselSF();
+  if ( phoMVAIDWP90SF != 0) phoMVAIDWP90SF::reset_phoMVAIDWP90SF();
   cout << "nTotal: " << h_weight_full->GetBinContent(1) << ", nPass: " << h_weight->GetBinContent(1) << ", eff: " << h_weight->GetBinContent(1)/h_weight_full->GetBinContent(1) << endl;
   cout << endl;
 

@@ -10,7 +10,7 @@ struct Photon {
         eta_ = nt.Photon_eta()[idx_];
         phi_ = nt.Photon_phi()[idx_];
         //mass_ = nt.Photon_mass()[idx_]; // Not in newest custom NanoAOD
-//        p4_ = nt.Photon_p4()[idx_]; need to convert to TLorentzVector to compute DeltaR later
+        //p4_ = nt.Photon_p4()[idx_]; need to convert to TLorentzVector to compute DeltaR later
         p4_.SetPtEtaPhiM(pt_, eta_, phi_, 0 );
         //id_ = nt.Photon_pdgId()[idx_]; // Not in newest custom NanoAOD
         r9_ = nt.Photon_r9()[idx_];
@@ -23,11 +23,18 @@ struct Photon {
         mvaID_ = nt.Photon_mvaID()[idx_];
         isScEtaEB_ = nt.Photon_isScEtaEB()[idx_];
         isScEtaEE_ = nt.Photon_isScEtaEE()[idx_];
-        //trkSumPtHollowConeDR03_ = nt.Photon_trkSumPtHollowConeDR03()[idx_]; // To be readded
+        trkSumPtHollowConeDR03_ = nt.Photon_trkSumPtHollowConeDR03()[idx_];
         //idlevel_ = whichPhotonLevel(id_, idx_);
+        try { pt_ScaleUp_ = nt.Photon_pt_ScaleUp()[idx_]; }
+        catch(const std::exception& e) { pt_ScaleUp_ = 1.0; }
+        try { pt_ScaleDown_ = nt.Photon_pt_ScaleDown()[idx_]; }
+        catch(const std::exception& e) { pt_ScaleDown_ = 1.0; }
+        dEsigmaUp_ = nt.Photon_dEsigmaUp()[idx_];
+        dEsigmaDown_ = nt.Photon_dEsigmaDown()[idx_];
         try { fixedGridRhoFastjetAll_ = nt.Rho_fixedGridRhoFastjetAll(); } catch(const std::exception& e) { fixedGridRhoFastjetAll_ = nt.fixedGridRhoFastjetAll(); }
+        try { genPartFlav_ = nt.Photon_genPartFlav()[idx_]; } catch(const std::exception& e) { genPartFlav_ = 0; }
     }
-    void setGenPartFlav(unsigned int idx) { genPartFlav_ = nt.Photon_genPartFlav()[idx_]; }
+    void setPt(float pt) { pt_ = pt; }
     //void set_idlevel(int idlevel) { idlevel_ = idlevel; }
     //int id() { return id_; } // Not in newest custom NanoAOD
     unsigned int idx() { return idx_; }
@@ -49,7 +56,11 @@ struct Photon {
     float perEvtRho() { return fixedGridRhoFastjetAll_; }
     float isScEtaEE() { return isScEtaEE_; }
     float isScEtaEB() { return isScEtaEB_; }
-    //float trkSumPtHollowConeDR03() { return trkSumPtHollowConeDR03_; } // To be readded
+    float trkSumPtHollowConeDR03() { return trkSumPtHollowConeDR03_; }
+    float pt_ScaleUp() { return pt_ScaleUp_; }
+    float pt_ScaleDown() { return pt_ScaleDown_; }
+    float dEsigmaUp() { return dEsigmaUp_; }
+    float dEsigmaDown() { return dEsigmaDown_; }
     unsigned char genPartFlav() { return genPartFlav_; }
 
   private:
@@ -69,15 +80,19 @@ struct Photon {
     bool eveto_ = 0.;
     bool pixelSeed_ = 0.;
     float mvaID_ = 0.;
-    float fixedGridRhoFastjetAll_ = 0.; // this variable is the same for each event
+    float fixedGridRhoFastjetAll_ = 0.;
     float isScEtaEB_ = 0;
     float isScEtaEE_ = 0;
-    //float trkSumPtHollowConeDR03_ = 0; // To be readded
+    float trkSumPtHollowConeDR03_ = 0;
+    float pt_ScaleUp_ = 0.;
+    float pt_ScaleDown_ = 0.;
+    float dEsigmaUp_ = 0.;
+    float dEsigmaDown_ = 0.;
     //int idlevel_ = SS::IDdefault;
     unsigned char genPartFlav_ = 0;
 };
 
-vector<Photon> getPhotons();
+vector<Photon> getPhotons(const TString year, const int fnufUnc, const int materialUnc, const int PhoScaleUnc, const int PhoSmearUnc);
 typedef std::vector<Photon> Photons;
 
 struct DiPhoton{
@@ -108,27 +123,5 @@ inline bool sortByPt(Photon &p1, Photon &p2)
 
 DiPhotons DiPhotonPreselection(Photons &photons); 
 bool UseLowR9Photon(Photon pho, bool isEB);
-/*
-SS::IDLevel whichLeptonLevel(int id, int idx);
 
-typedef std::pair<Lepton, Lepton> Hyp;
-typedef std::vector<Lepton> Leptons;
-
-std::ostream &operator<<(std::ostream &os, Lepton &lep) {
-    std::string lepstr = (abs(lep.id()) == 11) ? "Electron" : "Muon";
-    return os << "<" << lepstr << " id=" << std::showpos << setw(3) << lep.id() << std::noshowpos << ", idx=" << setw(2)
-              << lep.idx() << ", level=" << lep.idlevel() << ", (pT,eta)="
-              << "(" << lep.pt() << "," << lep.eta() << ")>";
-}
-template <typename T1, typename T2> std::ostream &operator<<(std::ostream &os, std::pair<T1, T2> &p) {
-    return os << "(" << p.first << ", " << p.second << ")";
-}
-
-vector<Lepton> getLeptons();
-std::tuple<int, int, float> getJetInfo(vector<Lepton> &leps, int variation = 0);
-std::pair<int, int> makesResonance(Leptons &leps, Lepton lep1, Lepton lep2, float mass, float window);
-std::pair<int, Hyp> getBestHyp(vector<Lepton> &leptons, bool verbose);
-bool isLeptonLevel(SS::IDLevel idlevel, int id, int idx);
-void dumpLeptonProperties(Lepton lep);
-*/
 #endif

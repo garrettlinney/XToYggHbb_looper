@@ -77,11 +77,21 @@ The output of your jobs will be found under `/ceph/cms/store/user/$USER/XToYggHb
 
 **To produce plots:**
 
-:construction: **WIP** :construction:
+The `python/tree_plotting` script has been added to produce plots from the trees containing the preselected events.
+Apart from the command line options, which can be shown by running `python python/tree_plotting -h`, some parameters are controlled from within the script:
+- The `samples` list contains the list of samples to run on.
+- The `weight` string can be used to multiplicatively scale the events.
+- The `cut` string is used to apply additional selections to the plots. The selection can be formed by (combinations of) existing branches, using C++ syntax.
+- The plots, which are created using the ROOT `TTree::Draw` as backend, are defined by:
+  - The `plotNames` list, which contains the (combination of) branches to be plotted. This is also the name of the plot.
+  - The `plotBins` dictionary which contains the binning definition of TH1 or TH2 of ROOT, either with fixed or variable binning.
+  - The `plotXTitles` dictionary which is the x(-y) axis(axes) title.
 
 **To produce cutflow table:**
 
-:construction: **WIP** :construction:
+A full cutflow table is still: :construction: **WIP** :construction:
+
+However, a final yield printer has been incorporated in the plotting script and can be run by enabling the `--yields` flag.
 
 ### Converting .root files to .parquet files
 
