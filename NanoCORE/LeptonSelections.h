@@ -7,6 +7,17 @@
 
 struct Electron {
     Electron(unsigned int idx = 0) : idx_(idx) {
+    if (idx==999) {
+        pt_ = -999;
+        eta_ = -999;
+        phi_ = -999;
+        dxy_ = -999;
+        dz_ = -999;
+        mvaFall17V2Iso_WP90_ = -999;
+        id_ = -999;
+        p4_.SetPtEtaPhiM(pt_, eta_, phi_, -999);
+    }
+    else {
         pt_ = nt.Electron_pt()[idx_];
         eta_ = nt.Electron_eta()[idx_];
         dxy_ = nt.Electron_dxy()[idx_];
@@ -15,6 +26,7 @@ struct Electron {
         phi_ = nt.Electron_phi()[idx_];
         id_ = nt.Electron_pdgId()[idx_];
         p4_.SetPtEtaPhiM(nt.Electron_pt()[idx_], nt.Electron_eta()[idx_], nt.Electron_phi()[idx_], nt.Electron_mass()[idx_]);
+    }
     }
     //void set_idlevel(int idlevel) { idlevel_ = idlevel; }
     int id() { return id_; }
@@ -45,6 +57,16 @@ typedef std::vector<Electron> Electrons;
 
 struct Muon {
     Muon(unsigned int idx = 0) : idx_(idx) {
+    if (idx==999) {
+        pt_ = -999;
+        eta_ = -999;
+        phi_ = -999;
+        dxy_ = -999;
+        dz_ = -999;
+        id_ = -999;
+        p4_.SetPtEtaPhiM(pt_, eta_, phi_, -999);
+    }
+    else {
         pt_ = nt.Muon_pt()[idx_];
         eta_ = nt.Muon_eta()[idx_];
         dxy_ = nt.Muon_dxy()[idx_];
@@ -55,6 +77,7 @@ struct Muon {
         mediumId_ = nt.Muon_mediumId()[idx_];
         pfRelIso03_all_ = nt.Muon_pfRelIso03_all()[idx_];
         p4_.SetPtEtaPhiM(nt.Muon_pt()[idx_], nt.Muon_eta()[idx_], nt.Muon_phi()[idx_], nt.Muon_mass()[idx_]);
+    }
     }
     //void set_idlevel(int idlevel) { idlevel_ = idlevel; }
     int id() { return id_; }

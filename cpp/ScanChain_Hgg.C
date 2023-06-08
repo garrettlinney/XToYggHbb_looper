@@ -162,6 +162,16 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   //float LeadPhoton_sieie, LeadPhoton_pfPhoIso03, LeadPhoton_chargedHadronIso, LeadPhoton_r9; // LeadPhoton_trkSumPtHollowConeDR03 
   //float SubleadPhoton_sieie, SubleadPhoton_pfPhoIso03, SubleadPhoton_chargedHadronIso, SubleadPhoton_r9; // SubleadPhoton_trkSumPtHollowConeDR03
 
+  int n_electrons, n_muons, electron_1_id, electron_2_id, electron_3_id, muon_1_id, muon_2_id, muon_3_id;
+
+  float electron_1_pt, electron_1_eta, electron_1_phi, electron_1_mass;
+  float electron_2_pt, electron_2_eta, electron_2_phi, electron_2_mass;
+  float electron_3_pt, electron_3_eta, electron_3_phi, electron_3_mass;
+
+  float muon_1_pt, muon_1_eta, muon_1_phi, muon_1_mass;
+  float muon_2_pt, muon_2_eta, muon_2_phi, muon_2_mass;
+  float muon_3_pt, muon_3_eta, muon_3_phi, muon_3_mass;
+
   int n_jets, jet_1_jetId, jet_2_jetId, jet_3_jetId;
   float jet_1_pt, jet_1_eta, jet_1_phi, jet_1_mass, jet_1_btagDeepFlavB;
   float jet_2_pt, jet_2_eta, jet_2_phi, jet_2_mass, jet_2_btagDeepFlavB;
@@ -220,6 +230,51 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   //tout->Branch("Diphoton_pt_mgg",&Diphoton_pt_mgg,"Diphoton_pt_mgg/F");
   //tout->Branch("Diphoton_dR",&Diphoton_dR,"Diphoton_dR/F");
 
+  // Electron vars
+  tout->Branch("n_electrons",&n_electrons,"n_electrons/I");  
+
+  tout->Branch("electron_1_id",&electron_1_id,"electron_1_id/I");  
+  tout->Branch("electron_2_id",&electron_2_id,"electron_2_id/I");  
+  tout->Branch("electron_3_id",&electron_3_id,"electron_3_id/I");  
+
+  tout->Branch("electron_1_pt",&electron_1_pt,"electron_1_pt/F");
+  tout->Branch("electron_1_eta",&electron_1_eta,"electron_1_eta/F");
+  tout->Branch("electron_1_phi",&electron_1_phi,"electron_1_phi/F");
+  tout->Branch("electron_1_mass",&electron_1_mass,"electron_1_mass/F");
+  
+  tout->Branch("electron_2_pt",&electron_2_pt,"electron_2_pt/F");
+  tout->Branch("electron_2_eta",&electron_2_eta,"electron_2_eta/F");
+  tout->Branch("electron_2_phi",&electron_2_phi,"electron_2_phi/F");
+  tout->Branch("electron_2_mass",&electron_2_mass,"electron_2_mass/F");
+ 
+  tout->Branch("electron_3_pt",&electron_3_pt,"electron_3_pt/F");
+  tout->Branch("electron_3_eta",&electron_3_eta,"electron_3_eta/F");
+  tout->Branch("electron_3_phi",&electron_3_phi,"electron_3_phi/F");
+  tout->Branch("electron_3_mass",&electron_3_mass,"electron_3_mass/F");
+
+  // Muon vars
+  tout->Branch("n_muons",&n_muons,"n_muons/I");  
+
+  tout->Branch("muon_1_id",&muon_1_id,"muon_1_id/I");  
+  tout->Branch("muon_2_id",&muon_2_id,"muon_2_id/I");  
+  tout->Branch("muon_3_id",&muon_3_id,"muon_3_id/I");  
+
+  tout->Branch("muon_1_pt",&muon_1_pt,"muon_1_pt/F");
+  tout->Branch("muon_1_eta",&muon_1_eta,"muon_1_eta/F");
+  tout->Branch("muon_1_phi",&muon_1_phi,"muon_1_phi/F");
+  tout->Branch("muon_1_mass",&muon_1_mass,"muon_1_mass/F");
+  
+  tout->Branch("muon_2_pt",&muon_2_pt,"muon_2_pt/F");
+  tout->Branch("muon_2_eta",&muon_2_eta,"muon_2_eta/F");
+  tout->Branch("muon_2_phi",&muon_2_phi,"muon_2_phi/F");
+  tout->Branch("muon_2_mass",&muon_2_mass,"muon_2_mass/F");
+ 
+  tout->Branch("muon_3_pt",&muon_3_pt,"muon_3_pt/F");
+  tout->Branch("muon_3_eta",&muon_3_eta,"muon_3_eta/F");
+  tout->Branch("muon_3_phi",&muon_3_phi,"muon_3_phi/F");
+  tout->Branch("muon_3_mass",&muon_3_mass,"muon_3_mass/F");
+
+  // Jet vars
   tout->Branch("n_jets",&n_jets,"n_jets/I");  
 
   tout->Branch("jet_1_jetId",&jet_1_jetId,"jet_1_jetId/I");  
@@ -472,6 +527,59 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       //Diphoton_pt_mgg = Diphoton_pt/Diphoton_mass;
       //Diphoton_dR = selectedDiPhoton.dR;
 
+      n_electrons = electrons.size();
+      n_muons = muons.size();
+
+      int want_electrons = 3;
+      if (n_electrons < want_electrons) { 
+        Electron dummy_electron = Electron(999);
+        for (int i = 0; i < (want_electrons - n_electrons); i++) {
+          electrons.push_back(dummy_electron);
+        }
+      }
+      electron_1_pt = electrons[0].p4().Pt();
+      electron_1_eta = electrons[0].p4().Eta();
+      electron_1_phi = electrons[0].p4().Phi();
+      electron_1_mass = electrons[0].p4().M();
+      electron_1_id = electrons[0].id();
+
+      electron_2_pt = electrons[1].p4().Pt();
+      electron_2_eta = electrons[1].p4().Eta();
+      electron_2_phi = electrons[1].p4().Phi();
+      electron_2_mass = electrons[1].p4().M();
+      electron_2_id = electrons[1].id();
+
+      electron_3_pt = electrons[2].p4().Pt();
+      electron_3_eta = electrons[2].p4().Eta();
+      electron_3_phi = electrons[2].p4().Phi();
+      electron_3_mass = electrons[2].p4().M();
+      electron_3_id = electrons[2].id();
+
+      int want_muons = 3;
+      if (n_muons < want_muons) { 
+        Muon dummy_muon = Muon(999);
+        for (int i = 0; i < (want_muons - n_muons); i++) {
+          muons.push_back(dummy_muon);
+        }
+      }
+      muon_1_pt = muons[0].p4().Pt();
+      muon_1_eta = muons[0].p4().Eta();
+      muon_1_phi = muons[0].p4().Phi();
+      muon_1_mass = muons[0].p4().M();
+      muon_1_id = muons[0].id();
+
+      muon_2_pt = muons[1].p4().Pt();
+      muon_2_eta = muons[1].p4().Eta();
+      muon_2_phi = muons[1].p4().Phi();
+      muon_2_mass = muons[1].p4().M();
+      muon_2_id = muons[1].id();
+
+      muon_3_pt = muons[2].p4().Pt();
+      muon_3_eta = muons[2].p4().Eta();
+      muon_3_phi = muons[2].p4().Phi();
+      muon_3_mass = muons[2].p4().M();
+      muon_3_id = muons[2].id();
+
       n_jets = jets.size();
       int want_jets = 3;
       if (n_jets < want_jets) { 
@@ -480,24 +588,24 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
           jets.push_back(dummy_jet);
         }
       }
-      jet_1_pt = jets[0].pt();
-      jet_1_mass = jets[0].mass();
-      jet_1_eta = jets[0].eta();
-      jet_1_phi = jets[0].phi();
+      jet_1_pt = jets[0].p4().Pt();
+      jet_1_eta = jets[0].p4().Eta();
+      jet_1_phi = jets[0].p4().Phi();
+      jet_1_mass = jets[0].p4().M();
       jet_1_jetId = jets[0].jetId();
       jet_1_btagDeepFlavB = jets[0].btagDeepFlavB();
 
-      jet_2_pt = jets[1].pt();
-      jet_2_mass = jets[1].mass();
-      jet_2_eta = jets[1].eta();
-      jet_2_phi = jets[1].phi();
+      jet_2_pt = jets[1].p4().Pt();
+      jet_2_eta = jets[1].p4().Eta();
+      jet_2_phi = jets[1].p4().Phi();
+      jet_2_mass = jets[1].p4().M();
       jet_2_jetId = jets[1].jetId();
       jet_2_btagDeepFlavB = jets[1].btagDeepFlavB();
 
-      jet_3_pt = jets[2].pt();
-      jet_3_mass = jets[2].mass();
-      jet_3_eta = jets[2].eta();
-      jet_3_phi = jets[2].phi();
+      jet_3_pt = jets[2].p4().Pt();
+      jet_3_eta = jets[2].p4().Eta();
+      jet_3_phi = jets[2].p4().Phi();
+      jet_3_mass = jets[2].p4().M();
       jet_3_jetId = jets[2].jetId();
       jet_3_btagDeepFlavB = jets[2].btagDeepFlavB();
 
