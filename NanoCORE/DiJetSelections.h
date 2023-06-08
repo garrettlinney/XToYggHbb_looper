@@ -7,22 +7,33 @@
 
 struct Jet {
     Jet(unsigned int idx = 0) : idx_(idx) {
-        try
-        {
-            pt_ = nt.Jet_pt_nom()[idx_];
+        if (idx==999) {
+            pt_ = -999;
+            mass_ = -999;
+            eta_ = -999;
+            phi_ = -999;
+            jetId_ = -999;
+            p4_.SetPtEtaPhiM(pt_, eta_, phi_, mass_);
+            btagDeepFlavB_ = -999;
         }
-        catch(const std::exception& e)
-        {
-            pt_ = nt.Jet_pt()[idx_];
+        else{
+            try
+            {
+                pt_ = nt.Jet_pt_nom()[idx_];
+            }
+            catch(const std::exception& e)
+            {
+                pt_ = nt.Jet_pt()[idx_];
+            }
+            
+//            pt_ = nt.Jet_pt_nom()[idx_] ? nt.Jet_pt_nom()[idx_] : nt.Jet_pt()[idx_];
+            mass_ = nt.Jet_mass()[idx_];
+            eta_ = nt.Jet_eta()[idx_];
+            phi_ = nt.Jet_phi()[idx_];
+            jetId_ = nt.Jet_jetId()[idx_];
+            p4_.SetPtEtaPhiM(pt_, nt.Jet_eta()[idx_], nt.Jet_phi()[idx_], nt.Jet_mass()[idx_]);
+            btagDeepFlavB_ = nt.Jet_btagDeepFlavB()[idx_];
         }
-        
-//        pt_ = nt.Jet_pt_nom()[idx_] ? nt.Jet_pt_nom()[idx_] : nt.Jet_pt()[idx_];
-        mass_ = nt.Jet_mass()[idx_];
-        eta_ = nt.Jet_eta()[idx_];
-        phi_ = nt.Jet_phi()[idx_];
-        jetId_ = nt.Jet_jetId()[idx_];
-        p4_.SetPtEtaPhiM(pt_, nt.Jet_eta()[idx_], nt.Jet_phi()[idx_], nt.Jet_mass()[idx_]);
-        btagDeepFlavB_ = nt.Jet_btagDeepFlavB()[idx_];
     }
     //void set_idlevel(int idlevel) { idlevel_ = idlevel; }
     int id() { return id_; }
@@ -47,7 +58,8 @@ struct Jet {
     float btagDeepFlavB_ = 0;
 };
 
-vector<Jet> getJets(Photons photons);
+vector<Jet> getJets();
+//vector<Jet> getJets(Photons photons);
 typedef std::vector<Jet> Jets;
 
 struct DiJet{

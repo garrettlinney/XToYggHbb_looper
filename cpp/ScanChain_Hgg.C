@@ -153,88 +153,114 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
 
   // Variables for output branches
-  float xcand_pt, xcand_eta, xcand_phi, xcand_mass;
+  //float xcand_pt, xcand_eta, xcand_phi, xcand_mass;
 
-  float LeadPhoton_pt, LeadPhoton_eta, LeadPhoton_phi, LeadPhoton_mvaID; // LeadPhoton_mass 
-  bool LeadPhoton_pixelSeed, SubleadPhoton_pixelSeed;
-  float SubleadPhoton_pt, SubleadPhoton_eta, SubleadPhoton_phi, SubleadPhoton_mvaID; // SubleadPhoton_mass
-  float Diphoton_pt, Diphoton_eta, Diphoton_phi, Diphoton_mass, Diphoton_pt_mgg, Diphoton_dR;
-  float LeadPhoton_sieie, LeadPhoton_pfPhoIso03, LeadPhoton_chargedHadronIso, LeadPhoton_r9; // LeadPhoton_trkSumPtHollowConeDR03 
-  float SubleadPhoton_sieie, SubleadPhoton_pfPhoIso03, SubleadPhoton_chargedHadronIso, SubleadPhoton_r9; // SubleadPhoton_trkSumPtHollowConeDR03
+  //float LeadPhoton_pt, LeadPhoton_eta, LeadPhoton_phi, LeadPhoton_mvaID; // LeadPhoton_mass 
+  //bool LeadPhoton_pixelSeed, SubleadPhoton_pixelSeed;
+  //float SubleadPhoton_pt, SubleadPhoton_eta, SubleadPhoton_phi, SubleadPhoton_mvaID; // SubleadPhoton_mass
+  //float Diphoton_pt, Diphoton_eta, Diphoton_phi, Diphoton_mass, Diphoton_pt_mgg, Diphoton_dR;
+  //float LeadPhoton_sieie, LeadPhoton_pfPhoIso03, LeadPhoton_chargedHadronIso, LeadPhoton_r9; // LeadPhoton_trkSumPtHollowConeDR03 
+  //float SubleadPhoton_sieie, SubleadPhoton_pfPhoIso03, SubleadPhoton_chargedHadronIso, SubleadPhoton_r9; // SubleadPhoton_trkSumPtHollowConeDR03
 
-  int n_jets;
-  float dijet_lead_pt, dijet_lead_eta, dijet_lead_phi, dijet_lead_mass, dijet_lead_btagDeepFlavB;
-  float dijet_sublead_pt, dijet_sublead_eta, dijet_sublead_phi, dijet_sublead_mass, dijet_sublead_btagDeepFlavB;
-  float dijet_pt, dijet_eta, dijet_phi, dijet_mass, dijet_dR;
+  int n_jets, jet_1_jetId, jet_2_jetId, jet_3_jetId;
+  float jet_1_pt, jet_1_eta, jet_1_phi, jet_1_mass, jet_1_btagDeepFlavB;
+  float jet_2_pt, jet_2_eta, jet_2_phi, jet_2_mass, jet_2_btagDeepFlavB;
+  float jet_3_pt, jet_3_eta, jet_3_phi, jet_3_mass, jet_3_btagDeepFlavB;
+  //float dijet_lead_pt, dijet_lead_eta, dijet_lead_phi, dijet_lead_mass, dijet_lead_btagDeepFlavB;
+  //float dijet_sublead_pt, dijet_sublead_eta, dijet_sublead_phi, dijet_sublead_mass, dijet_sublead_btagDeepFlavB;
+  //float dijet_pt, dijet_eta, dijet_phi, dijet_mass, dijet_dR;
   float pfmet_pt, puppimet_pt;
   int year_out, eventNum;
   float weight_central, weight_central_initial, weight_central_no_lumi;
 
-  unsigned int LeadPhoton_genPartFlav = 0, SubleadPhoton_genPartFlav = 0;
-  int n_gen_matched_jets = 0, n_gen_matched_in_dijet = 0;
-  bool dijet_lead_gen_match=false, dijet_sublead_gen_match=false;
-  float GenHiggs_pt=-999, GenHiggs_eta=-999, GenHiggs_phi=-999, GenHiggs_mass=-999, GenHiggs_dR=-999;
-  float GenY_pt=-999, GenY_eta=-999, GenY_phi=-999, GenY_mass=-999, GenY_dR=-999;
-  float GenX_pt=-999, GenX_eta=-999, GenX_phi=-999, GenX_mass=-999, GenX_dR=-999;
-  float GenBFromHiggs_1_pt=-999, GenBFromHiggs_1_eta=-999, GenBFromHiggs_1_phi=-999, GenBFromHiggs_1_mass=-999;
-  float GenBFromHiggs_2_pt=-999, GenBFromHiggs_2_eta=-999, GenBFromHiggs_2_phi=-999, GenBFromHiggs_2_mass=-999;
+  //unsigned int LeadPhoton_genPartFlav = 0, SubleadPhoton_genPartFlav = 0;
+  //int n_gen_matched_jets = 0, n_gen_matched_in_dijet = 0;
+  //bool dijet_lead_gen_match=false, dijet_sublead_gen_match=false;
+  //float GenHiggs_pt=-999, GenHiggs_eta=-999, GenHiggs_phi=-999, GenHiggs_mass=-999, GenHiggs_dR=-999;
+  //float GenY_pt=-999, GenY_eta=-999, GenY_phi=-999, GenY_mass=-999, GenY_dR=-999;
+  //float GenX_pt=-999, GenX_eta=-999, GenX_phi=-999, GenX_mass=-999, GenX_dR=-999;
+  //float GenBFromHiggs_1_pt=-999, GenBFromHiggs_1_eta=-999, GenBFromHiggs_1_phi=-999, GenBFromHiggs_1_mass=-999;
+  //float GenBFromHiggs_2_pt=-999, GenBFromHiggs_2_eta=-999, GenBFromHiggs_2_phi=-999, GenBFromHiggs_2_mass=-999;
 
 
   // Branch booking
-  tout->Branch("xcand_pt", &xcand_pt, "xcand_pt/F");
-  tout->Branch("xcand_eta", &xcand_eta, "xcand_eta/F");
-  tout->Branch("xcand_phi", &xcand_phi, "xcand_phi/F");
-  tout->Branch("xcand_mass", &xcand_mass, "xcand_mass/F");
+  //tout->Branch("xcand_pt", &xcand_pt, "xcand_pt/F");
+  //tout->Branch("xcand_eta", &xcand_eta, "xcand_eta/F");
+  //tout->Branch("xcand_phi", &xcand_phi, "xcand_phi/F");
+  //tout->Branch("xcand_mass", &xcand_mass, "xcand_mass/F");
 
-  tout->Branch("LeadPhoton_pt",&LeadPhoton_pt,"LeadPhoton_pt/F");
-  tout->Branch("LeadPhoton_eta",&LeadPhoton_eta,"LeadPhoton_eta/F");
-  tout->Branch("LeadPhoton_phi",&LeadPhoton_phi,"LeadPhoton_phi/F");
-  //tout->Branch("LeadPhoton_mass",&LeadPhoton_mass,"LeadPhoton_mass/F");
-  tout->Branch("LeadPhoton_pixelSeed",&LeadPhoton_pixelSeed,"LeadPhoton_pixelSeed/B");
-  tout->Branch("LeadPhoton_r9",&LeadPhoton_r9,"LeadPhoton_r9/F");
-  tout->Branch("LeadPhoton_sieie",&LeadPhoton_sieie,"LeadPhoton_sieie/F");
-  tout->Branch("LeadPhoton_pfPhoIso03",&LeadPhoton_pfPhoIso03,"LeadPhoton_pfPhoIso03/F");
-  //tout->Branch("LeadPhoton_trkSumPtHollowConeDR03",&LeadPhoton_trkSumPtHollowConeDR03,"LeadPhoton_trkSumPtHollowConeDR03/F"); // To be readded
-  tout->Branch("LeadPhoton_chargedHadronIso",&LeadPhoton_chargedHadronIso,"LeadPhoton_chargedHadronIso/F");
-  tout->Branch("LeadPhoton_mvaID",&LeadPhoton_mvaID,"LeadPhoton_mvaID/F");
+  //tout->Branch("LeadPhoton_pt",&LeadPhoton_pt,"LeadPhoton_pt/F");
+  //tout->Branch("LeadPhoton_eta",&LeadPhoton_eta,"LeadPhoton_eta/F");
+  //tout->Branch("LeadPhoton_phi",&LeadPhoton_phi,"LeadPhoton_phi/F");
+  ////tout->Branch("LeadPhoton_mass",&LeadPhoton_mass,"LeadPhoton_mass/F");
+  //tout->Branch("LeadPhoton_pixelSeed",&LeadPhoton_pixelSeed,"LeadPhoton_pixelSeed/B");
+  //tout->Branch("LeadPhoton_r9",&LeadPhoton_r9,"LeadPhoton_r9/F");
+  //tout->Branch("LeadPhoton_sieie",&LeadPhoton_sieie,"LeadPhoton_sieie/F");
+  //tout->Branch("LeadPhoton_pfPhoIso03",&LeadPhoton_pfPhoIso03,"LeadPhoton_pfPhoIso03/F");
+  ////tout->Branch("LeadPhoton_trkSumPtHollowConeDR03",&LeadPhoton_trkSumPtHollowConeDR03,"LeadPhoton_trkSumPtHollowConeDR03/F"); // To be readded
+  //tout->Branch("LeadPhoton_chargedHadronIso",&LeadPhoton_chargedHadronIso,"LeadPhoton_chargedHadronIso/F");
+  //tout->Branch("LeadPhoton_mvaID",&LeadPhoton_mvaID,"LeadPhoton_mvaID/F");
 
-  tout->Branch("SubleadPhoton_pt",&SubleadPhoton_pt,"SubleadPhoton_pt/F");
-  tout->Branch("SubleadPhoton_eta",&SubleadPhoton_eta,"SubleadPhoton_eta/F");
-  tout->Branch("SubleadPhoton_phi",&SubleadPhoton_phi,"SubleadPhoton_phi/F");
-  //tout->Branch("SubleadPhoton_mass",&SubleadPhoton_mass,"SubleadPhoton_mass/F");
-  tout->Branch("SubleadPhoton_pixelSeed",&SubleadPhoton_pixelSeed,"SubleadPhoton_pixelSeed/B");  
-  tout->Branch("SubleadPhoton_r9",&SubleadPhoton_r9,"SubleadPhoton_r9/F");
-  tout->Branch("SubleadPhoton_sieie",&SubleadPhoton_sieie,"SubleadPhoton_sieie/F");
-  tout->Branch("SubleadPhoton_pfPhoIso03",&SubleadPhoton_pfPhoIso03,"SubleadPhoton_pfPhoIso03/F");
-  //tout->Branch("SubleadPhoton_trkSumPtHollowConeDR03",&SubleadPhoton_trkSumPtHollowConeDR03,"SubleadPhoton_trkSumPtHollowConeDR03/F"); // To be readded
-  tout->Branch("SubleadPhoton_chargedHadronIso",&SubleadPhoton_chargedHadronIso,"SubleadPhoton_chargedHadronIso/F");
-  tout->Branch("SubleadPhoton_mvaID",&SubleadPhoton_mvaID,"SubleadPhoton_mvaID/F");
+  //tout->Branch("SubleadPhoton_pt",&SubleadPhoton_pt,"SubleadPhoton_pt/F");
+  //tout->Branch("SubleadPhoton_eta",&SubleadPhoton_eta,"SubleadPhoton_eta/F");
+  //tout->Branch("SubleadPhoton_phi",&SubleadPhoton_phi,"SubleadPhoton_phi/F");
+  ////tout->Branch("SubleadPhoton_mass",&SubleadPhoton_mass,"SubleadPhoton_mass/F");
+  //tout->Branch("SubleadPhoton_pixelSeed",&SubleadPhoton_pixelSeed,"SubleadPhoton_pixelSeed/B");  
+  //tout->Branch("SubleadPhoton_r9",&SubleadPhoton_r9,"SubleadPhoton_r9/F");
+  //tout->Branch("SubleadPhoton_sieie",&SubleadPhoton_sieie,"SubleadPhoton_sieie/F");
+  //tout->Branch("SubleadPhoton_pfPhoIso03",&SubleadPhoton_pfPhoIso03,"SubleadPhoton_pfPhoIso03/F");
+  ////tout->Branch("SubleadPhoton_trkSumPtHollowConeDR03",&SubleadPhoton_trkSumPtHollowConeDR03,"SubleadPhoton_trkSumPtHollowConeDR03/F"); // To be readded
+  //tout->Branch("SubleadPhoton_chargedHadronIso",&SubleadPhoton_chargedHadronIso,"SubleadPhoton_chargedHadronIso/F");
+  //tout->Branch("SubleadPhoton_mvaID",&SubleadPhoton_mvaID,"SubleadPhoton_mvaID/F");
 
-  tout->Branch("Diphoton_pt",&Diphoton_pt,"Diphoton_pt/F");
-  tout->Branch("Diphoton_eta",&Diphoton_eta,"Diphoton_eta/F");
-  tout->Branch("Diphoton_phi",&Diphoton_phi,"Diphoton_phi/F");
-  tout->Branch("Diphoton_mass",&Diphoton_mass,"Diphoton_mass/F");
-  tout->Branch("Diphoton_pt_mgg",&Diphoton_pt_mgg,"Diphoton_pt_mgg/F");
-  tout->Branch("Diphoton_dR",&Diphoton_dR,"Diphoton_dR/F");
+  //tout->Branch("Diphoton_pt",&Diphoton_pt,"Diphoton_pt/F");
+  //tout->Branch("Diphoton_eta",&Diphoton_eta,"Diphoton_eta/F");
+  //tout->Branch("Diphoton_phi",&Diphoton_phi,"Diphoton_phi/F");
+  //tout->Branch("Diphoton_mass",&Diphoton_mass,"Diphoton_mass/F");
+  //tout->Branch("Diphoton_pt_mgg",&Diphoton_pt_mgg,"Diphoton_pt_mgg/F");
+  //tout->Branch("Diphoton_dR",&Diphoton_dR,"Diphoton_dR/F");
 
   tout->Branch("n_jets",&n_jets,"n_jets/I");  
-  tout->Branch("dijet_lead_pt",&dijet_lead_pt,"dijet_lead_pt/F");
-  tout->Branch("dijet_lead_eta",&dijet_lead_eta,"dijet_lead_eta/F");
-  tout->Branch("dijet_lead_phi",&dijet_lead_phi,"dijet_lead_phi/F");
-  tout->Branch("dijet_lead_mass",&dijet_lead_mass,"dijet_lead_mass/F");
-  tout->Branch("dijet_lead_btagDeepFlavB",&dijet_lead_btagDeepFlavB,"dijet_lead_btagDeepFlavB/F");
 
-  tout->Branch("dijet_sublead_pt",&dijet_sublead_pt,"dijet_sublead_pt/F");
-  tout->Branch("dijet_sublead_eta",&dijet_sublead_eta,"dijet_sublead_eta/F");
-  tout->Branch("dijet_sublead_phi",&dijet_sublead_phi,"dijet_sublead_phi/F");
-  tout->Branch("dijet_sublead_mass",&dijet_sublead_mass,"dijet_sublead_mass/F");
-  tout->Branch("dijet_sublead_btagDeepFlavB",&dijet_sublead_btagDeepFlavB,"dijet_sublead_btagDeepFlavB/F");
+  tout->Branch("jet_1_jetId",&jet_1_jetId,"jet_1_jetId/I");  
+  tout->Branch("jet_2_jetId",&jet_2_jetId,"jet_2_jetId/I");  
+  tout->Branch("jet_3_jetId",&jet_3_jetId,"jet_3_jetId/I");  
 
-  tout->Branch("dijet_pt",&dijet_pt,"dijet_pt/F");
-  tout->Branch("dijet_eta",&dijet_eta,"dijet_eta/F");  
-  tout->Branch("dijet_phi",&dijet_phi,"dijet_phi/F");  
-  tout->Branch("dijet_mass",&dijet_mass,"dijet_mass/F");  
-  tout->Branch("dijet_dR",&dijet_dR,"dijet_dR/F"); 
+  tout->Branch("jet_1_pt",&jet_1_pt,"jet_1_pt/F");
+  tout->Branch("jet_1_eta",&jet_1_eta,"jet_1_eta/F");
+  tout->Branch("jet_1_phi",&jet_1_phi,"jet_1_phi/F");
+  tout->Branch("jet_1_mass",&jet_1_mass,"jet_1_mass/F");
+  tout->Branch("jet_1_btagDeepFlavB",&jet_1_btagDeepFlavB,"jet_1_btagDeepFlavB/F");
+  
+  tout->Branch("jet_2_pt",&jet_2_pt,"jet_2_pt/F");
+  tout->Branch("jet_2_eta",&jet_2_eta,"jet_2_eta/F");
+  tout->Branch("jet_2_phi",&jet_2_phi,"jet_2_phi/F");
+  tout->Branch("jet_2_mass",&jet_2_mass,"jet_2_mass/F");
+  tout->Branch("jet_2_btagDeepFlavB",&jet_2_btagDeepFlavB,"jet_2_btagDeepFlavB/F");
+ 
+  tout->Branch("jet_3_pt",&jet_3_pt,"jet_3_pt/F");
+  tout->Branch("jet_3_eta",&jet_3_eta,"jet_3_eta/F");
+  tout->Branch("jet_3_phi",&jet_3_phi,"jet_3_phi/F");
+  tout->Branch("jet_3_mass",&jet_3_mass,"jet_3_mass/F");
+  tout->Branch("jet_3_btagDeepFlavB",&jet_3_btagDeepFlavB,"jet_3_btagDeepFlavB/F");
+
+  //tout->Branch("dijet_lead_pt",&dijet_lead_pt,"dijet_lead_pt/F");
+  //tout->Branch("dijet_lead_eta",&dijet_lead_eta,"dijet_lead_eta/F");
+  //tout->Branch("dijet_lead_phi",&dijet_lead_phi,"dijet_lead_phi/F");
+  //tout->Branch("dijet_lead_mass",&dijet_lead_mass,"dijet_lead_mass/F");
+  //tout->Branch("dijet_lead_btagDeepFlavB",&dijet_lead_btagDeepFlavB,"dijet_lead_btagDeepFlavB/F");
+
+  //tout->Branch("dijet_sublead_pt",&dijet_sublead_pt,"dijet_sublead_pt/F");
+  //tout->Branch("dijet_sublead_eta",&dijet_sublead_eta,"dijet_sublead_eta/F");
+  //tout->Branch("dijet_sublead_phi",&dijet_sublead_phi,"dijet_sublead_phi/F");
+  //tout->Branch("dijet_sublead_mass",&dijet_sublead_mass,"dijet_sublead_mass/F");
+  //tout->Branch("dijet_sublead_btagDeepFlavB",&dijet_sublead_btagDeepFlavB,"dijet_sublead_btagDeepFlavB/F");
+
+  //tout->Branch("dijet_pt",&dijet_pt,"dijet_pt/F");
+  //tout->Branch("dijet_eta",&dijet_eta,"dijet_eta/F");  
+  //tout->Branch("dijet_phi",&dijet_phi,"dijet_phi/F");  
+  //tout->Branch("dijet_mass",&dijet_mass,"dijet_mass/F");  
+  //tout->Branch("dijet_dR",&dijet_dR,"dijet_dR/F"); 
 
   tout->Branch("pfmet_pt",&pfmet_pt,"pfmet_pt/F"); 
   tout->Branch("puppimet_pt",&puppimet_pt,"puppimet_pt/F"); 
@@ -251,37 +277,37 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   else if (year=="2018") year_out = 2018;
   else year_out = 0;
   
-  if (isMC) {
-    tout->Branch("LeadPhoton_genPartFlav",&LeadPhoton_genPartFlav,"LeadPhoton_genPartFlav/C");
-    tout->Branch("SubleadPhoton_genPartFlav",&SubleadPhoton_genPartFlav,"SubleadPhoton_genPartFlav/C");
-    tout->Branch("n_gen_matched_jets",&n_gen_matched_jets,"n_gen_matched_jets/I");
-    tout->Branch("n_gen_matched_in_dijet",&n_gen_matched_in_dijet,"n_gen_matched_in_dijet/I");
-    tout->Branch("dijet_lead_gen_match",&dijet_lead_gen_match,"dijet_lead_gen_match/B");
-    tout->Branch("dijet_sublead_gen_match",&dijet_sublead_gen_match,"dijet_sublead_gen_match/B");
-    tout->Branch("GenHiggs_pt",&GenHiggs_pt,"GenHiggs_pt/F");
-    tout->Branch("GenHiggs_eta",&GenHiggs_eta,"GenHiggs_eta/F");
-    tout->Branch("GenHiggs_phi",&GenHiggs_phi,"GenHiggs_phi/F");
-    tout->Branch("GenHiggs_mass",&GenHiggs_mass,"GenHiggs_mass/F");
-    tout->Branch("GenHiggs_dR",&GenHiggs_dR,"GenHiggs_dR/F");
-    tout->Branch("GenY_pt",&GenY_pt,"GenY_pt/F");
-    tout->Branch("GenY_eta",&GenY_eta,"GenY_eta/F");
-    tout->Branch("GenY_phi",&GenY_phi,"GenY_phi/F");
-    tout->Branch("GenY_mass",&GenY_mass,"GenY_mass/F");
-    tout->Branch("GenY_dR",&GenY_dR,"GenY_dR/F");
-    tout->Branch("GenX_pt",&GenX_pt,"GenX_pt/F");
-    tout->Branch("GenX_eta",&GenX_eta,"GenX_eta/F");
-    tout->Branch("GenX_phi",&GenX_phi,"GenX_phi/F");
-    tout->Branch("GenX_mass",&GenX_mass,"GenX_mass/F");
-    tout->Branch("GenX_dR",&GenX_dR,"GenX_dR/F");
-    tout->Branch("GenBFromHiggs_1_pt",&GenBFromHiggs_1_pt,"GenBFromHiggs_1_pt/F");
-    tout->Branch("GenBFromHiggs_1_eta",&GenBFromHiggs_1_eta,"GenBFromHiggs_1_eta/F");
-    tout->Branch("GenBFromHiggs_1_phi",&GenBFromHiggs_1_phi,"GenBFromHiggs_1_phi/F");
-    tout->Branch("GenBFromHiggs_1_mass",&GenBFromHiggs_1_mass,"GenBFromHiggs_1_mass/F");
-    tout->Branch("GenBFromHiggs_2_pt",&GenBFromHiggs_2_pt,"GenBFromHiggs_2_pt/F");
-    tout->Branch("GenBFromHiggs_2_eta",&GenBFromHiggs_2_eta,"GenBFromHiggs_2_eta/F");
-    tout->Branch("GenBFromHiggs_2_phi",&GenBFromHiggs_2_phi,"GenBFromHiggs_2_phi/F");
-    tout->Branch("GenBFromHiggs_2_mass",&GenBFromHiggs_2_mass,"GenBFromHiggs_2_mass/F");
-  }
+  //if (isMC) {
+  //  tout->Branch("LeadPhoton_genPartFlav",&LeadPhoton_genPartFlav,"LeadPhoton_genPartFlav/C");
+  //  tout->Branch("SubleadPhoton_genPartFlav",&SubleadPhoton_genPartFlav,"SubleadPhoton_genPartFlav/C");
+  //  tout->Branch("n_gen_matched_jets",&n_gen_matched_jets,"n_gen_matched_jets/I");
+  //  tout->Branch("n_gen_matched_in_dijet",&n_gen_matched_in_dijet,"n_gen_matched_in_dijet/I");
+  //  tout->Branch("dijet_lead_gen_match",&dijet_lead_gen_match,"dijet_lead_gen_match/B");
+  //  tout->Branch("dijet_sublead_gen_match",&dijet_sublead_gen_match,"dijet_sublead_gen_match/B");
+  //  tout->Branch("GenHiggs_pt",&GenHiggs_pt,"GenHiggs_pt/F");
+  //  tout->Branch("GenHiggs_eta",&GenHiggs_eta,"GenHiggs_eta/F");
+  //  tout->Branch("GenHiggs_phi",&GenHiggs_phi,"GenHiggs_phi/F");
+  //  tout->Branch("GenHiggs_mass",&GenHiggs_mass,"GenHiggs_mass/F");
+  //  tout->Branch("GenHiggs_dR",&GenHiggs_dR,"GenHiggs_dR/F");
+  //  tout->Branch("GenY_pt",&GenY_pt,"GenY_pt/F");
+  //  tout->Branch("GenY_eta",&GenY_eta,"GenY_eta/F");
+  //  tout->Branch("GenY_phi",&GenY_phi,"GenY_phi/F");
+  //  tout->Branch("GenY_mass",&GenY_mass,"GenY_mass/F");
+  //  tout->Branch("GenY_dR",&GenY_dR,"GenY_dR/F");
+  //  tout->Branch("GenX_pt",&GenX_pt,"GenX_pt/F");
+  //  tout->Branch("GenX_eta",&GenX_eta,"GenX_eta/F");
+  //  tout->Branch("GenX_phi",&GenX_phi,"GenX_phi/F");
+  //  tout->Branch("GenX_mass",&GenX_mass,"GenX_mass/F");
+  //  tout->Branch("GenX_dR",&GenX_dR,"GenX_dR/F");
+  //  tout->Branch("GenBFromHiggs_1_pt",&GenBFromHiggs_1_pt,"GenBFromHiggs_1_pt/F");
+  //  tout->Branch("GenBFromHiggs_1_eta",&GenBFromHiggs_1_eta,"GenBFromHiggs_1_eta/F");
+  //  tout->Branch("GenBFromHiggs_1_phi",&GenBFromHiggs_1_phi,"GenBFromHiggs_1_phi/F");
+  //  tout->Branch("GenBFromHiggs_1_mass",&GenBFromHiggs_1_mass,"GenBFromHiggs_1_mass/F");
+  //  tout->Branch("GenBFromHiggs_2_pt",&GenBFromHiggs_2_pt,"GenBFromHiggs_2_pt/F");
+  //  tout->Branch("GenBFromHiggs_2_eta",&GenBFromHiggs_2_eta,"GenBFromHiggs_2_eta/F");
+  //  tout->Branch("GenBFromHiggs_2_phi",&GenBFromHiggs_2_phi,"GenBFromHiggs_2_phi/F");
+  //  tout->Branch("GenBFromHiggs_2_mass",&GenBFromHiggs_2_mass,"GenBFromHiggs_2_mass/F");
+  //}
 
 
   // Define histo info maps
@@ -380,88 +406,116 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
 
       // Object selection
-      Photons photons = getPhotons();
-      if (isMC) {
-        for (auto pho : photons)
-          pho.setGenPartFlav(pho.idx());
-      }
-      DiPhotons diphotons = DiPhotonPreselection(photons);
+      //Photons photons = getPhotons();
+      //if (isMC) {
+      //  for (auto pho : photons)
+      //    pho.setGenPartFlav(pho.idx());
+      //}
+      //DiPhotons diphotons = DiPhotonPreselection(photons);
 
-      if (diphotons.size() == 0 ) continue; 
+      //if (diphotons.size() == 0 ) continue; 
 
-      DiPhoton selectedDiPhoton = diphotons[0];
-      Photons selectedPhotons={selectedDiPhoton.leadPho, selectedDiPhoton.subleadPho};
+      //DiPhoton selectedDiPhoton = diphotons[0];
+      //Photons selectedPhotons={selectedDiPhoton.leadPho, selectedDiPhoton.subleadPho};
 
-      LeadPhoton_mvaID = selectedDiPhoton.leadPho.mvaID();
-      SubleadPhoton_mvaID = selectedDiPhoton.subleadPho.mvaID();
-      if ( !(SubleadPhoton_mvaID>-0.7 && LeadPhoton_mvaID>-0.7) ) continue;
+      //LeadPhoton_mvaID = selectedDiPhoton.leadPho.mvaID();
+      //SubleadPhoton_mvaID = selectedDiPhoton.subleadPho.mvaID();
+      //if ( !(SubleadPhoton_mvaID>-0.7 && LeadPhoton_mvaID>-0.7) ) continue;
 
-      Electrons electrons = getElectrons(selectedPhotons);
-      Muons muons = getMuons(selectedPhotons);
-      if (electrons.size() != 0 ) continue; 
-      if (muons.size() != 0 ) continue; 
+      Electrons electrons = getElectrons();
+      Muons muons = getMuons();
+      // Only allow events with 2 or more leptons 
+      if ((electrons.size() + muons.size()) < 2) continue;
 
-      Jets jets = getJets(selectedPhotons);
-      if (jets.size() < 2) continue; 
+      Jets jets = getJets();
+      //if (jets.size() < 2) continue; 
 
-      DiJets dijets = DiJetPreselection(jets);
-      DiJet selectedDiJet = dijets[0];
+      //DiJets dijets = DiJetPreselection(jets);
+      //DiJet selectedDiJet = dijets[0];
 
-      if (dijets[0].p4.M()<50) continue;
+      //if (dijets[0].p4.M()<50) continue;
 
 
       // Setting output variables
-      TLorentzVector x_cand = selectedDiPhoton.p4 + selectedDiJet.p4;
-      xcand_pt = x_cand.Pt();
-      xcand_eta = x_cand.Eta();
-      xcand_phi = x_cand.Phi();
-      xcand_mass = x_cand.M();
+      //TLorentzVector x_cand = selectedDiPhoton.p4 + selectedDiJet.p4;
+      //xcand_pt = x_cand.Pt();
+      //xcand_eta = x_cand.Eta();
+      //xcand_phi = x_cand.Phi();
+      //xcand_mass = x_cand.M();
 
-      LeadPhoton_pt = selectedDiPhoton.leadPho.pt();
-      LeadPhoton_eta = selectedDiPhoton.leadPho.eta();
-      LeadPhoton_phi = selectedDiPhoton.leadPho.phi();
-      //LeadPhoton_mass = selectedDiPhoton.leadPho.mass();
-      LeadPhoton_r9 = selectedDiPhoton.leadPho.r9();
-      LeadPhoton_pixelSeed = selectedDiPhoton.leadPho.pixelSeed();
-      LeadPhoton_sieie = selectedDiPhoton.leadPho.sieie();
-      LeadPhoton_pfPhoIso03 = selectedDiPhoton.leadPho.phoIso();
-      //LeadPhoton_trkSumPtHollowConeDR03 = selectedDiPhoton.leadPho.trkIso(); // To be readded
-      LeadPhoton_chargedHadronIso = selectedDiPhoton.leadPho.chargedHadIso();
+      //LeadPhoton_pt = selectedDiPhoton.leadPho.pt();
+      //LeadPhoton_eta = selectedDiPhoton.leadPho.eta();
+      //LeadPhoton_phi = selectedDiPhoton.leadPho.phi();
+      ////LeadPhoton_mass = selectedDiPhoton.leadPho.mass();
+      //LeadPhoton_r9 = selectedDiPhoton.leadPho.r9();
+      //LeadPhoton_pixelSeed = selectedDiPhoton.leadPho.pixelSeed();
+      //LeadPhoton_sieie = selectedDiPhoton.leadPho.sieie();
+      //LeadPhoton_pfPhoIso03 = selectedDiPhoton.leadPho.phoIso();
+      ////LeadPhoton_trkSumPtHollowConeDR03 = selectedDiPhoton.leadPho.trkIso(); // To be readded
+      //LeadPhoton_chargedHadronIso = selectedDiPhoton.leadPho.chargedHadIso();
 
-      SubleadPhoton_pt = selectedDiPhoton.subleadPho.pt();
-      SubleadPhoton_eta = selectedDiPhoton.subleadPho.eta();
-      SubleadPhoton_phi = selectedDiPhoton.subleadPho.phi();
-      //SubleadPhoton_mass = selectedDiPhoton.subleadPho.mass();
-      SubleadPhoton_r9 = selectedDiPhoton.subleadPho.r9();
-      SubleadPhoton_pixelSeed = selectedDiPhoton.subleadPho.pixelSeed();
-      SubleadPhoton_sieie = selectedDiPhoton.subleadPho.sieie();
-      SubleadPhoton_pfPhoIso03 = selectedDiPhoton.subleadPho.phoIso();
-      //SubleadPhoton_trkSumPtHollowConeDR03 = selectedDiPhoton.subleadPho.trkIso(); // To be readded
-      SubleadPhoton_chargedHadronIso = selectedDiPhoton.subleadPho.chargedHadIso();
+      //SubleadPhoton_pt = selectedDiPhoton.subleadPho.pt();
+      //SubleadPhoton_eta = selectedDiPhoton.subleadPho.eta();
+      //SubleadPhoton_phi = selectedDiPhoton.subleadPho.phi();
+      ////SubleadPhoton_mass = selectedDiPhoton.subleadPho.mass();
+      //SubleadPhoton_r9 = selectedDiPhoton.subleadPho.r9();
+      //SubleadPhoton_pixelSeed = selectedDiPhoton.subleadPho.pixelSeed();
+      //SubleadPhoton_sieie = selectedDiPhoton.subleadPho.sieie();
+      //SubleadPhoton_pfPhoIso03 = selectedDiPhoton.subleadPho.phoIso();
+      ////SubleadPhoton_trkSumPtHollowConeDR03 = selectedDiPhoton.subleadPho.trkIso(); // To be readded
+      //SubleadPhoton_chargedHadronIso = selectedDiPhoton.subleadPho.chargedHadIso();
 
-      Diphoton_pt = selectedDiPhoton.p4.Pt();
-      Diphoton_eta = selectedDiPhoton.p4.Eta();
-      Diphoton_phi = selectedDiPhoton.p4.Phi();
-      Diphoton_mass = selectedDiPhoton.p4.M();
-      Diphoton_pt_mgg = Diphoton_pt/Diphoton_mass;
-      Diphoton_dR = selectedDiPhoton.dR;
+      //Diphoton_pt = selectedDiPhoton.p4.Pt();
+      //Diphoton_eta = selectedDiPhoton.p4.Eta();
+      //Diphoton_phi = selectedDiPhoton.p4.Phi();
+      //Diphoton_mass = selectedDiPhoton.p4.M();
+      //Diphoton_pt_mgg = Diphoton_pt/Diphoton_mass;
+      //Diphoton_dR = selectedDiPhoton.dR;
 
       n_jets = jets.size();
-      dijet_lead_pt = selectedDiJet.leadJet.pt();
-      dijet_lead_eta = selectedDiJet.leadJet.eta();
-      dijet_lead_phi = selectedDiJet.leadJet.phi();
-      dijet_lead_mass = selectedDiJet.leadJet.mass();
-      dijet_lead_btagDeepFlavB = selectedDiJet.leadJet.btagDeepFlavB();
-      dijet_sublead_pt = selectedDiJet.subleadJet.pt();
-      dijet_sublead_eta = selectedDiJet.subleadJet.eta();
-      dijet_sublead_phi = selectedDiJet.subleadJet.phi();
-      dijet_sublead_mass = selectedDiJet.subleadJet.mass();
-      dijet_sublead_btagDeepFlavB = selectedDiJet.subleadJet.btagDeepFlavB();
-      dijet_pt = selectedDiJet.p4.Pt();
-      dijet_eta = selectedDiJet.p4.Eta();
-      dijet_phi = selectedDiJet.p4.Phi();
-      dijet_mass = selectedDiJet.p4.M();
-      dijet_dR = selectedDiJet.dR;
+      int want_jets = 3;
+      if (n_jets < want_jets) { 
+        Jet dummy_jet = Jet(999);
+        for (int i = 0; i < (want_jets - n_jets); i++) {
+          jets.push_back(dummy_jet);
+        }
+      }
+      jet_1_pt = jets[0].pt();
+      jet_1_mass = jets[0].mass();
+      jet_1_eta = jets[0].eta();
+      jet_1_phi = jets[0].phi();
+      jet_1_jetId = jets[0].jetId();
+      jet_1_btagDeepFlavB = jets[0].btagDeepFlavB();
+
+      jet_2_pt = jets[1].pt();
+      jet_2_mass = jets[1].mass();
+      jet_2_eta = jets[1].eta();
+      jet_2_phi = jets[1].phi();
+      jet_2_jetId = jets[1].jetId();
+      jet_2_btagDeepFlavB = jets[1].btagDeepFlavB();
+
+      jet_3_pt = jets[2].pt();
+      jet_3_mass = jets[2].mass();
+      jet_3_eta = jets[2].eta();
+      jet_3_phi = jets[2].phi();
+      jet_3_jetId = jets[2].jetId();
+      jet_3_btagDeepFlavB = jets[2].btagDeepFlavB();
+
+      //dijet_lead_pt = selectedDiJet.leadJet.pt();
+      //dijet_lead_eta = selectedDiJet.leadJet.eta();
+      //dijet_lead_phi = selectedDiJet.leadJet.phi();
+      //dijet_lead_mass = selectedDiJet.leadJet.mass();
+      //dijet_lead_btagDeepFlavB = selectedDiJet.leadJet.btagDeepFlavB();
+      //dijet_sublead_pt = selectedDiJet.subleadJet.pt();
+      //dijet_sublead_eta = selectedDiJet.subleadJet.eta();
+      //dijet_sublead_phi = selectedDiJet.subleadJet.phi();
+      //dijet_sublead_mass = selectedDiJet.subleadJet.mass();
+      //dijet_sublead_btagDeepFlavB = selectedDiJet.subleadJet.btagDeepFlavB();
+      //dijet_pt = selectedDiJet.p4.Pt();
+      //dijet_eta = selectedDiJet.p4.Eta();
+      //dijet_phi = selectedDiJet.p4.Phi();
+      //dijet_mass = selectedDiJet.p4.M();
+      //dijet_dR = selectedDiJet.dR;
       pfmet_pt = isMC ? nt.MET_T1_pt() : nt.MET_pt();
       puppimet_pt = nt.PuppiMET_pt();
 
@@ -473,68 +527,68 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       count_test++;
 
       // Gen info - FIXME: Doesn't work because all if-statements are trivially false
-      if (isMC) {
-        LeadPhoton_genPartFlav = selectedDiPhoton.leadPho.genPartFlav();
-        SubleadPhoton_genPartFlav = selectedDiPhoton.subleadPho.genPartFlav();
+      //if (isMC) {
+      //  LeadPhoton_genPartFlav = selectedDiPhoton.leadPho.genPartFlav();
+      //  SubleadPhoton_genPartFlav = selectedDiPhoton.subleadPho.genPartFlav();
 
-        TLorentzVector GenHiggs, GenX, GenY;
-        GenParts genparts = getGenParts();
-        vector<TLorentzVector> gen_child_xyh, gen_child_ygg, gen_child_hbb;
-        for (int igenpart=0; igenpart<genparts.size(); igenpart++) {
-          if (genparts[igenpart].isxyh()) {GenX = genparts[igenpart].mother_p4(); gen_child_xyh.push_back(genparts[igenpart].p4());}
-          if (genparts[igenpart].isygg()) {GenY = genparts[igenpart].mother_p4(); gen_child_ygg.push_back(genparts[igenpart].p4());}
-          if (genparts[igenpart].ishbb()) {GenHiggs = genparts[igenpart].mother_p4(); gen_child_hbb.push_back(genparts[igenpart].p4());}
-        }
-        TLorentzVector sort_GenPart;
-        //if (gen_child_xyh[0].Pt()<gen_child_xyh[1].Pt()) {sort_GenPart = gen_child_xyh[0]; gen_child_xyh[0]= gen_child_xyh[1]; gen_child_xyh[1] = sort_GenPart;}
-        //if (gen_child_ygg[0].Pt()<gen_child_ygg[1].Pt()) {sort_GenPart = gen_child_ygg[0]; gen_child_ygg[0]= gen_child_ygg[1]; gen_child_ygg[1] = sort_GenPart;}
-        if (!abs(GenX_pt+999)<0.0001) {
-          GenX_pt = GenX.Pt();
-          GenX_eta = GenX.Eta();
-          GenX_phi = GenX.Phi();
-          GenX_mass = GenX.M();
-          GenX_dR = gen_child_xyh[0].DeltaR(gen_child_xyh[1]);
-        }
-        if (!abs(GenY_pt+999)<0.0001) {
-          GenY_pt = GenY.Pt();
-          GenY_eta = GenY.Eta();
-          GenY_phi = GenY.Phi();
-          GenY_mass = GenY.M();
-          GenY_dR = gen_child_ygg[0].DeltaR(gen_child_ygg[1]);
-        }
-        if (!abs(GenHiggs_pt+999)<0.0001) {
-          GenHiggs_pt = GenHiggs.Pt();
-          GenHiggs_eta = GenHiggs.Eta();
-          GenHiggs_phi = GenHiggs.Phi();
-          GenHiggs_mass = GenHiggs.M();
-          GenHiggs_dR = gen_child_hbb[0].DeltaR(gen_child_hbb[1]);
-          if (gen_child_hbb[0].Pt()<gen_child_hbb[1].Pt()) {sort_GenPart = gen_child_hbb[0]; gen_child_hbb[0]= gen_child_hbb[1]; gen_child_hbb[1] = sort_GenPart;}
-          GenBFromHiggs_1_pt = gen_child_hbb[0].Pt();
-          GenBFromHiggs_1_eta = gen_child_hbb[0].Eta();
-          GenBFromHiggs_1_phi = gen_child_hbb[0].Phi();
-          GenBFromHiggs_1_mass = gen_child_hbb[0].M();
-          GenBFromHiggs_2_pt = gen_child_hbb[1].Pt();
-          GenBFromHiggs_2_eta = gen_child_hbb[1].Eta();
-          GenBFromHiggs_2_phi = gen_child_hbb[1].Phi();
-          GenBFromHiggs_2_mass = gen_child_hbb[1].M();
-          if (selectedDiJet.leadJet.p4().DeltaR(gen_child_hbb[0])<=0.4 || selectedDiJet.leadJet.p4().DeltaR(gen_child_hbb[1])<=0.4) {dijet_lead_gen_match=true; n_gen_matched_in_dijet++;}
-          if (selectedDiJet.subleadJet.p4().DeltaR(gen_child_hbb[0])<=0.4 || selectedDiJet.subleadJet.p4().DeltaR(gen_child_hbb[1])<=0.4) {dijet_sublead_gen_match=true; n_gen_matched_in_dijet++;}
-          for (int ijet=0; ijet<jets.size(); ijet++) {
-            if (jets[ijet].p4().DeltaR(gen_child_hbb[0])<=0.4 || jets[ijet].p4().DeltaR(gen_child_hbb[1])<=0.4)
-              n_gen_matched_jets++;
-          }
-        }
-      }
+      //  TLorentzVector GenHiggs, GenX, GenY;
+      //  GenParts genparts = getGenParts();
+      //  vector<TLorentzVector> gen_child_xyh, gen_child_ygg, gen_child_hbb;
+      //  for (int igenpart=0; igenpart<genparts.size(); igenpart++) {
+      //    if (genparts[igenpart].isxyh()) {GenX = genparts[igenpart].mother_p4(); gen_child_xyh.push_back(genparts[igenpart].p4());}
+      //    if (genparts[igenpart].isygg()) {GenY = genparts[igenpart].mother_p4(); gen_child_ygg.push_back(genparts[igenpart].p4());}
+      //    if (genparts[igenpart].ishbb()) {GenHiggs = genparts[igenpart].mother_p4(); gen_child_hbb.push_back(genparts[igenpart].p4());}
+      //  }
+      //  TLorentzVector sort_GenPart;
+      //  //if (gen_child_xyh[0].Pt()<gen_child_xyh[1].Pt()) {sort_GenPart = gen_child_xyh[0]; gen_child_xyh[0]= gen_child_xyh[1]; gen_child_xyh[1] = sort_GenPart;}
+      //  //if (gen_child_ygg[0].Pt()<gen_child_ygg[1].Pt()) {sort_GenPart = gen_child_ygg[0]; gen_child_ygg[0]= gen_child_ygg[1]; gen_child_ygg[1] = sort_GenPart;}
+      //  if (!abs(GenX_pt+999)<0.0001) {
+      //    GenX_pt = GenX.Pt();
+      //    GenX_eta = GenX.Eta();
+      //    GenX_phi = GenX.Phi();
+      //    GenX_mass = GenX.M();
+      //    GenX_dR = gen_child_xyh[0].DeltaR(gen_child_xyh[1]);
+      //  }
+      //  if (!abs(GenY_pt+999)<0.0001) {
+      //    GenY_pt = GenY.Pt();
+      //    GenY_eta = GenY.Eta();
+      //    GenY_phi = GenY.Phi();
+      //    GenY_mass = GenY.M();
+      //    GenY_dR = gen_child_ygg[0].DeltaR(gen_child_ygg[1]);
+      //  }
+      //  if (!abs(GenHiggs_pt+999)<0.0001) {
+      //    GenHiggs_pt = GenHiggs.Pt();
+      //    GenHiggs_eta = GenHiggs.Eta();
+      //    GenHiggs_phi = GenHiggs.Phi();
+      //    GenHiggs_mass = GenHiggs.M();
+      //    GenHiggs_dR = gen_child_hbb[0].DeltaR(gen_child_hbb[1]);
+      //    if (gen_child_hbb[0].Pt()<gen_child_hbb[1].Pt()) {sort_GenPart = gen_child_hbb[0]; gen_child_hbb[0]= gen_child_hbb[1]; gen_child_hbb[1] = sort_GenPart;}
+      //    GenBFromHiggs_1_pt = gen_child_hbb[0].Pt();
+      //    GenBFromHiggs_1_eta = gen_child_hbb[0].Eta();
+      //    GenBFromHiggs_1_phi = gen_child_hbb[0].Phi();
+      //    GenBFromHiggs_1_mass = gen_child_hbb[0].M();
+      //    GenBFromHiggs_2_pt = gen_child_hbb[1].Pt();
+      //    GenBFromHiggs_2_eta = gen_child_hbb[1].Eta();
+      //    GenBFromHiggs_2_phi = gen_child_hbb[1].Phi();
+      //    GenBFromHiggs_2_mass = gen_child_hbb[1].M();
+      //    if (selectedDiJet.leadJet.p4().DeltaR(gen_child_hbb[0])<=0.4 || selectedDiJet.leadJet.p4().DeltaR(gen_child_hbb[1])<=0.4) {dijet_lead_gen_match=true; n_gen_matched_in_dijet++;}
+      //    if (selectedDiJet.subleadJet.p4().DeltaR(gen_child_hbb[0])<=0.4 || selectedDiJet.subleadJet.p4().DeltaR(gen_child_hbb[1])<=0.4) {dijet_sublead_gen_match=true; n_gen_matched_in_dijet++;}
+      //    for (int ijet=0; ijet<jets.size(); ijet++) {
+      //      if (jets[ijet].p4().DeltaR(gen_child_hbb[0])<=0.4 || jets[ijet].p4().DeltaR(gen_child_hbb[1])<=0.4)
+      //        n_gen_matched_jets++;
+      //    }
+      //  }
+      //}
 
 
       // Histo filling
-      h_LeadPhoton_sieie->Fill(LeadPhoton_sieie);
-      h_LeadPhoton_pfPhoIso03->Fill(LeadPhoton_pfPhoIso03);
-      h_LeadPhoton_chargedHadronIso->Fill(LeadPhoton_chargedHadronIso);
-      //h_LeadPhoton_trkSumPtHollowConeDR03->Fill(LeadPhoton_trkSumPtHollowConeDR03); // To be readded
-      h_SubleadPhoton_sieie->Fill(SubleadPhoton_sieie);
-      h_SubleadPhoton_pfPhoIso03->Fill(SubleadPhoton_pfPhoIso03);
-      h_SubleadPhoton_chargedHadronIso->Fill(SubleadPhoton_chargedHadronIso);
+      //h_LeadPhoton_sieie->Fill(LeadPhoton_sieie);
+      //h_LeadPhoton_pfPhoIso03->Fill(LeadPhoton_pfPhoIso03);
+      //h_LeadPhoton_chargedHadronIso->Fill(LeadPhoton_chargedHadronIso);
+      ////h_LeadPhoton_trkSumPtHollowConeDR03->Fill(LeadPhoton_trkSumPtHollowConeDR03); // To be readded
+      //h_SubleadPhoton_sieie->Fill(SubleadPhoton_sieie);
+      //h_SubleadPhoton_pfPhoIso03->Fill(SubleadPhoton_pfPhoIso03);
+      //h_SubleadPhoton_chargedHadronIso->Fill(SubleadPhoton_chargedHadronIso);
       //h_SubleadPhoton_trkSumPtHollowConeDR03->Fill(SubleadPhoton_trkSumPtHollowConeDR03); // To be readded
       h_weight->Fill(0.5, weight*factor);
 

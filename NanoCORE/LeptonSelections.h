@@ -39,7 +39,8 @@ struct Electron {
     unsigned int idx_;
 };
 
-vector<Electron> getElectrons(Photons photons);
+vector<Electron> getElectrons();
+//vector<Electron> getElectrons(Photons photons);
 typedef std::vector<Electron> Electrons;
 
 struct Muon {
@@ -82,7 +83,8 @@ struct Muon {
     bool isGlobal_ = 0;
 };
 
-vector<Muon> getMuons(Photons photons);
+vector<Muon> getMuons();
+//vector<Muon> getMuons(Photons photons);
 typedef std::vector<Muon> Muons;
 
 #endif
