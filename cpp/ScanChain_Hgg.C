@@ -11,6 +11,7 @@
 #include "TVector2.h"
 #include "TVector3.h"
 #include "TRandom3.h"
+#include "TCanvas.h"
 
 #include "RooRealVar.h"
 #include "RooDataSet.h"
@@ -36,6 +37,8 @@
 #include <iomanip>
 #include <sys/stat.h>
 #include <fstream>
+#include <list>
+#include <cmath>
 
 #define H1(name,nbins,low,high,xtitle) TH1D *h_##name = new TH1D(#name,"",nbins,low,high); h_##name->GetXaxis()->SetTitle(xtitle); h_##name->GetYaxis()->SetTitle("Events");
 
@@ -55,6 +58,30 @@ using namespace duplicate_removal;
 int count_test=0;
 
 ofstream txtout("evtnb.txt", ofstream::app);
+
+TCanvas *canvas = new TCanvas("c", "c", 800, 600);
+
+//histograms for Garrett's cutflow 
+TH1F *leadPtHist  = new TH1F("leadPtHist", "Leading Lepton pT", 10, 20, 200);
+TH1F *leadEtaHist = new TH1F("leadEtaHist", "Leading Lepton eta", 8, -2.4, 2.4);
+TH1F *secPtHist   = new TH1F("secPtHist", "Second Leading Lepton pT", 10, 20, 200);
+TH1F *secEtaHist  = new TH1F("secEtaHist", "Second Leading Lepton eta", 8, -2.4, 2.4); 
+TH1F *dilepMass   = new TH1F("dilepMass", "Dilepton Mass", 15, 50, 150); //GeV resolution, so use 1 GeV bin width
+TH1F *dilepEta    = new TH1F("dilepEta", "Dilepton Eta", 8, -2.4, 2.4); //extend x-axis, labels, y-axis scale
+TH1F *dilepP      = new TH1F("dilepP", "Dilepton Momentum", 15, 20, 300);
+TH1F *jetUnclean  = new TH1F("jetUnclean", "Number of Jets in Event (No Cleaning)", 6, 0, 6);
+TH1F *jetClean    = new TH1F("jetClean", "Number of Jets in Event (w/ Cleaning)", 6, 0, 6);
+
+unsigned int totalElectrons    = 0;
+unsigned int totalMuons        = 0;
+unsigned int pTetaCutElectrons = 0;
+unsigned int pTetaCutMuons     = 0;
+unsigned int rightNumElectrons = 0;
+unsigned int rightNumMuons     = 0;
+unsigned int oppSignElectrons  = 0;
+unsigned int oppSignMuons      = 0;
+
+TLorentzVector p4dilepton;
 
 int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process, int process_id, const char* outdir="temp_data", int PUWeight=1, int bTagSF=1, int JECUnc=0) {
 // Event weights / scale factors:
@@ -397,8 +424,9 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
     tree->SetCacheLearnEntries(100);
 
     nt.Init(tree);
-
-    for( unsigned int event = 0; event < tree->GetEntriesFast(); ++event) {
+  
+    
+	for( unsigned int event = 0; event < tree->GetEntriesFast(); ++event) {
       nt.GetEntry(event);
       tree->LoadTree(event);
 
@@ -479,11 +507,113 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
       Electrons electrons = getElectrons();
       Muons muons = getMuons();
-      // Only allow events with 2 or more leptons 
-      if ((electrons.size() + muons.size()) < 2) continue;
-
-      Jets jets = getJets();
-      //if (jets.size() < 2) continue; 
+      
+	  /*
+	  
+	  BEGIN CUTLFOW
+	  
+	  */
+	  
+	  Electrons candElectrons;
+	  totalElectrons += electrons.size();
+	  for (unsigned int n = 0; n < electrons.size(); n++){ 
+		Electron e = electrons[n];
+		if ( !(abs(e.eta()) < 2.4) ) continue;
+		if ( (e.pt() < 20)) continue;
+		candElectrons.push_back(e);
+		pTetaCutElectrons++;
+		}
+	  
+	  Muons candMuons;
+	  totalMuons += muons.size();
+	  for (unsigned int n = 0; n < muons.size(); n++){ 
+		Muon mu = muons[n];
+		if ( !(abs(mu.eta()) < 2.4) ) continue;
+		if ( (mu.pt() < 20)) continue;
+		candMuons.push_back(mu);
+		pTetaCutMuons++;
+	    }
+	  
+	  // Only allow events with 2 leptons 
+      if ((candElectrons.size() + candMuons.size()) != 2) continue; 
+	  rightNumElectrons += candElectrons.size();
+	  rightNumMuons += candMuons.size();
+	  
+	  //Only allow oppoiste signed leptons
+	  if (candElectrons.size() == 2 && candElectrons[0].id()*candElectrons[1].id() < 0){ 
+		  leadPtHist  -> Fill(candElectrons[0].pt());
+		  leadEtaHist -> Fill(candElectrons[0].eta());
+		  secPtHist   -> Fill(candElectrons[1].pt());
+		  secEtaHist  -> Fill(candElectrons[1].eta());
+		  p4dilepton = candElectrons[0].p4() + candElectrons[1].p4();
+		  oppSignElectrons += 2;
+	  } 
+	  
+	  if (candElectrons.size() == 1 && abs(candElectrons[0].id()*candMuons[0].id()) > 0){ //These events are unphysical for Z decays
+		  if (candElectrons[0].pt() > candMuons[0].pt()){ //check that electrons are sorted by pT
+		      leadPtHist  -> Fill(candElectrons[0].pt());
+		      leadEtaHist -> Fill(candElectrons[0].eta());
+		      secPtHist   -> Fill(candMuons[0].pt());
+		      secEtaHist  -> Fill(candMuons[0].eta());
+	      }
+		  if (candElectrons[0].pt() < candMuons[0].pt()){
+		      leadPtHist  -> Fill(candMuons[0].pt());
+		      leadEtaHist -> Fill(candMuons[0].eta());
+		      secPtHist   -> Fill(candElectrons[0].pt());
+		      secEtaHist  -> Fill(candElectrons[0].eta());
+	      }
+	      p4dilepton = candElectrons[0].p4() + candMuons[0].p4();
+		  oppSignElectrons++;
+		  oppSignMuons++;
+	  }
+	  
+	  if (candElectrons.size() == 0 && candMuons[0].id()*candMuons[1].id() < 0){
+		  leadPtHist  -> Fill(candMuons[0].pt());
+		  leadEtaHist -> Fill(candMuons[0].eta());
+		  secPtHist   -> Fill(candMuons[1].pt());
+		  secEtaHist  -> Fill(candMuons[1].eta());
+		  p4dilepton = candMuons[0].p4() + candMuons[1].p4();
+		  oppSignMuons += 2;
+	  }
+	  
+	  //dilepton
+	  dilepMass -> Fill(p4dilepton.Mag());
+	  dilepEta  -> Fill(p4dilepton.Eta());
+	  dilepP    -> Fill(p4dilepton.P());
+      
+	  Jets jets = getJets();
+	  
+	  Jets nocleanJets;
+	  Jets cleanJets;
+	  for (unsigned int n = 0; n < jets.size(); n++){ 
+		Jet j = jets[n];
+		if ( abs(j.eta()) > 2.4 ) continue;
+		if ( (j.pt() < 30)) continue;
+		nocleanJets.push_back(j);
+		cleanJets.push_back(j);
+		for (unsigned int k = 0; k < candElectrons.size(); k++){
+			double dR = sqrt(pow(acos(cos(j.phi() - candElectrons[k].phi())), 2) + pow(j.eta() - candElectrons[k].eta(), 2));
+			if (dR < 0.4){ 
+				cleanJets.pop_back();
+				goto cnt;
+		    }
+		}
+	    
+		for (unsigned int k = 0; k < candMuons.size(); k++){
+			double dR = sqrt(pow(acos(cos(j.phi() - candMuons[k].phi())), 2) + pow(j.eta() - candMuons[k].eta(), 2));
+			if (dR < 0.4){ 
+				cleanJets.pop_back();
+				goto cnt;
+		    }
+	    }
+	    cnt:;
+	  }
+	  
+	  
+      jetUnclean -> Fill(nocleanJets.size());
+	  jetClean   -> Fill(cleanJets.size());
+	  
+	  //if (jets.size() < 2) continue; 
 
       //DiJets dijets = DiJetPreselection(jets);
       //DiJet selectedDiJet = dijets[0];
@@ -526,7 +656,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       //Diphoton_mass = selectedDiPhoton.p4.M();
       //Diphoton_pt_mgg = Diphoton_pt/Diphoton_mass;
       //Diphoton_dR = selectedDiPhoton.dR;
-
+	  
       n_electrons = electrons.size();
       n_muons = muons.size();
 
@@ -702,9 +832,48 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
       tout->Fill();
     } // Event loop
-    delete file;
+    
+	delete file;
   } // File loop
     
+  //Save histograms
+  canvas -> Draw();
+  leadPtHist -> Draw();
+  canvas -> SaveAs("leadPtHist.png");
+  canvas -> Clear();
+  leadEtaHist -> Draw();
+  canvas -> SaveAs("leadEtaHist.png");
+  canvas -> Clear();
+  secPtHist -> Draw();
+  canvas -> SaveAs("secPtHist.png");
+  canvas -> Clear();
+  secEtaHist -> Draw();
+  canvas -> SaveAs("secEtaHist.png");
+  canvas -> Clear();
+  dilepMass -> Draw();
+  canvas -> SaveAs("dilepMass.png");
+  canvas -> Clear();
+  dilepEta -> Draw();
+  canvas -> SaveAs("dilepEta.png");
+  canvas -> Clear();
+  dilepP -> Draw();
+  canvas -> SaveAs("dilepP.png");
+  canvas -> Clear();
+  jetUnclean -> Draw();
+  canvas -> SaveAs("jetUnclean.png");
+  canvas -> Clear();
+  jetClean -> Draw();
+  canvas -> SaveAs("jetClean.png");
+  
+  // Print number of leptons that pass our selections in total
+  std::cout << "Total electrons: " << ::totalElectrons << " Total Muons: " << ::totalMuons << "\n";
+  std::cout << "Kinematic cut \n";
+  std::cout << "Electrons: " << pTetaCutElectrons << " Muons: " << pTetaCutMuons << "\n";
+  std::cout << "2 leptons cut \n";
+  std::cout << "Electrons: " << rightNumElectrons << " Muons: " << rightNumMuons << "\n";
+  std::cout << "Opposite sign cut \n";
+  std::cout << "Electrons: " << oppSignElectrons << " Muons: " << oppSignMuons << "\n";
+  
   bar.finish();
   cout << "nTotal: " << h_weight_full->GetBinContent(1) << ", nPass: " << h_weight->GetBinContent(1) << ", eff: " << h_weight->GetBinContent(1)/h_weight_full->GetBinContent(1) << endl;
   cout << endl;
