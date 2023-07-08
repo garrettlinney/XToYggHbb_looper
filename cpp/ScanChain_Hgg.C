@@ -70,7 +70,14 @@ TH1F *dilepMass   = new TH1F("dilepMass", "Dilepton Mass", 15, 50, 150); //GeV r
 TH1F *dilepEta    = new TH1F("dilepEta", "Dilepton Eta", 8, -2.4, 2.4); //extend x-axis, labels, y-axis scale
 TH1F *dilepP      = new TH1F("dilepP", "Dilepton Momentum", 15, 20, 300);
 TH1F *jetUnclean  = new TH1F("jetUnclean", "Number of Jets in Event (No Cleaning)", 6, 0, 6);
-TH1F *jetClean    = new TH1F("jetClean", "Number of Jets in Event (w/ Cleaning)", 6, 0, 6);
+TH1F *jetClean    = new TH1F("jetClean", "Number of Jets in Event (w/ Cleaning) (v. seperate fill)", 6, 0, 6);
+TH1F *jetCleanEE  = new TH1F("jetCleanEE", "Number of Jets in ee Event (w/ Cleaning)", 6, 0, 6);
+TH1F *jetCleanMM  = new TH1F("jetCleanMM", "Number of Jets in mm Event (w/ Cleaning)", 6, 0, 6);
+
+/*
+//TFile to store histograms in
+TFile *ZHists     = new TFile("ZHists.root", "RECREATE" );
+*/
 
 unsigned int totalElectrons    = 0;
 unsigned int totalMuons        = 0;
@@ -534,6 +541,9 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 		pTetaCutMuons++;
 	    }
 	  
+	  Electrons goodElectrons;
+	  Muons goodMuons;
+	  
 	  // Only allow events with 2 leptons 
       if ((candElectrons.size() + candMuons.size()) != 2) continue; 
 	  rightNumElectrons += candElectrons.size();
@@ -547,8 +557,10 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 		  secEtaHist  -> Fill(candElectrons[1].eta());
 		  p4dilepton = candElectrons[0].p4() + candElectrons[1].p4();
 		  oppSignElectrons += 2;
+		  goodElectrons = candElectrons;
 	  } 
 	  
+	  /*
 	  if (candElectrons.size() == 1 && abs(candElectrons[0].id()*candMuons[0].id()) > 0){ //These events are unphysical for Z decays
 		  if (candElectrons[0].pt() > candMuons[0].pt()){ //check that electrons are sorted by pT
 		      leadPtHist  -> Fill(candElectrons[0].pt());
@@ -566,6 +578,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 		  oppSignElectrons++;
 		  oppSignMuons++;
 	  }
+	  */
 	  
 	  if (candElectrons.size() == 0 && candMuons[0].id()*candMuons[1].id() < 0){
 		  leadPtHist  -> Fill(candMuons[0].pt());
@@ -574,6 +587,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 		  secEtaHist  -> Fill(candMuons[1].eta());
 		  p4dilepton = candMuons[0].p4() + candMuons[1].p4();
 		  oppSignMuons += 2;
+		  goodMuons = candMuons;
 	  }
 	  
 	  //dilepton
@@ -585,33 +599,45 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 	  
 	  Jets nocleanJets;
 	  Jets cleanJets;
+	  Jets cleanJetsEE;
+	  Jets cleanJetsMM;
+	  	  
 	  for (unsigned int n = 0; n < jets.size(); n++){ 
 		Jet j = jets[n];
 		if ( abs(j.eta()) > 2.4 ) continue;
 		if ( (j.pt() < 30)) continue;
 		nocleanJets.push_back(j);
 		cleanJets.push_back(j);
-		for (unsigned int k = 0; k < candElectrons.size(); k++){
-			double dR = sqrt(pow(acos(cos(j.phi() - candElectrons[k].phi())), 2) + pow(j.eta() - candElectrons[k].eta(), 2));
+		if (goodElectrons.size() == 2) cleanJetsEE.push_back(j);
+		if (goodMuons.size() == 2) cleanJetsMM.push_back(j);
+		
+		for (unsigned int k = 0; k < goodElectrons.size(); k++){
+			double dR = sqrt(pow(acos(cos(j.phi() - goodElectrons[k].phi())), 2) + pow(j.eta() - goodElectrons[k].eta(), 2));
 			if (dR < 0.4){ 
 				cleanJets.pop_back();
+				if (goodElectrons.size() == 2) cleanJetsEE.pop_back();
 				goto cnt;
 		    }
 		}
 	    
-		for (unsigned int k = 0; k < candMuons.size(); k++){
-			double dR = sqrt(pow(acos(cos(j.phi() - candMuons[k].phi())), 2) + pow(j.eta() - candMuons[k].eta(), 2));
+		for (unsigned int z = 0; z < goodMuons.size(); z++){
+			double dR = sqrt(pow(acos(cos(j.phi() - goodMuons[z].phi())), 2) + pow(j.eta() - goodMuons[z].eta(), 2));
 			if (dR < 0.4){ 
 				cleanJets.pop_back();
+				if (goodMuons.size() == 2) cleanJetsMM.pop_back();
 				goto cnt;
 		    }
 	    }
 	    cnt:;
 	  }
 	  
-	  
       jetUnclean -> Fill(nocleanJets.size());
-	  jetClean   -> Fill(cleanJets.size());
+	  //jetClean   -> Fill(cleanJets.size());
+	  //jetClean -> Fill(cleanJetsEE.size() + cleanJetsMM.size());
+	  jetClean   -> Fill(cleanJetsEE.size());
+	  jetClean   -> Fill(cleanJetsMM.size());
+	  jetCleanEE -> Fill(cleanJetsEE.size());
+	  jetCleanMM -> Fill(cleanJetsMM.size());
 	  
 	  //if (jets.size() < 2) continue; 
 
@@ -835,7 +861,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
     
 	delete file;
   } // File loop
-    
+  
   //Save histograms
   canvas -> Draw();
   leadPtHist -> Draw();
@@ -864,6 +890,26 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   canvas -> Clear();
   jetClean -> Draw();
   canvas -> SaveAs("jetClean.png");
+  canvas -> Clear();
+  jetCleanEE -> Draw();
+  canvas -> SaveAs("jetCleanEE.png");
+  canvas -> Clear();
+  jetCleanMM -> Draw();
+  canvas -> SaveAs("jetCleanMM.png");
+  
+  /*
+  ZHists -> WriteObject(&leadPtHist, "leadPtHist");
+  ZHists -> WriteObject(&leadEtaHist, "leadEtaHist");
+  ZHists -> WriteObject(&secPtHist, "secPtHist");
+  ZHists -> WriteObject(&secEtaHist, "secEtaHist");
+  ZHists -> WriteObject(&dilepMass, "dilepMass");
+  ZHists -> WriteObject(&dilepEta, "dilepEta");
+  ZHists -> WriteObject(&dilepP, "dilepP");
+  ZHists -> WriteObject(&jetUnclean, "jetUnclean");
+  ZHists -> WriteObject(&jetClean, "jetClean");
+  ZHists -> WriteObject(&jetCleanEE, "jetCleanEE");
+  ZHists -> WriteObject(&jetCleanMM, "jetCleanMM");
+  */
   
   // Print number of leptons that pass our selections in total
   std::cout << "Total electrons: " << ::totalElectrons << " Total Muons: " << ::totalMuons << "\n";
