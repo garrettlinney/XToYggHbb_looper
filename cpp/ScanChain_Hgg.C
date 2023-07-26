@@ -561,20 +561,19 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 		  secEtaHist  -> Fill(candElectrons[1].eta());
 		  p4dilepton = candElectrons[0].p4() + candElectrons[1].p4();	//calculate dilepton 4-vector
 		  oppSignElectrons += 2;	//count number of electrons that passed previous cuts and now the opposite sign cut
-
-	  //Next check if the 2 leptons are opposite sign muons
-		  else if (candMuons.size() == 2 && candMuons[0].id()*candMuons[1].id() < 0){
-			  leadPtHist  -> Fill(candMuons[0].pt());
-			  leadEtaHist -> Fill(candMuons[0].eta());
-			  secPtHist   -> Fill(candMuons[1].pt());
-			  secEtaHist  -> Fill(candMuons[1].eta());
-			  p4dilepton = candMuons[0].p4() + candMuons[1].p4();
-			  oppSignMuons += 2;
-			  goodMuons = candMuons;
-		      }
-		//if neither of the condions above are met, skip event (the leptons are not opposite-sign, same-flavor
-		  else continue; 
 	  }
+	  //Next check if the 2 leptons are opposite sign muons
+	  else if (candMuons.size() == 2 && candMuons[0].id()*candMuons[1].id() < 0){
+		  leadPtHist  -> Fill(candMuons[0].pt());
+		  leadEtaHist -> Fill(candMuons[0].eta());
+		  secPtHist   -> Fill(candMuons[1].pt());
+		  secEtaHist  -> Fill(candMuons[1].eta());
+		  p4dilepton = candMuons[0].p4() + candMuons[1].p4();
+		  oppSignMuons += 2;
+	  }
+	  //if neither of the condions above are met, skip event (the leptons are not opposite-sign, same-flavor
+	  else continue; 
+	  
 	  
 	  //fill dilepton histograms
 	  dilepMass -> Fill(p4dilepton.Mag());
@@ -597,11 +596,11 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 		nocleanJets.push_back(j); //if jet passes our kinematic cuts, push_back to nocleanjets
 		
 		//For each jet, loop over the leptons in the events. If the jet is within a delta R (dR) of 0.4 with any lepton, set JetIsLep = True
-		bool JetIsLep = False;
+		bool JetIsLep = false;
 		for (unsigned int k = 0; k < candElectrons.size(); k++){
 			double dR = sqrt(pow(acos(cos(j.phi() - candElectrons[k].phi())), 2) + pow(j.eta() - candElectrons[k].eta(), 2)); //calculate dR
 			if (dR < 0.4){ 
-				JetIsLep = True;	//if the "jet" is within 0.4 of a lepton, it is likely that the "jet" is actually that lepton being doubly reconstructed
+				JetIsLep = true;	//if the "jet" is within 0.4 of a lepton, it is likely that the "jet" is actually that lepton being doubly reconstructed
 				goto cnt;			//as a both a lepton and a jet
 			}
 		}
@@ -609,13 +608,13 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 		for (unsigned int z = 0; z < candMuons.size(); z++){
 			double dR = sqrt(pow(acos(cos(j.phi() - candMuons[z].phi())), 2) + pow(j.eta() - candMuons[z].eta(), 2));
 			if (dR < 0.4){ 
-				JetIsLep = True;
+				JetIsLep = true;
 				goto cnt;
 		    }
 	    }
 	    
 		//if the jet is outside dR <= 0.4 for every lepton, push back to cleanJets
-		if JetIsLep == False {
+		if (JetIsLep == false) {
 			cleanJets.push_back(j);
 		}
 		
@@ -897,7 +896,10 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   ZHists -> WriteObject(&jetCleanMM, "jetCleanMM");
   */
   
+  
+  /*
   // Print number of leptons that pass our selections in total
+  //commented out for now because it was causing problems with the progress bar.
   std::cout << "Total electrons: " << ::totalElectrons << " Total Muons: " << ::totalMuons << "\n";
   std::cout << "Kinematic cut \n";
   std::cout << "Electrons: " << pTetaCutElectrons << " Muons: " << pTetaCutMuons << "\n";
@@ -905,6 +907,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   std::cout << "Electrons: " << rightNumElectrons << " Muons: " << rightNumMuons << "\n";
   std::cout << "Opposite sign cut \n";
   std::cout << "Electrons: " << oppSignElectrons << " Muons: " << oppSignMuons << "\n";
+  */
   
   bar.finish();
   cout << "nTotal: " << h_weight_full->GetBinContent(1) << ", nPass: " << h_weight->GetBinContent(1) << ", eff: " << h_weight->GetBinContent(1)/h_weight_full->GetBinContent(1) << endl;
