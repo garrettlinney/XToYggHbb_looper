@@ -70,7 +70,7 @@ TH1F *dilepMass   = new TH1F("dilepMass", "Dilepton Mass", 15, 50, 150); //GeV r
 TH1F *dilepEta    = new TH1F("dilepEta", "Dilepton Eta", 8, -2.4, 2.4); //extend x-axis, labels, y-axis scale
 TH1F *dilepP      = new TH1F("dilepP", "Dilepton Momentum", 15, 20, 300);
 TH1F *jetUnclean  = new TH1F("jetUnclean", "Number of Jets in Event (No Cleaning)", 6, 0, 6);
-TH1F *jetClean    = new TH1F("jetClean", "Number of Jets in Event (w/ Cleaning) (v. seperate fill)", 6, 0, 6);
+TH1F *jetClean    = new TH1F("jetClean", "Number of Jets in Event (w/ Cleaning)", 6, 0, 6);
 TH1F *jetCleanEE  = new TH1F("jetCleanEE", "Number of Jets in ee Event (w/ Cleaning)", 6, 0, 6);
 TH1F *jetCleanMM  = new TH1F("jetCleanMM", "Number of Jets in mm Event (w/ Cleaning)", 6, 0, 6);
 
@@ -517,20 +517,25 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       
 	  /*
 	  
-	  BEGIN CUTLFOW
+	  BEGIN CUTLFOW:
+	  We scan over the leptons in each event. We first throw out leptons whose kinematics do not fall within our desired bounds. Second, we
+	  check that the event had exactly two same-flavor, opposite-sign leptons, and throw out events that were not.
 	  
 	  */
 	  
 	  Electrons candElectrons;
-	  totalElectrons += electrons.size();
+	  totalElectrons += electrons.size();	//counts number of electrons in all events, no cuts applied yet
+	  
+	  //apply kinematic cuts to electrons
 	  for (unsigned int n = 0; n < electrons.size(); n++){ 
 		Electron e = electrons[n];
 		if ( !(abs(e.eta()) < 2.4) ) continue;
 		if ( (e.pt() < 20)) continue;
-		candElectrons.push_back(e);
-		pTetaCutElectrons++;
+		candElectrons.push_back(e); //add electron to candElectrons if it passes all cuts
+		pTetaCutElectrons++; //counts the number of electrons that pass kinematic cuts
 		}
 	  
+	  //apply kinematic cuts to muons
 	  Muons candMuons;
 	  totalMuons += muons.size();
 	  for (unsigned int n = 0; n < muons.size(); n++){ 
@@ -541,103 +546,84 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 		pTetaCutMuons++;
 	    }
 	  
-	  Electrons goodElectrons;
-	  Muons goodMuons;
-	  
 	  // Only allow events with 2 leptons 
       if ((candElectrons.size() + candMuons.size()) != 2) continue; 
+	  //count the number of leptons (wrt flavor) in events that passed the previous cuts and now the 2 lepton requirement 
 	  rightNumElectrons += candElectrons.size();
 	  rightNumMuons += candMuons.size();
 	  
-	  //Only allow oppoiste signed leptons
+	  //Only allow opposite signed leptons
+	  //First check if the 2 leptons are opposite sign electrons
 	  if (candElectrons.size() == 2 && candElectrons[0].id()*candElectrons[1].id() < 0){ 
-		  leadPtHist  -> Fill(candElectrons[0].pt());
+		  leadPtHist  -> Fill(candElectrons[0].pt());	//fill histograms for leading lepton and second-leading leptons pt and eta 
 		  leadEtaHist -> Fill(candElectrons[0].eta());
 		  secPtHist   -> Fill(candElectrons[1].pt());
 		  secEtaHist  -> Fill(candElectrons[1].eta());
-		  p4dilepton = candElectrons[0].p4() + candElectrons[1].p4();
-		  oppSignElectrons += 2;
-		  goodElectrons = candElectrons;
-	  } 
-	  
-	  /*
-	  if (candElectrons.size() == 1 && abs(candElectrons[0].id()*candMuons[0].id()) > 0){ //These events are unphysical for Z decays
-		  if (candElectrons[0].pt() > candMuons[0].pt()){ //check that electrons are sorted by pT
-		      leadPtHist  -> Fill(candElectrons[0].pt());
-		      leadEtaHist -> Fill(candElectrons[0].eta());
-		      secPtHist   -> Fill(candMuons[0].pt());
-		      secEtaHist  -> Fill(candMuons[0].eta());
-	      }
-		  if (candElectrons[0].pt() < candMuons[0].pt()){
-		      leadPtHist  -> Fill(candMuons[0].pt());
-		      leadEtaHist -> Fill(candMuons[0].eta());
-		      secPtHist   -> Fill(candElectrons[0].pt());
-		      secEtaHist  -> Fill(candElectrons[0].eta());
-	      }
-	      p4dilepton = candElectrons[0].p4() + candMuons[0].p4();
-		  oppSignElectrons++;
-		  oppSignMuons++;
-	  }
-	  */
-	  
-	  if (candElectrons.size() == 0 && candMuons[0].id()*candMuons[1].id() < 0){
-		  leadPtHist  -> Fill(candMuons[0].pt());
-		  leadEtaHist -> Fill(candMuons[0].eta());
-		  secPtHist   -> Fill(candMuons[1].pt());
-		  secEtaHist  -> Fill(candMuons[1].eta());
-		  p4dilepton = candMuons[0].p4() + candMuons[1].p4();
-		  oppSignMuons += 2;
-		  goodMuons = candMuons;
+		  p4dilepton = candElectrons[0].p4() + candElectrons[1].p4();	//calculate dilepton 4-vector
+		  oppSignElectrons += 2;	//count number of electrons that passed previous cuts and now the opposite sign cut
+
+	  //Next check if the 2 leptons are opposite sign muons
+		  else if (candMuons.size() == 2 && candMuons[0].id()*candMuons[1].id() < 0){
+			  leadPtHist  -> Fill(candMuons[0].pt());
+			  leadEtaHist -> Fill(candMuons[0].eta());
+			  secPtHist   -> Fill(candMuons[1].pt());
+			  secEtaHist  -> Fill(candMuons[1].eta());
+			  p4dilepton = candMuons[0].p4() + candMuons[1].p4();
+			  oppSignMuons += 2;
+			  goodMuons = candMuons;
+		      }
+		//if neither of the condions above are met, skip event (the leptons are not opposite-sign, same-flavor
+		  else continue; 
 	  }
 	  
-	  //dilepton
+	  //fill dilepton histograms
 	  dilepMass -> Fill(p4dilepton.Mag());
 	  dilepEta  -> Fill(p4dilepton.Eta());
 	  dilepP    -> Fill(p4dilepton.P());
-      
+       
 	  Jets jets = getJets();
 	  
-	  Jets nocleanJets;
-	  Jets cleanJets;
-	  Jets cleanJetsEE;
+	  Jets nocleanJets;		//jets before cleaning
+	  Jets cleanJets;		//jets after cleaning
+	  Jets cleanJetsEE;	
 	  Jets cleanJetsMM;
-	  	  
+	  
+	  //loop over all jets in event
 	  for (unsigned int n = 0; n < jets.size(); n++){ 
 		Jet j = jets[n];
+		//kinematic cuts for our jets
 		if ( abs(j.eta()) > 2.4 ) continue;
 		if ( (j.pt() < 30)) continue;
-		nocleanJets.push_back(j);
-		cleanJets.push_back(j);
-		if (goodElectrons.size() == 2) cleanJetsEE.push_back(j);
-		if (goodMuons.size() == 2) cleanJetsMM.push_back(j);
+		nocleanJets.push_back(j); //if jet passes our kinematic cuts, push_back to nocleanjets
 		
-		for (unsigned int k = 0; k < goodElectrons.size(); k++){
-			double dR = sqrt(pow(acos(cos(j.phi() - goodElectrons[k].phi())), 2) + pow(j.eta() - goodElectrons[k].eta(), 2));
+		//For each jet, loop over the leptons in the events. If the jet is within a delta R (dR) of 0.4 with any lepton, set JetIsLep = True
+		bool JetIsLep = False;
+		for (unsigned int k = 0; k < candElectrons.size(); k++){
+			double dR = sqrt(pow(acos(cos(j.phi() - candElectrons[k].phi())), 2) + pow(j.eta() - candElectrons[k].eta(), 2)); //calculate dR
 			if (dR < 0.4){ 
-				cleanJets.pop_back();
-				if (goodElectrons.size() == 2) cleanJetsEE.pop_back();
-				goto cnt;
-		    }
+				JetIsLep = True;	//if the "jet" is within 0.4 of a lepton, it is likely that the "jet" is actually that lepton being doubly reconstructed
+				goto cnt;			//as a both a lepton and a jet
+			}
 		}
 	    
-		for (unsigned int z = 0; z < goodMuons.size(); z++){
-			double dR = sqrt(pow(acos(cos(j.phi() - goodMuons[z].phi())), 2) + pow(j.eta() - goodMuons[z].eta(), 2));
+		for (unsigned int z = 0; z < candMuons.size(); z++){
+			double dR = sqrt(pow(acos(cos(j.phi() - candMuons[z].phi())), 2) + pow(j.eta() - candMuons[z].eta(), 2));
 			if (dR < 0.4){ 
-				cleanJets.pop_back();
-				if (goodMuons.size() == 2) cleanJetsMM.pop_back();
+				JetIsLep = True;
 				goto cnt;
 		    }
 	    }
-	    cnt:;
+	    
+		//if the jet is outside dR <= 0.4 for every lepton, push back to cleanJets
+		if JetIsLep == False {
+			cleanJets.push_back(j);
+		}
+		
+		cnt:;
 	  }
-	  
+	  //finally, fill nJet histograms 
       jetUnclean -> Fill(nocleanJets.size());
-	  //jetClean   -> Fill(cleanJets.size());
-	  //jetClean -> Fill(cleanJetsEE.size() + cleanJetsMM.size());
-	  jetClean   -> Fill(cleanJetsEE.size());
-	  jetClean   -> Fill(cleanJetsMM.size());
-	  jetCleanEE -> Fill(cleanJetsEE.size());
-	  jetCleanMM -> Fill(cleanJetsMM.size());
+	  jetClean -> Fill(cleanJets.size());
 	  
 	  //if (jets.size() < 2) continue; 
 
