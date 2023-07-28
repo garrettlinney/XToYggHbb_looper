@@ -623,7 +623,8 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 	  //finally, fill nJet histograms 
       jetUnclean -> Fill(nocleanJets.size());
 	  jetClean -> Fill(cleanJets.size());
-	  
+	  if (candElectrons.size() == 2) jetCleanEE -> Fill(cleanJets.size());
+	  if (candMuons.size() == 2) jetCleanMM -> Fill(cleanJets.size());
 	  //if (jets.size() < 2) continue; 
 
       //DiJets dijets = DiJetPreselection(jets);
