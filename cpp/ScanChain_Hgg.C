@@ -73,6 +73,9 @@ TH1F *jetUnclean  = new TH1F("jetUnclean", "Number of Jets in Event (No Cleaning
 TH1F *jetClean    = new TH1F("jetClean", "Number of Jets in Event (w/ Cleaning)", 6, 0, 6);
 TH1F *jetCleanEE  = new TH1F("jetCleanEE", "Number of Jets in ee Event (w/ Cleaning)", 6, 0, 6);
 TH1F *jetCleanMM  = new TH1F("jetCleanMM", "Number of Jets in mm Event (w/ Cleaning)", 6, 0, 6);
+TH1F *dilepType     = new TH1F("nLeps", "DiLepType", 6, -0.5, 5.5);
+TH1F *nElectrons  = new TH1F("nElectrons", "Number of Electrons", 6, -0.5, 5.5);
+TH1F *nMuons      = new TH1F("nMuons", "Number of Muons", 6, -0.5, 5.5);
 
 /*
 //TFile to store histograms in
@@ -514,7 +517,10 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 
       Electrons electrons = getElectrons();
       Muons muons = getMuons();
-      
+      nElectrons -> Fill(electrons.size());
+	  nMuons -> Fill(muons.size());
+	  std::cout << "num els = " << electrons.size() << "num mus = " << muons.size() << std::endl;
+	  
 	  /*
 	  
 	  BEGIN CUTLFOW:
@@ -552,6 +558,9 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 	  rightNumElectrons += candElectrons.size();
 	  rightNumMuons += candMuons.size();
 	  
+	  //dilep type: ee = 0, emu = 1, mumu = 2
+	  dilepType -> Fill(candMuons.size());
+	  
 	  //Only allow opposite signed leptons
 	  //First check if the 2 leptons are opposite sign electrons
 	  if (candElectrons.size() == 2 && candElectrons[0].id()*candElectrons[1].id() < 0){ 
@@ -571,7 +580,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
 		  p4dilepton = candMuons[0].p4() + candMuons[1].p4();
 		  oppSignMuons += 2;
 	  }
-	  //if neither of the condions above are met, skip event (the leptons are not opposite-sign, same-flavor
+	  //if neither of the condions above are met, skip event (the leptons are not opposite-sign, same-flavor)
 	  else continue; 
 	  
 	  
