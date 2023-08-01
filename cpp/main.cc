@@ -23,12 +23,18 @@ double getSumOfGenEventSumw(TChain *chaux, bool isMC)
 int main(int argc, char **argv) {
   //Arguments
   const char* outdir = ( argc > 1 ? argv[1]               : "temp_data" );
+  if (TString(outdir)=="-h") {
+	  std::cerr << "How to run:" << std::endl;
+	  std::cerr << argv[0] << " OUTPUTDIRNAME YEAR RUNDATA RUNBKG RUNSIGNAL SAMPLE TREENUM ADDITIONALBOOLEANFLAGS" << std::endl;
+	  return 1;
+  }
   TString yearArg    = ( argc > 2 ? argv[2]               : "all" );
   int run_data       = ( argc > 3 ? ((int)*argv[3] - 48 ) : 1 );  // '0' has the ASCII code of 48
   int run_MCbkg      = ( argc > 4 ? ((int)*argv[4] - 48 ) : 1 );  // '0' has the ASCII code of 48
   int run_signal     = ( argc > 5 ? ((int)*argv[5] - 48 ) : 1 );  // '0' has the ASCII code of 48
   TString sampleArg  = ( argc > 6 ? argv[6]               : "all" );
   int onlyCreateJSON = ( argc > 7 ? ((int)*argv[7] - 48 ) : 0 );  // '0' has the ASCII code of 48
+  TString treenum    = ( argc > 8 ? argv[8]               : "*");
   
   int PUWeight=1;
   int bTagSF=1;
@@ -339,7 +345,7 @@ int main(int argc, char **argv) {
   }
   else {
     // Main loops
-    TString baseDir = "/ceph/cms/store/user/iareed/skim_Jul202023_ggbb_Data_and_DY_ABCD_mini_jobs";
+    TString baseDir = "/ceph/cms/store/user/iareed/skim_Jun302023_ggbb_no_pho_selection";
     TString version = "v0";
 
     for ( int iyear=0; iyear<years.size(); iyear++ ) {
@@ -364,13 +370,14 @@ int main(int argc, char **argv) {
         TChain *ch_temp = new TChain("Events");
         TChain *chaux_temp = new TChain("Runs");
         for ( unsigned int d=0; d<sample_prod[sample][year].size(); d++ ) {
-          TString trees = baseDir+"/"+year+"/"+sample_name+"_"+sample_prod[sample][year][d]+"/"+"tree_*.root";
+          TString trees = baseDir+"/"+year+"/"+sample_name+"_"+sample_prod[sample][year][d]+"/"+"tree_"+treenum+".root";
 
           ch_temp->Add(trees);
           chaux_temp->Add(trees);
         }
 
-        std::cout<<"Sample: "<<sample<<" --> Process ID: "<<sample_procid<<"\n\n";
+        std::cout<<"Sample: "<<sample<<" --> Process ID: "<<sample_procid<<"\n";
+		std::cout<<"TTree: " << treenum << "\n\n"; 
         ScanChain_Hgg(ch_temp,getSumOfGenEventSumw(chaux_temp, isMC),year,sample,sample_procid,outdir,PUWeight,bTagSF,JECUnc);
       }
     }
