@@ -12,6 +12,7 @@
 #include "TVector3.h"
 #include "TRandom3.h"
 #include "TCanvas.h"
+#include "TString.h"
 
 #include "RooRealVar.h"
 #include "RooDataSet.h"
@@ -39,6 +40,7 @@
 #include <fstream>
 #include <list>
 #include <cmath>
+#include <vector>
 
 #define H1(name,nbins,low,high,xtitle) TH1D *h_##name = new TH1D(#name,"",nbins,low,high); h_##name->GetXaxis()->SetTitle(xtitle); h_##name->GetYaxis()->SetTitle("Events");
 
@@ -59,24 +61,6 @@ int count_test=0;
 
 ofstream txtout("evtnb.txt", ofstream::app);
 
-TCanvas *canvas = new TCanvas("c", "c", 800, 600);
-
-//histograms for Garrett's cutflow 
-TH1F *leadPtHist  = new TH1F("leadPtHist", "Leading Lepton pT", 10, 20, 200);
-TH1F *leadEtaHist = new TH1F("leadEtaHist", "Leading Lepton eta", 8, -2.4, 2.4);
-TH1F *secPtHist   = new TH1F("secPtHist", "Second Leading Lepton pT", 10, 20, 200);
-TH1F *secEtaHist  = new TH1F("secEtaHist", "Second Leading Lepton eta", 8, -2.4, 2.4); 
-TH1F *dilepMass   = new TH1F("dilepMass", "Dilepton Mass", 15, 50, 150); //GeV resolution, so use 1 GeV bin width
-TH1F *dilepEta    = new TH1F("dilepEta", "Dilepton Eta", 8, -2.4, 2.4); //extend x-axis, labels, y-axis scale
-TH1F *dilepP      = new TH1F("dilepP", "Dilepton Momentum", 15, 20, 300);
-TH1F *jetUnclean  = new TH1F("jetUnclean", "Number of Jets in Event (No Cleaning)", 6, 0, 6);
-TH1F *jetClean    = new TH1F("jetClean", "Number of Jets in Event (w/ Cleaning)", 6, 0, 6);
-TH1F *jetCleanEE  = new TH1F("jetCleanEE", "Number of Jets in ee Event (w/ Cleaning)", 6, 0, 6);
-TH1F *jetCleanMM  = new TH1F("jetCleanMM", "Number of Jets in mm Event (w/ Cleaning)", 6, 0, 6);
-TH1F *dilepType     = new TH1F("nLeps", "DiLepType", 6, -0.5, 5.5);
-TH1F *nElectrons  = new TH1F("nElectrons", "Number of Electrons", 6, -0.5, 5.5);
-TH1F *nMuons      = new TH1F("nMuons", "Number of Muons", 6, -0.5, 5.5);
-
 /*
 //TFile to store histograms in
 TFile *ZHists     = new TFile("ZHists.root", "RECREATE" );
@@ -93,7 +77,43 @@ unsigned int oppSignMuons      = 0;
 
 TLorentzVector p4dilepton;
 
+TCanvas *canvas = new TCanvas("c", "c", 800, 600);
+
+//histograms for Garrett's cutflow 
+TH1F *leadPtHist  = new TH1F("leadPtHist", "Leading Lepton pT", 10, 20, 200);
+TH1F *leadEtaHist = new TH1F("leadEtaHist", "Leading Lepton eta", 8, -2.4, 2.4);
+TH1F *secPtHist   = new TH1F("secPtHist", "Second Leading Lepton pT", 10, 20, 200);
+TH1F *secEtaHist  = new TH1F("secEtaHist", "Second Leading Lepton eta", 8, -2.4, 2.4); 
+TH1F *dilepMass   = new TH1F("dilepMass", "Dilepton Mass", 15, 50, 150); //GeV resolution, so use 1 GeV bin width
+TH1F *dilepEta    = new TH1F("dilepEta", "Dilepton Eta", 8, -2.4, 2.4); //extend x-axis, labels, y-axis scale
+TH1F *dilepP      = new TH1F("dilepP", "Dilepton Momentum", 15, 20, 300);
+TH1F *jetUnclean  = new TH1F("jetUnclean", "Number of Jets in Event (No Cleaning)", 6, 0, 6);
+TH1F *jetClean    = new TH1F("jetClean", "Number of Jets in Event (w/ Cleaning)", 6, 0, 6);
+TH1F *jetCleanEE  = new TH1F("jetCleanEE", "Number of Jets in ee Event (w/ Cleaning)", 6, 0, 6);
+TH1F *jetCleanMM  = new TH1F("jetCleanMM", "Number of Jets in mm Event (w/ Cleaning)", 6, 0, 6);
+TH1F *dilepType   = new TH1F("nLeps", "DiLepType", 6, -0.5, 5.5);
+TH1F *nElectrons  = new TH1F("nElectrons", "Number of Electrons", 6, -0.5, 5.5);
+TH1F *nMuons      = new TH1F("nMuons", "Number of Muons", 6, -0.5, 5.5);
+
 int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process, int process_id, const char* outdir="temp_data", int PUWeight=1, int bTagSF=1, int JECUnc=0) {
+
+//put all of our histograms into a vector
+  std::vector<TH1F*> histograms;
+  histograms.push_back(leadPtHist);
+  histograms.push_back(leadEtaHist);
+  histograms.push_back(secPtHist);
+  histograms.push_back(secEtaHist);
+  histograms.push_back(dilepMass);
+  histograms.push_back(dilepEta);
+  histograms.push_back(dilepP);
+  histograms.push_back(jetUnclean);
+  histograms.push_back(jetClean);
+  histograms.push_back(jetCleanEE);
+  histograms.push_back(jetCleanMM);
+  histograms.push_back(dilepType);
+  histograms.push_back(nElectrons);
+  histograms.push_back(nMuons);
+  
 // Event weights / scale factors:
 //  0: Do not apply
 //  1: Apply central value
@@ -107,7 +127,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   if ( process == "Data" ) {
     isMC = false;
   }
-   
+  
   // Processes and cross-sections (in fb):
   // set this in a different file
   else if ( process == "ttbar" )                              { xsec = 87310.0;                         }
@@ -519,7 +539,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
       Muons muons = getMuons();
       nElectrons -> Fill(electrons.size());
 	  nMuons -> Fill(muons.size());
-	  std::cout << "num els = " << electrons.size() << "num mus = " << muons.size() << std::endl;
+	  //std::cout << "num els = " << electrons.size() << "num mus = " << muons.size() << std::endl;
 	  
 	  /*
 	  
@@ -858,7 +878,16 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   } // File loop
   
   //Save histograms
+  //Trying a for loop for brevity
+  
   canvas -> Draw();
+  for (unsigned int n = 0; n < histograms.size(); n++){ 
+	histograms[n] -> Draw();
+	canvas -> SaveAs(TString(histograms[n]->GetTitle()) + TString(".png"));
+	canvas -> Clear();
+  }
+  
+  /*
   leadPtHist -> Draw();
   canvas -> SaveAs("leadPtHist.png");
   canvas -> Clear();
@@ -891,6 +920,16 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   canvas -> Clear();
   jetCleanMM -> Draw();
   canvas -> SaveAs("jetCleanMM.png");
+  canvas -> Clear();
+  dilepType -> Draw();
+  canvas -> SaveAs("dilepType.png");
+  canvas -> Clear();
+  nElectrons -> Draw();
+  canvas -> SaveAs("nElectrons.png");
+  canvas -> Clear();
+  nMuons -> Draw();
+  canvas -> SaveAs("nMuons.png");  
+  */
   
   /*
   ZHists -> WriteObject(&leadPtHist, "leadPtHist");
@@ -906,10 +945,7 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   ZHists -> WriteObject(&jetCleanMM, "jetCleanMM");
   */
   
-  
-  /*
   // Print number of leptons that pass our selections in total
-  //commented out for now because it was causing problems with the progress bar.
   std::cout << "Total electrons: " << ::totalElectrons << " Total Muons: " << ::totalMuons << "\n";
   std::cout << "Kinematic cut \n";
   std::cout << "Electrons: " << pTetaCutElectrons << " Muons: " << pTetaCutMuons << "\n";
@@ -917,7 +953,6 @@ int ScanChain_Hgg(TChain *ch, double genEventSumw, TString year, TString process
   std::cout << "Electrons: " << rightNumElectrons << " Muons: " << rightNumMuons << "\n";
   std::cout << "Opposite sign cut \n";
   std::cout << "Electrons: " << oppSignElectrons << " Muons: " << oppSignMuons << "\n";
-  */
   
   bar.finish();
   cout << "nTotal: " << h_weight_full->GetBinContent(1) << ", nPass: " << h_weight->GetBinContent(1) << ", eff: " << h_weight->GetBinContent(1)/h_weight_full->GetBinContent(1) << endl;
